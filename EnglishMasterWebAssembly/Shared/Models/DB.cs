@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace EnglishMasterWebAssembly.Server.Models
+namespace EnglishMasterWebAssembly.Shared.Models
 {
     public partial class DB : DbContext
     {

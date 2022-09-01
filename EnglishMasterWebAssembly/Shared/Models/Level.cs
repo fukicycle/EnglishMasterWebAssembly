@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EnglishMasterWebAssembly.Server.Models
+namespace EnglishMasterWebAssembly.Shared.Models
 {
     public partial class Level
     {
