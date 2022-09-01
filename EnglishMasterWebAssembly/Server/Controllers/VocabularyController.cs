@@ -17,9 +17,9 @@ namespace EnglishMasterWebAssembly.Server.Controllers
         {
             this.db = db;
         }
-        public List<Vocabulary> Get()
+        public async Task<IEnumerable<Vocabulary>> Get()
         {
-            return db.Vocabularies.Include(a => a.Word).Include(a => a.PartOfSpeech).ToList();
+            return await db.Vocabularies.ToListAsync();
         }
     }
 }

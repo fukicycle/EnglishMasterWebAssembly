@@ -16,8 +16,8 @@ else
     foreach (var item in VocabularyList)
     {
         <div>@item.Meaning</div>
-        <div>@item.Word.Word1</div>
-        <div>@item.PartOfSpeech.Name</div>
+        <div>@item.Word?.Word1</div>
+        <div>@item.PartOfSpeech?.Name</div>
     }
 }
 
