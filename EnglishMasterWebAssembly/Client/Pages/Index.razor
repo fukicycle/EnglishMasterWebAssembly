@@ -23,9 +23,13 @@ else
 
 @code {
     private List<Vocabulary> VocabularyList = null;
+    private List<Word> WordList = null;
+    private List<PartOfSpeech> PartOfSpeechList = null;
 
     protected override async Task OnInitializedAsync()
     {
         VocabularyList = await Http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary");
+        WordList = await Http.GetFromJsonAsync<List<Word>>("Word");
+        PartOfSpeechList = await Http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech");
     }
 }
