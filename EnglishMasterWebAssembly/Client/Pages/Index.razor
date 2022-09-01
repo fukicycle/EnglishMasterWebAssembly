@@ -15,9 +15,12 @@ else
 {
     foreach (var item in VocabularyList)
     {
-        <div>@item.Meaning</div>
-        <div>@item.Word?.Word1</div>
-        <div>@item.PartOfSpeech?.Name</div>
+        <div style="border: solid 1px; border-rounded:10px;">
+            <div>@WordList.First(a => a.Id == item.WordId).Word1</div>
+            <div>@item.Meaning</div>
+            <div>@PartOfSpeechList.First(a => a.Id == item.PartOfSpeechId).InJapanese</div>
+            <div>@PartOfSpeechList.First(a => a.Id == item.PartOfSpeechId).Name</div>
+        </div>
     }
 }
 
@@ -28,8 +31,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        VocabularyList = await Http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary");
         WordList = await Http.GetFromJsonAsync<List<Word>>("Word");
         PartOfSpeechList = await Http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech");
+        VocabularyList = await Http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary");
     }
 }
