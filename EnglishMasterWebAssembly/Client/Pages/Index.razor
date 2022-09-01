@@ -15,7 +15,7 @@ else
 {
     foreach (var item in VocabularyList)
     {
-        <div style="border: solid 1px; border-rounded:10px;">
+        <div style="border: solid 1px; border-radius:10px; margin-bottom:5px;padding:5px;">
             <div>@WordList.First(a => a.Id == item.WordId).Word1</div>
             <div>@item.Meaning</div>
             <div>@PartOfSpeechList.First(a => a.Id == item.PartOfSpeechId).InJapanese</div>
