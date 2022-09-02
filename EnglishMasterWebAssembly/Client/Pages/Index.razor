@@ -43,8 +43,8 @@
         <button>4</button>
     </div>
     <div class="navigation-area">
-        <button>&#xE892;</button>
-        <button>&#xE893;</button>
+        <button @onclick="@MovePrev">&#xE892;</button>
+        <button @onclick="@MoveNext">&#xE893;</button>
     </div>
 </div>
 @code {
@@ -61,6 +61,20 @@
         PartOfSpeechList = await Http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech");
         VocabularyList = await Http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary");
         Questions = VocabularyList.GetQuestions();
+        Question = Questions[Idx];
+    }
+
+    private void MovePrev()
+    {
+        Idx = Idx - 1;
+        if (Idx < 0) Idx = 0;
+        Question = Questions[Idx];
+    }
+
+    private void MoveNext()
+    {
+        Idx = Idx + 1;
+        if (Idx > VocabularyList.Count) Idx = VocabularyList.Count;
         Question = Questions[Idx];
     }
 }
