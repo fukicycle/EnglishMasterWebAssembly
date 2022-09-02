@@ -10,24 +10,19 @@
             <option>試験</option>
         </select>
         <p>品詞</p>
-        @if (PartOfSpeechList == null)
-        {
-            <div class="spinner-border"></div>
-        }
-        else
-        {
-            <select onchange="@PartOfSpeechChanged">
-                @foreach (var item in PartOfSpeechList)
-                {
-                    <option value="@item.Id">@item.InJapanese</option>
-                }
-            </select>
-        }
+        <select onchange="@PartOfSpeechChanged">
+            @foreach (var item in PartOfSpeechList)
+            {
+                <option value="@item.Id">@item.InJapanese</option>
+            }
+        </select>
     </div>
     <div class="question-area">
         @if (WordList == null || Questions == null)
         {
-            <div class="spinner-border"></div>
+            <p class="question">Loading...</p>
+            <hr />
+            <p class="count">0/0</p>
         }
         else
         {
@@ -56,14 +51,17 @@
         }
     </div>
     <div class="navigation-area">
-        <button @onclick="@MovePrev">&#xE892;</button>
-        <button @onclick="@MoveNext">&#xE893;</button>
+        @if (Question != null)
+        {
+            <button @onclick="@MovePrev">&#xE892;</button>
+            <button @onclick="@MoveNext">&#xE893;</button>
+        }
     </div>
 </div>
 @code {
     private List<Vocabulary> VocabularyList = null;
     private List<Word> WordList = null;
-    private List<PartOfSpeech> PartOfSpeechList = null;
+    private List<PartOfSpeech> PartOfSpeechList = new List<PartOfSpeech>();
     private List<Vocabulary> Questions = null;
     private Vocabulary Question;
     private int Idx = 0;
