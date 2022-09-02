@@ -11,22 +11,22 @@
     "EnglishMasterWebAssembly": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "EnglishMaster/Client",
-      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/EnglishMaster/Client/_framework/debug/ws-proxy?browser={browserInspectUri}",
+      "launchUrl": "EnglishMasterClient",
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/EnglishMasterClient/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "applicationUrl": "http://localhost:5028",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_PATHBASE": "/EnglishMaster/Client"
+        "ASPNETCORE_PATHBASE": "/EnglishMasterClient"
       }
     },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "EnglishMaster/Cilent",
-      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/EnglishMaster/Client/_framework/debug/ws-proxy?browser={browserInspectUri}",
+      "launchUrl": "EnglishMasterCilent",
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/EnglishMasterClient/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_PATHBASE": "/EnglishMaster/Client"
+        "ASPNETCORE_PATHBASE": "/EnglishMasterClient"
       }
     }
   }

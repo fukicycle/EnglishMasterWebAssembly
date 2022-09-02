@@ -11,7 +11,7 @@
     "EnglishMasterWebAssembly.Server": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "EnglishMaster/Client",
+      "launchUrl": "EnglishMasterClient",
       "applicationUrl": "http://localhost:40495",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -20,8 +20,8 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "EnglishMaster/Client",
-      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/EnglishMaster/Client/_framework/debug/ws-proxy?browser={browserInspectUri}",
+      "launchUrl": "EnglishMasterClient",
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/EnglishMasterClient/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

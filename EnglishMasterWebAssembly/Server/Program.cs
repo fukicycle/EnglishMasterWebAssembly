@@ -11,7 +11,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<DB>(a => a.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
 var app = builder.Build();
-app.UsePathBase("/EnglishMaster/Client");
+app.UsePathBase("/EnglishMasterClient");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
