@@ -16,10 +16,10 @@
         }
         else
         {
-            <select>
+            <select onchange="@PartOfSpeechChanged">
                 @foreach (var item in PartOfSpeechList)
                 {
-                    <option>@item.InJapanese</option>
+                    <option value="@item.Id">@item.InJapanese</option>
                 }
             </select>
         }
@@ -31,7 +31,7 @@
         }
         else
         {
-            <p class="question">@WordList.First(a =>a.Id == Question.WordId).Word1</p>
+            <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
             <hr />
             <p class="count">@(Idx + 1)/@Questions.Count</p>
         }
@@ -60,7 +60,7 @@
         WordList = await Http.GetFromJsonAsync<List<Word>>("Word");
         PartOfSpeechList = await Http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech");
         VocabularyList = await Http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary");
-        Questions = VocabularyList.GetQuestions();
+        Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechList.First().Id).GetQuestions().ToList();
         Question = Questions[Idx];
     }
 
@@ -76,5 +76,15 @@
         Idx = Idx + 1;
         if (Idx > VocabularyList.Count) Idx = VocabularyList.Count;
         Question = Questions[Idx];
+    }
+
+    private void PartOfSpeechChanged(ChangeEventArgs e)
+    {
+        Idx = 0;
+        Questions = VocabularyList.Where(a => a.PartOfSpeechId == int.Parse(e.Value.ToString())).GetQuestions().ToList();
+        if (Questions.Count > 0)
+            Question = Questions[Idx];
+        else
+            Question = new Vocabulary();
     }
 }
