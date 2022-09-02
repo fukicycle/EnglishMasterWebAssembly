@@ -126,7 +126,6 @@ a, .btn-link {
         }
 
 .navigation-area > button {
-    font-family: 'Segoe MDL2 Assets';
     border: none;
     margin: 5px;
     border-radius: 20px;
@@ -134,14 +133,13 @@ a, .btn-link {
     height: 40px;
 }
 
-.navigation-area > button:hover {
-    font-family: 'Segoe MDL2 Assets';
-    border: none;
-    margin: 5px;
-    border-radius: 20px;
-    width: 40px;
-    height: 40px;
-    background-color: gray;
-    color:white;
-    transition: linear 0.3s;
-}
+    .navigation-area > button:hover {
+        border: none;
+        margin: 5px;
+        border-radius: 20px;
+        width: 40px;
+        height: 40px;
+        background-color: gray;
+        color: white;
+        transition: linear 0.3s;
+    }
