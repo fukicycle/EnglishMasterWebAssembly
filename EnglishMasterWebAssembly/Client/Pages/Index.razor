@@ -37,10 +37,23 @@
         }
     </div>
     <div class="answer-area">
-        <button>1</button>
-        <button>2</button>
-        <button>3</button>
-        <button>4</button>
+        @if (Question == null)
+        {
+            <div class="spinner-border"></div>
+        }
+        else
+        {
+            @if (Question.WordId == 0)
+            {
+            }
+            else
+            {
+                @foreach (var item in VocabularyList.GetAnswer(Question))
+                {
+                    <button>@item.Meaning</button>
+                }
+            }
+        }
     </div>
     <div class="navigation-area">
         <button @onclick="@MovePrev">&#xE892;</button>
@@ -66,6 +79,7 @@
 
     private void MovePrev()
     {
+        if (Questions.Count == 0) return;
         Idx = Idx - 1;
         if (Idx < 0) Idx = 0;
         Question = Questions[Idx];
@@ -73,8 +87,9 @@
 
     private void MoveNext()
     {
+        if (Questions.Count == 0) return;
         Idx = Idx + 1;
-        if (Idx > VocabularyList.Count) Idx = VocabularyList.Count;
+        if (Idx >= Questions.Count) Idx = Questions.Count - 1;
         Question = Questions[Idx];
     }
 

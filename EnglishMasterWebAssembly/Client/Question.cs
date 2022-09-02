@@ -8,5 +8,13 @@ namespace EnglishMasterWebAssembly.Client
         {
             return items.Select(a => new { a, o = Guid.NewGuid() }).OrderBy(a => a.o).Select(a => a.a);
         }
+
+        public static IEnumerable<Vocabulary> GetAnswer(this IEnumerable<Vocabulary> items, Vocabulary vocabulary)
+        {
+            List<Vocabulary> answers = new();
+            answers.Add(vocabulary);
+            answers.AddRange(items.Where(a => a.WordId != vocabulary.WordId).Select(a => new { a, o = Guid.NewGuid() }).OrderBy(a => a.o).Select(a => a.a).Take(3));
+            return answers.Select(a => new { a, o = Guid.NewGuid() }).OrderBy(a => a.o).Select(a => a.a);
+        }
     }
 }
