@@ -62,3 +62,65 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+/* defined */
+.container {
+    text-align: center;
+}
+
+.spinner-area {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    max-width: 500px;
+    margin: 0px auto;
+}
+
+    .spinner-area > p {
+        margin: 0px;
+        border: solid 1px;
+        border-radius: 5px 0px 0px 5px;
+        padding: 5px;
+    }
+
+    .spinner-area > select {
+        border-radius: 0px 5px 5px 0px;
+        text-align: center;
+    }
+
+.question-area {
+    border: solid 1px;
+    max-width: 500px;
+    margin: 0px auto;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.question {
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.answer-area {
+    max-width: 500px;
+    margin: 0px auto;
+}
+
+    .answer-area > button {
+        display: block;
+        margin-top: 5px;
+        border: none;
+        border-radius: 5px;
+        padding: 5px;
+        width: 100%;
+    }
+
+        .answer-area > button:hover {
+            display: block;
+            margin-top: 5px;
+            border: none;
+            border-radius: 5px;
+            padding: 5px;
+            width: 100%;
+            background-color:gray;
+            transition:linear 0.3s;
+        }
