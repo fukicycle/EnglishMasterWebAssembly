@@ -129,7 +129,6 @@ a, .btn-link {
         }
 
 .navigation-area > button {
-    font-family: 'Segoe MDL2 Assets';
     border: none;
     margin: 5px;
     border-radius: 20px;
@@ -139,7 +138,6 @@ a, .btn-link {
 }
 
     .navigation-area > button:hover {
-        font-family: 'Segoe MDL2 Assets';
         border: none;
         margin: 5px;
         border-radius: 20px;
