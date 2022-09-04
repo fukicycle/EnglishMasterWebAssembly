@@ -1,7 +1,7 @@
 # EnglishMaster (WebAssembly)
-## Webアプリの練習として英語学習アプリを作成中です
-## EnglishMasterのWebAssemblyバージョンとして開発中
-## 動作改善により初代サーバーサイドより高速動作可能
+### Webアプリの練習として英語学習アプリを作成中です<br/>
+EnglishMasterのWebAssemblyバージョンとして開発中<br/>
+動作改善により初代サーバーサイドより高速動作可能
 ## 必要要件
 * .NET6
 * IIS or Apache (Web server)
