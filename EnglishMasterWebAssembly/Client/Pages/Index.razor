@@ -6,12 +6,12 @@
 <div class="container">
     <div class="spinner-area">
         <p>モード</p>
-        <select disabled>
+        <select @onchange="@ModeChanged">
             <option>練習</option>
             <option>試験</option>
         </select>
         <p>品詞</p>
-        <select onchange="@PartOfSpeechChanged">
+        <select @onchange="@PartOfSpeechChanged">
             @foreach (var item in PartOfSpeechList)
             {
                 <option value="@item.Id">@item.InJapanese</option>
@@ -86,6 +86,7 @@
     private List<Vocabulary> AnswerList = new();
     private int Idx = 0;
     private bool? IsPass = null;
+    private int PartOfSpeechId = 0;
 
     //Test mode property
     private bool IsTest = false;
@@ -102,7 +103,12 @@
         AnswerList = VocabularyList.GetAnswer(Question).ToList();
         Timer.Elapsed += (s, e) =>
         {
-
+            LimitTime = LimitTime.Subtract(TimeSpan.FromSeconds(1));
+            if (LimitTime == TimeSpan.Zero)
+            {
+                Timer.Stop();
+                LimitTime = TimeSpan.FromMinutes(2);
+            }
         };
     }
 
@@ -128,26 +134,39 @@
 
     private void PartOfSpeechChanged(ChangeEventArgs e)
     {
-        IsPass = null;
-        Idx = 0;
-        Questions = VocabularyList.Where(a => a.PartOfSpeechId == int.Parse(e.Value.ToString())).GetQuestions().ToList();
-        if (Questions.Count > 0)
-            Question = Questions[Idx];
-        else
-            Question = new Vocabulary();
-        AnswerList = VocabularyList.GetAnswer(Question).ToList();
+        PartOfSpeechId = int.Parse(e.Value.ToString());
+        CreateQuestions();
     }
 
     private void AnswerButtonOnClick(long id)
     {
         IsPass = null;
-        if (Question.Id == id)
-        {
-            IsPass = true;
-        }
+        bool testResult = false;
+        if (IsTest) testResult = Question.Id == id;
+        else IsPass = Question.Id == id;
+    }
+
+    private void ModeChanged(ChangeEventArgs e)
+    {
+        IsTest = e.Value.ToString() == "試験";
+        CreateQuestions();
+    }
+
+    private void StartButtonOnClick()
+    {
+        Timer.Start();
+    }
+
+    private void CreateQuestions()
+    {
+        IsPass = null;
+        Idx = 0;
+        if (IsTest) Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId).GetQuestions().Take(25).ToList();
+        else Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId).GetQuestions().ToList();
+        if (Questions.Count > 0)
+            Question = Questions[Idx];
         else
-        {
-            IsPass = false;
-        }
+            Question = new Vocabulary();
+        AnswerList = VocabularyList.GetAnswer(Question).ToList();
     }
 }
