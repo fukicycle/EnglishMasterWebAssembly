@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using EnglishMasterWebAssembly.Shared.Models
+@using System.Timers
 @inject HttpClient Http
 <PageTitle>Question</PageTitle>
 <div class="container">
@@ -86,6 +87,11 @@
     private int Idx = 0;
     private bool? IsPass = null;
 
+    //Test mode property
+    private bool IsTest = false;
+    private Timer Timer = new Timer(1000);
+    private TimeSpan LimitTime = TimeSpan.FromMinutes(2);
+
     protected override async Task OnInitializedAsync()
     {
         WordList = await Http.GetFromJsonAsync<List<Word>>("Word") ?? new();
@@ -94,6 +100,10 @@
         Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechList.First().Id).GetQuestions().ToList() ?? new();
         Question = Questions[Idx];
         AnswerList = VocabularyList.GetAnswer(Question).ToList();
+        Timer.Elapsed += (s, e) =>
+        {
+
+        };
     }
 
     private void MovePrev()
