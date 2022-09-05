@@ -2,6 +2,7 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #D7E7FE;
 }
 
 h1:focus {
@@ -72,24 +73,28 @@ a, .btn-link {
     display: grid;
     grid-template-columns: 40% 60%;
     max-width: 500px;
-    margin: 0px auto;
+    margin: 5px auto;
 }
 
     .spinner-area > p {
+        background-color: #05429E;
+        color: #D7E7FE;
         margin: 0px;
-        border: solid 1px;
-        border-radius: 5px 0px 0px 5px;
+        border-radius: 10px 0px 0px 10px;
         padding: 5px;
     }
 
     .spinner-area > select {
-        border-radius: 0px 5px 5px 0px;
-        color: black;
+        background-color: #05429E;
+        color: #D7E7FE;
+        border: none;
+        border-radius: 0px 10px 10px 0px;
         text-align: center;
     }
 
 .question-area {
-    border: solid 1px;
+    background-color: #A6C8FC;
+    color: #02193B;
     max-width: 500px;
     margin: 0px auto;
     border-radius: 10px;
@@ -111,6 +116,7 @@ a, .btn-link {
     border-radius: 20px;
     width: 40px;
     height: 40px;
+    background-color: #126DF7;
 }
 
     .navigation-area > button:hover {
@@ -118,24 +124,28 @@ a, .btn-link {
         border-radius: 20px;
         width: 40px;
         height: 40px;
+        background-color: #126DF7;
     }
 
 .btn-base {
     display: block;
     margin-top: 5px;
-    border: none;
-    border-radius: 5px;
+    border: solid 2px #126DF7;
+    border-radius: 10px;
     padding: 5px;
     width: 100%;
+    background-color: #D7E7FE;
+    color: #02193B;
 }
 
     .btn-base:hover {
         display: block;
         margin-top: 5px;
-        border: none;
-        border-radius: 5px;
+        border: solid 2px #438BF9;
+        border-radius: 10px;
         padding: 5px;
         width: 100%;
-        background-color: gray;
-        transition: linear 0.3s;
+        background-color: #438BF9;
+        transition: linear 0.2s;
+        color: #D7E7FE;
     }
