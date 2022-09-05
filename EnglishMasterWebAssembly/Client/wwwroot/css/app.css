@@ -3,7 +3,7 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: #D7E7FE;
-    font-size: clamp(17px,3vw,25px);
+    font-size: clamp(17px,3vw,20px);
 }
 
 h1:focus {
