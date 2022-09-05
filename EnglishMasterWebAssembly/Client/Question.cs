@@ -13,7 +13,7 @@ namespace EnglishMasterWebAssembly.Client
         {
             List<Vocabulary> answers = new();
             answers.Add(vocabulary);
-            answers.AddRange(items.Where(a => a.WordId != vocabulary.WordId).Select(a => new { a, o = Guid.NewGuid() }).OrderBy(a => a.o).Select(a => a.a).Take(3));
+            answers.AddRange(items.Where(a => a.WordId != vocabulary.WordId && a.PartOfSpeechId == vocabulary.PartOfSpeechId).Select(a => new { a, o = Guid.NewGuid() }).OrderBy(a => a.o).Select(a => a.a).Take(3));
             return answers.Select(a => new { a, o = Guid.NewGuid() }).OrderBy(a => a.o).Select(a => a.a);
         }
     }
