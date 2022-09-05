@@ -62,7 +62,7 @@
             {
                 @foreach (var item in AnswerList)
                 {
-                    <button @onclick="@(() => AnswerButtonOnClick(item.Id))">@item.Meaning</button>
+                    <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))">@item.Meaning</button>
                 }
             }
         }
@@ -70,8 +70,8 @@
     <div class="navigation-area">
         @if (Question != null)
         {
-            <button @onclick="@MovePrev"><span class="oi oi-chevron-left"></span></button>
-            <button @onclick="@MoveNext"><span class="oi oi-chevron-right"></span></button>
+            <button class="btn-base" @onclick="@MovePrev"><span class="oi oi-chevron-left"></span></button>
+            <button class="btn-base" @onclick="@MoveNext"><span class="oi oi-chevron-right"></span></button>
         }
     </div>
 </div>

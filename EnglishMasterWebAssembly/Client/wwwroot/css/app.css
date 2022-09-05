@@ -105,41 +105,36 @@ a, .btn-link {
     margin: 0px auto;
 }
 
-    .answer-area > button {
-        display: block;
-        margin-top: 5px;
-        border: none;
-        border-radius: 5px;
-        padding: 5px;
-        width: 100%;
-    }
-
-        .answer-area > button:hover {
-            display: block;
-            margin-top: 5px;
-            border: none;
-            border-radius: 5px;
-            padding: 5px;
-            width: 100%;
-            background-color: gray;
-            transition: linear 0.3s;
-        }
-
 .navigation-area > button {
-    border: none;
-    margin: 5px;
+    display: inline-block;
     border-radius: 20px;
     width: 40px;
     height: 40px;
 }
 
     .navigation-area > button:hover {
-        border: none;
-        margin: 5px;
+        display: inline-block;
         border-radius: 20px;
         width: 40px;
         height: 40px;
+    }
+
+.btn-base {
+    display: block;
+    margin-top: 5px;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    width: 100%;
+}
+
+    .btn-base:hover {
+        display: block;
+        margin-top: 5px;
+        border: none;
+        border-radius: 5px;
+        padding: 5px;
+        width: 100%;
         background-color: gray;
-        color: white;
         transition: linear 0.3s;
     }
