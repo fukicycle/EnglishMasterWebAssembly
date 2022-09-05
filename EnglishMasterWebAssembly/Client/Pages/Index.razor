@@ -29,6 +29,7 @@
             if (IsPass == null)
             {
                 <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+                <p>-</p>
                 <hr />
                 <p class="count">@(Idx + 1)/@Questions.Count</p>
             }
