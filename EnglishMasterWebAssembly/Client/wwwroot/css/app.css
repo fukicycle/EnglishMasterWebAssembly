@@ -3,6 +3,7 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: #D7E7FE;
+    font-size: clamp(17px,3vw,25px);
 }
 
 h1:focus {
@@ -71,24 +72,25 @@ a, .btn-link {
 
 .spinner-area {
     display: grid;
-    grid-template-columns: 40% 60%;
+    grid-template-columns: 30% 70%;
     max-width: 500px;
     margin: 5px auto;
 }
 
     .spinner-area > p {
-        background-color: #05429E;
         color: #D7E7FE;
-        margin: 0px;
-        border-radius: 10px 0px 0px 10px;
+        margin: 5px 0px 0px 0px;
         padding: 5px;
+        color: #02193B;
     }
 
     .spinner-area > select {
         background-color: #05429E;
         color: #D7E7FE;
         border: none;
-        border-radius: 0px 10px 10px 0px;
+        margin-top: 5px;
+        padding: 5px;
+        border-radius: 10px;
         text-align: center;
     }
 
@@ -114,6 +116,7 @@ a, .btn-link {
 .navigation-area > button {
     display: inline-block;
     border-radius: 20px;
+    font-size: 17px;
     width: 40px;
     height: 40px;
     background-color: #126DF7;
