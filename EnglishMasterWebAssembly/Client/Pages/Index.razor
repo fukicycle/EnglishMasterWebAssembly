@@ -1,18 +1,19 @@
 ﻿@page "/"
 @using EnglishMasterWebAssembly.Shared.Models
 @using System.Timers
+@using Newtonsoft.Json
 @inject HttpClient Http
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 <PageTitle>Question</PageTitle>
 <div class="container">
     <div class="spinner-area">
         <p>モード</p>
-        <select @onchange="@ModeChanged">
+        <select @onchange="@ModeChanged" disabled="@Timer.Enabled">
             <option>練習</option>
             <option>試験</option>
         </select>
         <p>品詞</p>
-        <select @onchange="@PartOfSpeechChanged">
+        <select @onchange="@PartOfSpeechChanged" disabled="@Timer.Enabled">
             @foreach (var item in PartOfSpeechList)
             {
                 <option value="@item.Id">@item.InJapanese</option>
@@ -30,10 +31,20 @@
         {
             if (IsPass == null)
             {
-                <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
-                <p>-</p>
-                <hr />
-                <p class="count">@(Idx + 1)/@Questions.Count</p>
+                if (IsTest)
+                {
+                    <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+                    <p>@LimitTime.ToString(@"mm\:ss")</p>
+                    <hr />
+                    <p class="count">@(Idx + 1)/@Questions.Count</p>
+                }
+                else
+                {
+                    <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+                    <p>-</p>
+                    <hr />
+                    <p class="count">@(Idx + 1)/@Questions.Count</p>
+                }
             }
             else if (IsPass == true)
             {
@@ -58,8 +69,9 @@
         }
         else
         {
-            @if (Question.WordId == 0)
+            @if (IsTest && !Timer.Enabled)
             {
+                <button class="btn-base" @onclick="StartButtonOnClick">Start</button>
             }
             else
             {
@@ -71,7 +83,7 @@
         }
     </div>
     <div class="navigation-area">
-        @if (Question != null)
+        @if (Question != null && !IsTest)
         {
             <button class="btn-base" @onclick="@MovePrev"><span class="oi oi-chevron-left"></span></button>
             <button class="btn-base" @onclick="@MoveNext"><span class="oi oi-chevron-right"></span></button>
@@ -87,19 +99,21 @@
     private List<Vocabulary> AnswerList = new();
     private int Idx = 0;
     private bool? IsPass = null;
-    private int PartOfSpeechId = 0;
+    private long PartOfSpeechId = 0;
 
     //Test mode property
     private bool IsTest = false;
     private Timer Timer = new Timer(1000);
     private TimeSpan LimitTime = TimeSpan.FromMinutes(2);
+    private Dictionary<long, bool> TestResult = new();
 
     protected override async Task OnInitializedAsync()
     {
         WordList = await Http.GetFromJsonAsync<List<Word>>("Word") ?? new();
         PartOfSpeechList = await Http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech") ?? new();
         VocabularyList = await Http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
-        Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechList.First().Id).GetQuestions().ToList() ?? new();
+        PartOfSpeechId = PartOfSpeechList.First().Id;
+        Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId).GetQuestions().ToList() ?? new();
         Question = Questions[Idx];
         AnswerList = VocabularyList.GetAnswer(Question).ToList();
         Timer.Elapsed += (s, e) =>
@@ -110,6 +124,7 @@
                 Timer.Stop();
                 LimitTime = TimeSpan.FromMinutes(2);
             }
+            StateHasChanged();
         };
     }
 
@@ -139,11 +154,16 @@
         CreateQuestions();
     }
 
-    private void AnswerButtonOnClick(long id)
+    private async Task AnswerButtonOnClick(long id)
     {
         IsPass = null;
-        bool testResult = false;
-        if (IsTest) testResult = Question.Id == id;
+        if (IsTest)
+        {
+            bool testResult = Question.Id == id;
+            TestResult.Add(Question.Id, testResult);
+            await sessionStorage.SetItemAsStringAsync("TestResult", JsonConvert.SerializeObject(TestResult));
+            MoveNext();
+        }
         else IsPass = Question.Id == id;
     }
 
