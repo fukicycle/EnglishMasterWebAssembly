@@ -1,0 +1,19 @@
+﻿@page "/Result"
+@using Newtonsoft.Json
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+
+<h3>Result</h3>
+@foreach (var item in ResultList)
+{
+    <p>@item.Key</p>
+    <p>@item.Value</p>
+}
+
+@code {
+    private Dictionary<long, bool> ResultList = new();
+    protected override async Task OnInitializedAsync()
+    {
+        ResultList = JsonConvert.DeserializeObject<Dictionary<long, bool>>(await sessionStorage.GetItemAsStringAsync("TestResult"));
+    }
+}
+
