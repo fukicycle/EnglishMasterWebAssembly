@@ -4,6 +4,7 @@
 @using Newtonsoft.Json
 @inject HttpClient Http
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject NavigationManager navigationManager
 <PageTitle>Question</PageTitle>
 <div class="container">
     <div class="spinner-area">
@@ -102,7 +103,7 @@
             {
                 if (IsTest)
                 {
-                    <a href="/Result" class="btn-base">Show Result</a>
+                    <button class="btn-base" @onclick="@(() => navigationManager.NavigateTo("./Result"))">Show Result</button>
                 }
                 else
                 {
