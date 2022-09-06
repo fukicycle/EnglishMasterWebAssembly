@@ -29,14 +29,32 @@
         }
         else
         {
-            if (IsPass == null)
+            if (IsEnd)
+            {
+                <p class="question">Completed!</p>
+                <p>-</p>
+                <hr />
+                <p class="count">@(Idx + 1)/@Questions.Count</p>
+            }
+            else if (IsPass == null)
             {
                 if (IsTest)
                 {
-                    <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
-                    <p>@LimitTime.ToString(@"mm\:ss")</p>
-                    <hr />
-                    <p class="count">@(Idx + 1)/@Questions.Count</p>
+                    if (Timer.Enabled)
+                    {
+                        <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+                        <p>@LimitTime.ToString(@"mm\:ss")</p>
+                        <hr />
+                        <p class="count">@(Idx + 1)/@Questions.Count</p>
+                    }
+                    else
+                    {
+                        <p class="question">Please click the start!</p>
+                        <p>@LimitTime.ToString(@"mm\:ss")</p>
+                        <hr />
+                        <p class="count">@(Idx + 1)/@Questions.Count</p>
+
+                    }
                 }
                 else
                 {
@@ -69,7 +87,7 @@
         }
         else
         {
-            @if (IsTest && !Timer.Enabled)
+            @if (IsTest && !IsEnd && !Timer.Enabled)
             {
                 <button class="btn-base" @onclick="StartButtonOnClick">Start</button>
             }
@@ -82,7 +100,14 @@
             }
             else
             {
-                <button class="btn-base" @onclick="ReturnButtonOnClick">Return top</button>
+                if (IsTest)
+                {
+                    <a href="/Result" class="btn-base">Show Result</a>
+                }
+                else
+                {
+                    <button class="btn-base" @onclick="ReturnButtonOnClick">Return top</button>
+                }
             }
         }
     </div>
@@ -126,8 +151,8 @@
             LimitTime = LimitTime.Subtract(TimeSpan.FromSeconds(1));
             if (LimitTime == TimeSpan.Zero)
             {
+                IsEnd = true;
                 Timer.Stop();
-                LimitTime = TimeSpan.FromMinutes(2);
             }
             StateHasChanged();
         };
@@ -159,6 +184,7 @@
         {
             IsEnd = true;
             Idx = Questions.Count - 1;
+            if (IsTest) Timer.Stop();
         }
         else
         {
