@@ -73,12 +73,16 @@
             {
                 <button class="btn-base" @onclick="StartButtonOnClick">Start</button>
             }
-            else
+            else if (!IsEnd)
             {
                 @foreach (var item in AnswerList)
                 {
                     <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))">@item.Meaning</button>
                 }
+            }
+            else
+            {
+                <button class="btn-base" @onclick="ReturnButtonOnClick">Return top</button>
             }
         }
     </div>
@@ -100,6 +104,7 @@
     private int Idx = 0;
     private bool? IsPass = null;
     private long PartOfSpeechId = 0;
+    private bool IsEnd = false;
 
     //Test mode property
     private bool IsTest = false;
@@ -130,12 +135,19 @@
 
     private void MovePrev()
     {
+        IsEnd = false;
         if (Questions.Count == 0) return;
         IsPass = null;
         Idx = Idx - 1;
-        if (Idx < 0) Idx = 0;
-        Question = Questions[Idx];
-        AnswerList = VocabularyList.GetAnswer(Question).ToList();
+        if (Idx < 0)
+        {
+            Idx = 0;
+        }
+        else
+        {
+            Question = Questions[Idx];
+            AnswerList = VocabularyList.GetAnswer(Question).ToList();
+        }
     }
 
     private void MoveNext()
@@ -143,9 +155,16 @@
         if (Questions.Count == 0) return;
         IsPass = null;
         Idx = Idx + 1;
-        if (Idx >= Questions.Count) Idx = Questions.Count - 1;
-        Question = Questions[Idx];
-        AnswerList = VocabularyList.GetAnswer(Question).ToList();
+        if (Idx >= Questions.Count)
+        {
+            IsEnd = true;
+            Idx = Questions.Count - 1;
+        }
+        else
+        {
+            Question = Questions[Idx];
+            AnswerList = VocabularyList.GetAnswer(Question).ToList();
+        }
     }
 
     private void PartOfSpeechChanged(ChangeEventArgs e)
@@ -189,5 +208,11 @@
         else
             Question = new Vocabulary();
         AnswerList = VocabularyList.GetAnswer(Question).ToList();
+    }
+
+    private void ReturnButtonOnClick()
+    {
+        IsEnd = false;
+        CreateQuestions();
     }
 }
