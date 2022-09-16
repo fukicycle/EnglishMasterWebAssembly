@@ -8,118 +8,127 @@
 @inject NavigationManager navigationManager
 <PageTitle>Question</PageTitle>
 <div class="container">
-    <div class="spinner-area">
-        <p>モード</p>
-        <select @onchange="@ModeChanged" disabled="@Timer.Enabled">
-            <option>練習</option>
-            <option>試験</option>
-        </select>
-        <p>品詞</p>
-        <select @onchange="@PartOfSpeechChanged" disabled="@Timer.Enabled">
-            @foreach (var item in PartOfSpeechList)
-            {
-                <option value="@item.Id">@item.InJapanese</option>
-            }
-        </select>
-    </div>
-    <p>@TotalAnswerCount</p>
-    <div class="question-area">
-        @if (WordList == null || Questions == null)
-        {
-            <p class="question">Loading...</p>
-            <hr />
-            <p class="count">0/0</p>
-        }
-        else
-        {
-            if (IsEnd)
-            {
-                <p class="question">Completed!</p>
-                <p>-</p>
-                <hr />
-                <p class="count">@(Idx + 1)/@Questions.Count</p>
-            }
-            else if (IsPass == null)
-            {
-                if (IsTest)
+    <div class="main-area">
+        <div></div>
+        <div>
+            <div class="spinner-area">
+                <p>モード</p>
+                <select @onchange="@ModeChanged" disabled="@Timer.Enabled">
+                    <option>練習</option>
+                    <option>試験</option>
+                </select>
+                <p>品詞</p>
+                <select @onchange="@PartOfSpeechChanged" disabled="@Timer.Enabled">
+                    @foreach (var item in PartOfSpeechList)
+                    {
+                        <option value="@item.Id">@item.InJapanese</option>
+                    }
+                </select>
+            </div>
+            <div class="question-area">
+                @if (WordList == null || Questions == null)
                 {
-                    if (Timer.Enabled)
+                    <p class="question">Loading...</p>
+                    <hr />
+                    <p class="count">0/0</p>
+                }
+                else
+                {
+                    if (IsEnd)
+                    {
+                        <p class="question">Completed!</p>
+                        <p>-</p>
+                        <hr />
+                        <p class="count">@(Idx + 1)/@Questions.Count</p>
+                    }
+                    else if (IsPass == null)
+                    {
+                        if (IsTest)
+                        {
+                            if (Timer.Enabled)
+                            {
+                                <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+                                <p>@LimitTime.ToString(@"mm\:ss")</p>
+                                <hr />
+                                <p class="count">@(Idx + 1)/@Questions.Count</p>
+                            }
+                            else
+                            {
+                                <p class="question">Please click the start!</p>
+                                <p>@LimitTime.ToString(@"mm\:ss")</p>
+                                <hr />
+                                <p class="count">@(Idx + 1)/@Questions.Count</p>
+
+                            }
+                        }
+                        else
+                        {
+                            <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+                            <p>-</p>
+                            <hr />
+                            <p class="count">@(Idx + 1)/@Questions.Count</p>
+                        }
+                    }
+                    else if (IsPass == true)
                     {
                         <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
-                        <p>@LimitTime.ToString(@"mm\:ss")</p>
+                        <p class="text-success">Correct !</p>
                         <hr />
                         <p class="count">@(Idx + 1)/@Questions.Count</p>
                     }
                     else
                     {
-                        <p class="question">Please click the start!</p>
-                        <p>@LimitTime.ToString(@"mm\:ss")</p>
+                        <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+                        <p class="text-danger">Incorrect !</p>
                         <hr />
                         <p class="count">@(Idx + 1)/@Questions.Count</p>
-
                     }
                 }
-                else
+            </div>
+            <div class="answer-area">
+                @if (Question.WordId == 0)
                 {
-                    <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
-                    <p>-</p>
-                    <hr />
-                    <p class="count">@(Idx + 1)/@Questions.Count</p>
-                }
-            }
-            else if (IsPass == true)
-            {
-                <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
-                <p class="text-success">Correct !</p>
-                <hr />
-                <p class="count">@(Idx + 1)/@Questions.Count</p>
-            }
-            else
-            {
-                <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
-                <p class="text-danger">Incorrect !</p>
-                <hr />
-                <p class="count">@(Idx + 1)/@Questions.Count</p>
-            }
-        }
-    </div>
-    <div class="answer-area">
-        @if (Question.WordId == 0)
-        {
-            <div class="spinner-border"></div>
-        }
-        else
-        {
-            @if (IsTest && !IsEnd && !Timer.Enabled)
-            {
-                <button class="btn-base" @onclick="StartButtonOnClick">Start</button>
-            }
-            else if (!IsEnd)
-            {
-                @foreach (var item in AnswerList)
-                {
-                    <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))">@item.Meaning</button>
-                }
-            }
-            else
-            {
-                if (IsTest)
-                {
-                    <button class="btn-base" @onclick="@(() => navigationManager.NavigateTo("./Result"))">Show Result</button>
+                    <div class="spinner-border"></div>
                 }
                 else
                 {
-                    <button class="btn-base" @onclick="ReturnButtonOnClick">Return top</button>
+                    @if (IsTest && !IsEnd && !Timer.Enabled)
+                    {
+                        <button class="btn-base" @onclick="StartButtonOnClick">Start</button>
+                    }
+                    else if (!IsEnd)
+                    {
+                        @foreach (var item in AnswerList)
+                        {
+                            <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))">@item.Meaning</button>
+                        }
+                    }
+                    else
+                    {
+                        if (IsTest)
+                        {
+                            <button class="btn-base" @onclick="@(() => navigationManager.NavigateTo("./Result"))">Show Result</button>
+                        }
+                        else
+                        {
+                            <button class="btn-base" @onclick="ReturnButtonOnClick">Return top</button>
+                        }
+                    }
                 }
-            }
-        }
-    </div>
-    <div class="navigation-area">
-        @if (Question != null && !IsTest)
-        {
-            <button class="btn-base" @onclick="@MovePrev"><span class="oi oi-chevron-left"></span></button>
-            <button class="btn-base" @onclick="@MoveNext"><span class="oi oi-chevron-right"></span></button>
-        }
+            </div>
+            <div class="navigation-area">
+                @if (Question != null && !IsTest)
+                {
+                    <button class="btn-base" @onclick="@MovePrev"><span class="oi oi-chevron-left"></span></button>
+                    <button class="btn-base" @onclick="@MoveNext"><span class="oi oi-chevron-right"></span></button>
+                }
+            </div>
+        </div>
+        <div class="achivement-area">
+            <p class="text-primary">@TotalAnswerCount</p>
+            <p class="text-success">@TotalCorrectCount</p>
+            <p class="text-danger">@TotalIncorrectCount</p>
+        </div>
     </div>
 </div>
 @code {
