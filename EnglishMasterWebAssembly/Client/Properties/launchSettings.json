@@ -28,6 +28,13 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_PATHBASE": "/EnglishMasterClient"
       }
+    },
+    "EnglishMasterWebAssembly.Client": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
     }
   }
 }
