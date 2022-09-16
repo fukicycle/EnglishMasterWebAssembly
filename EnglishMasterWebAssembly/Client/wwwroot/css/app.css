@@ -161,3 +161,28 @@ a, .btn-link {
     max-width: 500px;
     text-align: center;
 }
+
+.main-area {
+    display: flex;
+}
+
+.content-area {
+    width: 100%;
+}
+
+.space-area {
+    width: 10%;
+}
+
+.achivement-area {
+    width: 10%;
+}
+
+    .achivement-area > p {
+        margin: 5px;
+        border-radius: 20px;
+        padding: 5px;
+        width: 40px;
+        height: 40px;
+        border: solid 2px #126DF7;
+    }
