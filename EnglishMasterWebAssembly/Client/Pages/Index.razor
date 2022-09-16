@@ -4,6 +4,7 @@
 @using Newtonsoft.Json
 @inject HttpClient Http
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager navigationManager
 <PageTitle>Question</PageTitle>
 <div class="container">
@@ -21,6 +22,7 @@
             }
         </select>
     </div>
+    <p>@TotalAnswerCount</p>
     <div class="question-area">
         @if (WordList == null || Questions == null)
         {
@@ -137,6 +139,9 @@
     private Timer Timer = new Timer(1000);
     private TimeSpan LimitTime = TimeSpan.FromMinutes(2);
     private Dictionary<long, bool> TestResult = new();
+    private int TotalAnswerCount = 0;
+    private int TotalCorrectCount = 0;
+    private int TotalIncorrectCount = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -157,6 +162,9 @@
             }
             StateHasChanged();
         };
+        TotalAnswerCount = await localStorage.GetItemAsync<int>("ALL_COUNT");
+        TotalCorrectCount = await localStorage.GetItemAsync<int>("CORRECT_COUNT");
+        TotalIncorrectCount = await localStorage.GetItemAsync<int>("IN_CORRECT_COUNT");
     }
 
     private void MovePrev()
@@ -199,10 +207,26 @@
         PartOfSpeechId = int.Parse(e.Value.ToString());
         CreateQuestions();
     }
-
+    private long prevAnswerId = 0;
     private async Task AnswerButtonOnClick(long id)
     {
         IsPass = null;
+        if (prevAnswerId != id)
+        {
+            prevAnswerId = id;
+            TotalAnswerCount++;
+            await localStorage.SetItemAsync<int>("ALL_COUNT", TotalAnswerCount);
+            if (Question.Id == id)
+            {
+                TotalCorrectCount++;
+                await localStorage.SetItemAsync<int>("CORRECT_COUNT", TotalCorrectCount);
+            }
+            else
+            {
+                TotalIncorrectCount++;
+                await localStorage.SetItemAsync<int>("IN_CORRECT_COUNT", TotalIncorrectCount);
+            }
+        }
         if (IsTest)
         {
             bool testResult = Question.Id == id;
