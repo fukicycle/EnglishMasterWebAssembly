@@ -146,7 +146,7 @@
     //Test mode property
     private bool IsTest = false;
     private Timer Timer = new Timer(1000);
-    private TimeSpan LimitTime = TimeSpan.FromMinutes(2);
+    private TimeSpan LimitTime = TimeSpan.FromSeconds(90);
     private Dictionary<long, bool> TestResult = new();
     private int TotalAnswerCount = 0;
     private int TotalCorrectCount = 0;
