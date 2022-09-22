@@ -176,3 +176,24 @@ a, .btn-link {
         height: 40px;
         border: solid 2px #126DF7;
     }
+
+.detail-area {
+    max-width: 500px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 40% 60%;
+    text-align: center;
+    background-color: #A6C8FC;
+    padding: 5px;
+    border-radius: 20px;
+}
+
+.header {
+    font-weight: bold;
+    padding: 2px;
+    border-right: solid 1px #D7E7FE;
+}
+
+.contents {
+    padding: 2px;
+}
