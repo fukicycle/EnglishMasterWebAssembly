@@ -9,11 +9,14 @@
 <PageTitle>Question</PageTitle>
 <div class="container">
     <div class="content-area">
-        <div class="achivement-area">
-            <p class="text-primary">@TotalAnswerCount</p>
-            <p class="text-success">@TotalCorrectCount</p>
-            <p class="text-danger">@TotalIncorrectCount</p>
-        </div>
+        @if (!IsTest)
+        {
+            <div class="achivement-area">
+                <p class="text-primary">@TotalAnswerCount</p>
+                <p class="text-success">@TotalCorrectCount</p>
+                <p class="text-danger">@TotalIncorrectCount</p>
+            </div>
+        }
         <div class="spinner-area">
             <p>モード</p>
             <select @onchange="@ModeChanged" disabled="@Timer.Enabled">
