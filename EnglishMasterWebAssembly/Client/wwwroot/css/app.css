@@ -197,3 +197,29 @@ a, .btn-link {
 .contents {
     padding: 2px;
 }
+
+.main-area {
+    max-width: 500px;
+    background-color: #A6C8FC;
+    margin: auto;
+    padding: 15px;
+    border-radius: 30px;
+}
+
+.nav-icon-round {
+    border-radius: 20px !important;
+    height: 40px;
+    width: 40px;
+    margin: auto 15px 5px 5px;
+    padding: 0px;
+}
+
+.word-title {
+    margin: auto;
+    font-weight: bold;
+    text-align: center;
+}
+
+.tab-content {
+    width: 100%;
+}
