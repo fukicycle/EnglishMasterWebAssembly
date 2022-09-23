@@ -223,3 +223,7 @@ a, .btn-link {
 .tab-content {
     width: 100%;
 }
+
+.btn-no-outline {
+    border: none !important;
+}

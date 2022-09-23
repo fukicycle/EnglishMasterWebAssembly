@@ -3,6 +3,12 @@
 @using System.Timers
 @using Newtonsoft.Json
 @inject HttpClient Http
+<div class="detail-area">
+    @foreach (var item in DisplayList)
+    {
+        <div>@item.Meaning</div>
+    }
+</div>
 <div class="main-area">
     <div class="d-flex align-items-start">
         <div class="nav flex-column nav-pills"
@@ -50,7 +56,7 @@
                      aria-labelledby="v-pills-home-tab">
                     @foreach (var item1 in item)
                     {
-                        <div class="word-title">@item1.Word1</div>
+                        <button class="btn-base btn-no-outline" @onclick="@(() => OnClickWord(item1.Id))">@item1.Word1</button>
                     }
                 </div>
             }
@@ -59,11 +65,17 @@
 </div>
 @code {
     private List<Vocabulary> VocabularyList = new();
+    private List<Vocabulary> DisplayList = new();
     private List<Word> WordList = new();
     protected override async Task OnInitializedAsync()
     {
         WordList = await Http.GetFromJsonAsync<List<Word>>("Word") ?? new();
         VocabularyList = await Http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
+    }
+
+    private void OnClickWord(long id)
+    {
+        DisplayList = VocabularyList.Where(a => a.WordId == id).ToList();
     }
 }
 
