@@ -227,3 +227,15 @@ a, .btn-link {
 .btn-no-outline {
     border: none !important;
 }
+
+.mean-area {
+    max-width: 500px;
+    height: 100px;
+    padding: 10px;
+    margin: 5px auto;
+    text-align: center;
+    background-color: #A6C8FC;
+    border-radius: 30px;
+    display: grid;
+    grid-template-columns: 10% 90%;
+}
