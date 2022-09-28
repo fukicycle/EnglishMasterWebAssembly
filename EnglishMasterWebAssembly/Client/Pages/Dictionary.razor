@@ -55,7 +55,7 @@
                      id="v-pills-@item.Key"
                      role="tabpanel"
                      aria-labelledby="v-pills-home-tab">
-                    @foreach (var item1 in item)
+                    @foreach (var item1 in item.OrderBy(a => a.Word1))
                     {
                         <button class="btn-base btn-no-outline" @onclick="@(() => OnClickWord(item1.Id))">@item1.Word1</button>
                     }
