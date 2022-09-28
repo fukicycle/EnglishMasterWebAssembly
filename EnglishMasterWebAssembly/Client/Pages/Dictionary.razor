@@ -6,7 +6,7 @@
 <div class="mean-area">
     @foreach (var item in DisplayList)
     {
-        <div></div>
+        <div>@PartOfSpeechList.First(a => a.Id == item.PartOfSpeechId).InJapanese</div>
         <div>@item.Meaning</div>
     }
 </div>
@@ -67,11 +67,13 @@
 @code {
     private List<Vocabulary> VocabularyList = new();
     private List<Vocabulary> DisplayList = new();
+    private List<PartOfSpeech> PartOfSpeechList = new();
     private List<Word> WordList = new();
     protected override async Task OnInitializedAsync()
     {
         WordList = await Http.GetFromJsonAsync<List<Word>>("Word") ?? new();
         VocabularyList = await Http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
+        PartOfSpeechList = await Http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech") ?? new();
     }
 
     private void OnClickWord(long id)
