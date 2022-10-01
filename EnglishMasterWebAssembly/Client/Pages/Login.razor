@@ -1,0 +1,27 @@
+﻿@page "/Login"
+<div class="login-area">
+    <h3 class="text-center">Login</h3>
+    <div class="input-area">
+        <span>Username</span>
+        <input type="text" />
+    </div>
+    <div class="input-area">
+        <span>Password</span>
+        <input type="password" />
+    </div>
+    <button class="btn-base" style="border:none;margin-top:10px;" @onclick="@LoginButtonOnClick">Login</button>
+    <div class="text-secondary text-center" style="margin:10px;">or</div>
+    <div class="text-center">
+        <a class="text-secondary" href="#">Register</a>
+    </div>
+    <div class="alert-danger text-center">@Message</div>
+</div>
+@code {
+    private string Message = "";
+    private void LoginButtonOnClick()
+    {
+        Message = "Sorry, Not availabed yet.";
+    }
+
+}
+

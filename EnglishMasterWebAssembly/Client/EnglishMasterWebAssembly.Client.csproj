@@ -25,4 +25,10 @@
     <None Remove="Newtonsoft.Json" />
     <None Remove="Blazored.LocalStorage" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\imgs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\imgs\" />
+  </ItemGroup>
 </Project>

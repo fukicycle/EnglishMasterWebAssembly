@@ -4,6 +4,8 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: #D7E7FE;
     font-size: clamp(17px,3vw,20px);
+/*    background-image: url('../imgs/background.jpg');
+    background-size: cover;*/
 }
 
 h1:focus {
@@ -295,3 +297,12 @@ a, .btn-link {
     border-bottom: solid 1px #D7E7FE;
     background-color: #A6C8FC;
 }
+
+.info-item {
+    margin-bottom: 5px;
+}
+
+    .info-item > div {
+        font-weight: bold;
+        padding: 5px;
+    }
