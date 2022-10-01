@@ -238,3 +238,39 @@ a, .btn-link {
     display: grid;
     grid-template-columns: 20% 80%;
 }
+
+.navigation-bar-area {
+    height: 100px;
+    background-color: #05429E;
+    width: 100%;
+}
+
+.menu-item {
+    padding: 9px;
+    background-color: #A6C8FC;
+    border-radius: 20px;
+    width: 40px !important;
+    font-size: 20px !important;
+    height: 40px;
+    color: #05429E;
+    margin-right: 5px;
+}
+
+    .menu-item:hover {
+        padding: 9px;
+        background-color: #05429E;
+        border-radius: 20px;
+        width: 40px !important;
+        font-size: 20px !important;
+        height: 40px;
+        color: #A6C8FC;
+        margin-right: 5px;
+    }
+
+.navbar {
+    background-color: #05429E;
+}
+
+.navbar-brand {
+    color: #D7E7FE !important;
+}
