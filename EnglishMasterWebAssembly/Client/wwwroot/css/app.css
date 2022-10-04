@@ -4,7 +4,7 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: #D7E7FE;
     font-size: clamp(17px,3vw,20px);
-/*    background-image: url('../imgs/background.jpg');
+    /*    background-image: url('../imgs/background.jpg');
     background-size: cover;*/
 }
 
@@ -305,4 +305,37 @@ a, .btn-link {
     .info-item > div {
         font-weight: bold;
         padding: 5px;
+    }
+
+.menu-area {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.btn-menu {
+    width: 45%;
+    height: 20vh;
+    margin-bottom: 10px;
+    border: none;
+    position: relative;
+    text-decoration: none;
+}
+
+    .btn-menu:hover {
+        position: relative;
+        text-decoration: none;
+        height: 20vh;
+        margin-bottom: 10px;
+        width: 45%;
+        border: none;
+    }
+
+    .btn-menu span {
+        position: absolute;
+        width: 100%;
+        top: 50%;
+        left: 0;
+        text-align: center;
+        transform: translateY(-50%);
     }
