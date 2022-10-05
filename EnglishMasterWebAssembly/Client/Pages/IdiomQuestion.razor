@@ -10,16 +10,17 @@
 <div class="container">
     <div class="content-area">
         @*@if (!IsTest)
-        {
-            <div class="achivement-area">
-                <p class="text-primary">@TotalAnswerCount</p>
-                <p class="text-success">@TotalCorrectCount</p>
-                <p class="text-danger">@TotalIncorrectCount</p>
-            </div>
-        }*@
+            {
+                <div class="achivement-area">
+                    <p class="text-primary">@TotalAnswerCount</p>
+                    <p class="text-success">@TotalCorrectCount</p>
+                    <p class="text-danger">@TotalIncorrectCount</p>
+                </div>
+            }*@
         <div class="spinner-area">
             <p>モード</p>
-            <select @onchange="@ModeChanged" disabled="@Timer.Enabled">
+            @*<select @onchange="@ModeChanged" disabled="@Timer.Enabled">*@
+            <select disabled @onchange="@ModeChanged">
                 <option>練習</option>
                 <option>試験</option>
             </select>
