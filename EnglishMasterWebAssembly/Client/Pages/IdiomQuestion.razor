@@ -1,4 +1,4 @@
-﻿@page "/WordQuestion"
+﻿@page "/IdiomQuestion"
 @using EnglishMasterWebAssembly.Shared.Models
 @using System.Timers
 @using Newtonsoft.Json
@@ -6,7 +6,7 @@
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager navigationManager
-<PageTitle>Word</PageTitle>
+<PageTitle>Idiom</PageTitle>
 <div class="container">
     <div class="content-area">
         @*@if (!IsTest)
@@ -23,16 +23,9 @@
                 <option>練習</option>
                 <option>試験</option>
             </select>
-            <p>品詞</p>
-            <select @onchange="@PartOfSpeechChanged" disabled="@Timer.Enabled">
-                @foreach (var item in PartOfSpeechList)
-                {
-                    <option value="@item.Id">@item.InJapanese</option>
-                }
-            </select>
         </div>
         <div class="question-area">
-            @if (WordList == null || Questions == null)
+            @if (IdiomList == null || Questions == null)
             {
                 <p class="question">Loading...</p>
                 <hr />
@@ -53,7 +46,7 @@
                     {
                         if (Timer.Enabled)
                         {
-                            <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+                            <p class="question">@(IdiomList.FirstOrDefault(a => a.Id == Question.IdiomId)?.Idiom1 ?? "No word")</p>
                             <p>@LimitTime.ToString(@"mm\:ss")</p>
                             <hr />
                             <p class="count">@(Idx + 1)/@Questions.Count</p>
@@ -69,7 +62,7 @@
                     }
                     else
                     {
-                        <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+                        <p class="question">@(IdiomList.FirstOrDefault(a => a.Id == Question.IdiomId)?.Idiom1 ?? "No word")</p>
                         <p>-</p>
                         <hr />
                         <p class="count">@(Idx + 1)/@Questions.Count</p>
@@ -77,14 +70,14 @@
                 }
                 else if (IsPass == true)
                 {
-                    <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+                    <p class="question">@(IdiomList.FirstOrDefault(a => a.Id == Question.IdiomId)?.Idiom1 ?? "No word")</p>
                     <p class="text-success">Correct !</p>
                     <hr />
                     <p class="count">@(Idx + 1)/@Questions.Count</p>
                 }
                 else
                 {
-                    <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+                    <p class="question">@(IdiomList.FirstOrDefault(a => a.Id == Question.IdiomId)?.Idiom1 ?? "No word")</p>
                     <p class="text-danger">Incorrect !</p>
                     <hr />
                     <p class="count">@(Idx + 1)/@Questions.Count</p>
@@ -92,7 +85,7 @@
             }
         </div>
         <div class="answer-area">
-            @if (Question.WordId == 0)
+            @if (Question.IdiomId == 0)
             {
                 <div class="spinner-border"></div>
             }
@@ -132,15 +125,13 @@
     </div>
 </div>
 @code {
-    private List<Vocabulary> VocabularyList = new();
-    private List<Word> WordList = new();
-    private List<PartOfSpeech> PartOfSpeechList = new();
-    private List<Vocabulary> Questions = new();
-    private Vocabulary Question = new();
-    private List<Vocabulary> AnswerList = new();
+    private List<MeaningOfIdiom> MeaningOfIdiomList = new();
+    private List<Idiom> IdiomList = new();
+    private List<MeaningOfIdiom> Questions = new();
+    private MeaningOfIdiom Question = new();
+    private List<MeaningOfIdiom> AnswerList = new();
     private int Idx = 0;
     private bool? IsPass = null;
-    private long PartOfSpeechId = 0;
     private bool IsEnd = false;
 
     //Test mode property
@@ -154,13 +145,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        WordList = await Http.GetFromJsonAsync<List<Word>>("Word") ?? new();
-        PartOfSpeechList = await Http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech") ?? new();
-        VocabularyList = await Http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
-        PartOfSpeechId = PartOfSpeechList.First().Id;
-        Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId).GetQuestions().ToList() ?? new();
+        IdiomList = await Http.GetFromJsonAsync<List<Idiom>>("Idiom") ?? new();
+        MeaningOfIdiomList = await Http.GetFromJsonAsync<List<MeaningOfIdiom>>("MeaningOfIdiom") ?? new();
+        Questions = MeaningOfIdiomList.GetQuestions().ToList() ?? new();
         Question = Questions[Idx];
-        AnswerList = VocabularyList.GetAnswer(Question).ToList();
+        AnswerList = MeaningOfIdiomList.GetAnswer(Question).ToList();
         Timer.Elapsed += (s, e) =>
         {
             LimitTime = LimitTime.Subtract(TimeSpan.FromSeconds(1));
@@ -189,7 +178,7 @@
         else
         {
             Question = Questions[Idx];
-            AnswerList = VocabularyList.GetAnswer(Question).ToList();
+            AnswerList = MeaningOfIdiomList.GetAnswer(Question).ToList();
         }
     }
 
@@ -207,15 +196,10 @@
         else
         {
             Question = Questions[Idx];
-            AnswerList = VocabularyList.GetAnswer(Question).ToList();
+            AnswerList = MeaningOfIdiomList.GetAnswer(Question).ToList();
         }
     }
 
-    private void PartOfSpeechChanged(ChangeEventArgs e)
-    {
-        PartOfSpeechId = int.Parse(e.Value.ToString());
-        CreateQuestions();
-    }
     private long prevAnswerId = 0;
     private async Task AnswerButtonOnClick(long id)
     {
@@ -261,13 +245,13 @@
     {
         IsPass = null;
         Idx = 0;
-        if (IsTest) Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId).GetQuestions().Take(25).ToList();
-        else Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId).GetQuestions().ToList();
+        if (IsTest) Questions = MeaningOfIdiomList.GetQuestions().Take(25).ToList();
+        else Questions = MeaningOfIdiomList.GetQuestions().ToList();
         if (Questions.Count > 0)
             Question = Questions[Idx];
         else
-            Question = new Vocabulary();
-        AnswerList = VocabularyList.GetAnswer(Question).ToList();
+            Question = new MeaningOfIdiom();
+        AnswerList = MeaningOfIdiomList.GetAnswer(Question).ToList();
     }
 
     private void ReturnButtonOnClick()

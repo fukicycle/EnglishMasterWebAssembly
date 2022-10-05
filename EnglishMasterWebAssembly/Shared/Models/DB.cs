@@ -18,7 +18,9 @@ namespace EnglishMasterWebAssembly.Shared.Models
 
         public virtual DbSet<ExamResult> ExamResults { get; set; } = null!;
         public virtual DbSet<ExamResultIncorrect> ExamResultIncorrects { get; set; } = null!;
+        public virtual DbSet<Idiom> Idioms { get; set; } = null!;
         public virtual DbSet<Level> Levels { get; set; } = null!;
+        public virtual DbSet<MeaningOfIdiom> MeaningOfIdioms { get; set; } = null!;
         public virtual DbSet<PartOfSpeech> PartOfSpeeches { get; set; } = null!;
         public virtual DbSet<PracticeResult> PracticeResults { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
@@ -71,11 +73,36 @@ namespace EnglishMasterWebAssembly.Shared.Models
                     .HasConstraintName("FK_ExamResultIncorrects_Vocabularies");
             });
 
+            modelBuilder.Entity<Idiom>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Idiom1)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("Idiom");
+            });
+
             modelBuilder.Entity<Level>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Name).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<MeaningOfIdiom>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.IdiomId).HasColumnName("IdiomID");
+
+                entity.Property(e => e.Meaning).HasMaxLength(50);
+
+                entity.HasOne(d => d.Idiom)
+                    .WithMany(p => p.MeaningOfIdioms)
+                    .HasForeignKey(d => d.IdiomId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_MeaningOfIdioms_Idioms");
             });
 
             modelBuilder.Entity<PartOfSpeech>(entity =>
