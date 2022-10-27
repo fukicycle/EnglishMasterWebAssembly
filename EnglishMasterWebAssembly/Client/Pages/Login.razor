@@ -1,13 +1,16 @@
 ﻿@page "/Login"
+@inject HttpClient Http
+@using Shared.Models
+@using Newtonsoft.Json
 <div class="login-area">
     <h3 class="text-center">Login</h3>
     <div class="input-area">
         <span>Username</span>
-        <input type="text" />
+        <input type="text" @bind="Email" />
     </div>
     <div class="input-area">
         <span>Password</span>
-        <input type="password" />
+        <input type="password" @bind="Password" />
     </div>
     <button class="btn-base" style="border:none;margin-top:10px;" @onclick="@LoginButtonOnClick">Login</button>
     <div class="text-secondary text-center" style="margin:10px;">or</div>
@@ -18,9 +21,24 @@
 </div>
 @code {
     private string Message = "";
-    private void LoginButtonOnClick()
+    private string Password = "";
+    private string Email = "";
+    private async Task LoginButtonOnClick()
     {
         Message = "Sorry, Not availabled yet.";
+        var user = new User
+        {
+            Email = Email,
+            Password = Password
+        };
+        HttpContent content = new StringContent(JsonConvert.SerializeObject(user), System.Text.Encoding.UTF8, "application/json;");
+        HttpResponseMessage response = await Http.PostAsync("", content);
+        var result = await response.Content.ReadAsStringAsync();
+        if (result.Contains("failed"))
+        {
+            Message = "Authentication failed.";
+            return;
+        }
     }
 
 }
