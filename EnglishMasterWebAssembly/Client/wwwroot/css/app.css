@@ -314,12 +314,13 @@ a, .btn-link {
 }
 
 .btn-menu {
-    width: 45%;
+    width: auto;
     height: 20vh;
     margin-bottom: 10px;
     border: none;
     position: relative;
     text-decoration: none;
+    aspect-ratio: 1/1;
 }
 
     .btn-menu:hover {
@@ -327,8 +328,9 @@ a, .btn-link {
         text-decoration: none;
         height: 20vh;
         margin-bottom: 10px;
-        width: 45%;
+        width: auto;
         border: none;
+        aspect-ratio: 1/1;
     }
 
     .btn-menu span {
