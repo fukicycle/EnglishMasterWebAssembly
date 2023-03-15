@@ -11,17 +11,24 @@
     <div class="content-area">
         @*@if (!IsTest)
         {
-            <div class="achivement-area">
-                <p class="text-primary">@TotalAnswerCount</p>
-                <p class="text-success">@TotalCorrectCount</p>
-                <p class="text-danger">@TotalIncorrectCount</p>
-            </div>
+        <div class="achivement-area">
+        <p class="text-primary">@TotalAnswerCount</p>
+        <p class="text-success">@TotalCorrectCount</p>
+        <p class="text-danger">@TotalIncorrectCount</p>
+        </div>
         }*@
         <div class="spinner-area">
             <p>モード</p>
             <select @onchange="@ModeChanged" disabled="@Timer.Enabled">
                 <option>練習</option>
                 <option>試験</option>
+            </select>
+            <p>レベル</p>
+            <select @onchange="@LevelChanged" disabled="@Timer.Enabled">
+                @foreach (var item in LevelList)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
             </select>
             <p>品詞</p>
             <select @onchange="@PartOfSpeechChanged" disabled="@Timer.Enabled">
@@ -92,32 +99,35 @@
             }
         </div>
         <div class="answer-area">
-            @if (Question.WordId == 0)
+            @if (IsLoad)
             {
                 <div class="spinner-border"></div>
             }
             else
             {
-                @if (IsTest && !IsEnd && !Timer.Enabled)
+                @if (Question.WordId != 0)
                 {
-                    <button class="btn-base" @onclick="StartButtonOnClick">Start</button>
-                }
-                else if (!IsEnd)
-                {
-                    @foreach (var item in AnswerList)
+                    @if (IsTest && !IsEnd && !Timer.Enabled)
                     {
-                        <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))">@item.Meaning</button>
+                        <button class="btn-base" @onclick="StartButtonOnClick">Start</button>
                     }
-                }
-                else
-                {
-                    if (IsTest)
+                    else if (!IsEnd)
                     {
-                        <button class="btn-base" @onclick="@(() => navigationManager.NavigateTo("./Result"))">Show Result</button>
+                        @foreach (var item in AnswerList)
+                        {
+                            <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))">@item.Meaning</button>
+                        }
                     }
                     else
                     {
-                        <button class="btn-base" @onclick="ReturnButtonOnClick">Return top</button>
+                        if (IsTest)
+                        {
+                            <button class="btn-base" @onclick="@(() => navigationManager.NavigateTo("./Result"))">Show Result</button>
+                        }
+                        else
+                        {
+                            <button class="btn-base" @onclick="ReturnButtonOnClick">Return top</button>
+                        }
                     }
                 }
             }
@@ -132,16 +142,19 @@
     </div>
 </div>
 @code {
+    private List<Level> LevelList = new();
     private List<Vocabulary> VocabularyList = new();
     private List<Word> WordList = new();
     private List<PartOfSpeech> PartOfSpeechList = new();
     private List<Vocabulary> Questions = new();
     private Vocabulary Question = new();
     private List<Vocabulary> AnswerList = new();
+    private long LevelId = 0;
     private int Idx = 0;
     private bool? IsPass = null;
     private long PartOfSpeechId = 0;
     private bool IsEnd = false;
+    private bool IsLoad = false;
 
     //Test mode property
     private bool IsTest = false;
@@ -154,13 +167,13 @@
 
     protected override async Task OnInitializedAsync()
     {
+        IsLoad = true;
+        LevelList = await Http.GetFromJsonAsync<List<Level>>("Level") ?? new();
         WordList = await Http.GetFromJsonAsync<List<Word>>("Word") ?? new();
         PartOfSpeechList = await Http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech") ?? new();
         VocabularyList = await Http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
         PartOfSpeechId = PartOfSpeechList.First().Id;
-        Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId).GetQuestions().ToList() ?? new();
-        Question = Questions[Idx];
-        AnswerList = VocabularyList.GetAnswer(Question).ToList();
+        CreateQuestions();
         Timer.Elapsed += (s, e) =>
         {
             LimitTime = LimitTime.Subtract(TimeSpan.FromSeconds(1));
@@ -174,6 +187,7 @@
         TotalAnswerCount = await localStorage.GetItemAsync<int>("ALL_COUNT");
         TotalCorrectCount = await localStorage.GetItemAsync<int>("CORRECT_COUNT");
         TotalIncorrectCount = await localStorage.GetItemAsync<int>("IN_CORRECT_COUNT");
+        IsLoad = false;
     }
 
     private void MovePrev()
@@ -209,6 +223,12 @@
             Question = Questions[Idx];
             AnswerList = VocabularyList.GetAnswer(Question).ToList();
         }
+    }
+
+    private void LevelChanged(ChangeEventArgs e)
+    {
+        LevelId = int.Parse(e.Value.ToString());
+        CreateQuestions();
     }
 
     private void PartOfSpeechChanged(ChangeEventArgs e)
@@ -261,8 +281,8 @@
     {
         IsPass = null;
         Idx = 0;
-        if (IsTest) Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId).GetQuestions().Take(25).ToList();
-        else Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId).GetQuestions().ToList();
+        if (IsTest) Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId && a.LevelId == LevelId).GetQuestions().Take(25).ToList();
+        else Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId && a.LevelId == LevelId).GetQuestions().ToList();
         if (Questions.Count > 0)
             Question = Questions[Idx];
         else
