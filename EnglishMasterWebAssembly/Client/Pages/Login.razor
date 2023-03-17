@@ -1,5 +1,7 @@
 ﻿@page "/Login"
 @inject HttpClient Http
+@inject NavigationManager navigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @using EnglishMasterWebAssembly.Shared.Models
 @using Newtonsoft.Json
 <div class="login-area">
@@ -20,24 +22,32 @@
     <div class="alert-danger text-center">@Message</div>
 </div>
 @code {
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string? RedirectURL { get; set; }
     private string Message = "";
     private string Password = "";
     private string Email = "";
     private async Task LoginButtonOnClick()
     {
-        Message = "Sorry, Not availabled yet.";
+        Message = "";
         var user = new User
-        {
-            Email = Email,
-            Password = Password
-        };
-        HttpContent content = new StringContent(JsonConvert.SerializeObject(user), System.Text.Encoding.UTF8, "application/json;");
-        HttpResponseMessage response = await Http.PostAsync("", content);
+            {
+                Email = Email,
+                Password = Password
+            };
+        HttpContent content = new StringContent(JsonConvert.SerializeObject(user), System.Text.Encoding.UTF8, "application/json");
+        HttpResponseMessage response = await Http.PostAsync("user/post/login", content);
         var result = await response.Content.ReadAsStringAsync();
-        if (result.Contains("failed"))
+        if (result.Contains("Authentication failed."))
         {
-            Message = "Authentication failed.";
+            Message = result;
             return;
+        }
+        else
+        {
+            await localStorage.SetItemAsync<long>("USER_ID", long.Parse(result));
+            navigationManager.NavigateTo(RedirectURL);
         }
     }
 

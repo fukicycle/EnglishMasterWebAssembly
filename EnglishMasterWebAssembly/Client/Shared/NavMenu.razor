@@ -1,4 +1,6 @@
-﻿<nav class="navbar navbar-light border-bottom box-shadow">
+﻿@inject NavigationManager navigationManager
+@using Microsoft.AspNetCore.WebUtilities
+<nav class="navbar navbar-light border-bottom box-shadow">
     <div class="container">
         <a class="navbar-brand" href="">English Master</a>
         <div class="d-flex justify-right">
@@ -6,16 +8,24 @@
                 <span class="oi oi-home menu-item"></span>
             </NavLink>
             @*<NavLink class="nav-item" href="Dictionary">
-                <span class="oi oi-book menu-item"></span>
+            <span class="oi oi-book menu-item"></span>
             </NavLink>*@
             <NavLink class="nav-item" href="Info">
                 <span class="oi oi-info menu-item"></span>
             </NavLink>
-            <NavLink class="nav-item" href="Login">
+            <NavLink class="nav-item" @onclick=@NavigateToLoginPage>
                 <span class="oi oi-account-login menu-item"></span>
             </NavLink>
         </div>
     </div>
 </nav>
 @code {
+    private void NavigateToLoginPage()
+    {
+        var queryParameter = new Dictionary<string, string>
+            {
+                ["RedirectURL"] = navigationManager.Uri
+            };
+        navigationManager.NavigateTo(QueryHelpers.AddQueryString("Login", queryParameter));
+    }
 }
