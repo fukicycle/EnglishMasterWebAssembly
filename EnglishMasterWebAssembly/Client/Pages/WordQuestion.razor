@@ -10,31 +10,54 @@
 <div class="container">
     <div class="content-area">
         @*@if (!IsTest)
-        {
-        <div class="achivement-area">
-        <p class="text-primary">@TotalAnswerCount</p>
-        <p class="text-success">@TotalCorrectCount</p>
-        <p class="text-danger">@TotalIncorrectCount</p>
-        </div>
-        }*@
+            {
+            <div class="achivement-area">
+            <p class="text-primary">@TotalAnswerCount</p>
+            <p class="text-success">@TotalCorrectCount</p>
+            <p class="text-danger">@TotalIncorrectCount</p>
+            </div>
+            }*@
         <div class="spinner-area">
             <p>モード</p>
             <select @onchange="@ModeChanged" disabled="@Timer.Enabled">
-                <option>練習</option>
-                <option>試験</option>
+                @if (Mode == "練習")
+                {
+                    <option selected>練習</option>
+                    <option>試験</option>
+
+                }
+                else
+                {
+                    <option>練習</option>
+                    <option selected>試験</option>
+                }
             </select>
             <p>レベル</p>
             <select @onchange="@LevelChanged" disabled="@Timer.Enabled">
                 @foreach (var item in LevelList)
                 {
-                    <option value="@item.Id">@item.Name</option>
+                    if (LevelId == item.Id)
+                    {
+                        <option selected value="@item.Id">@item.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
                 }
             </select>
             <p>品詞</p>
             <select @onchange="@PartOfSpeechChanged" disabled="@Timer.Enabled">
                 @foreach (var item in PartOfSpeechList)
                 {
-                    <option value="@item.Id">@item.InJapanese</option>
+                    if (PartOfSpeechId == item.Id)
+                    {
+                        <option selected value="@item.Id">@item.InJapanese</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Id">@item.InJapanese</option>
+                    }
                 }
             </select>
         </div>
@@ -149,12 +172,19 @@
     private List<Vocabulary> Questions = new();
     private Vocabulary Question = new();
     private List<Vocabulary> AnswerList = new();
-    private long LevelId = 0;
     private int Idx = 0;
     private bool? IsPass = null;
-    private long PartOfSpeechId = 0;
     private bool IsEnd = false;
     private bool IsLoad = false;
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public long LevelId { get; set; } = 0;
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public long PartOfSpeechId { get; set; } = 0;
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string Mode { get; set; } = "";
 
     //Test mode property
     private bool IsTest = false;
@@ -172,7 +202,12 @@
         WordList = await Http.GetFromJsonAsync<List<Word>>("Word") ?? new();
         PartOfSpeechList = await Http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech") ?? new();
         VocabularyList = await Http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
-        PartOfSpeechId = PartOfSpeechList.First().Id;
+        if (PartOfSpeechId == 0)
+            PartOfSpeechId = PartOfSpeechList.First().Id;
+        if (LevelId == 0)
+            LevelId = LevelList.First().Id;
+        if (string.IsNullOrEmpty(Mode))
+            Mode = "練習";
         CreateQuestions();
         Timer.Elapsed += (s, e) =>
         {
@@ -225,15 +260,27 @@
         }
     }
 
+    private void ParameterChanged()
+    {
+        Dictionary<string, object> parameters = new Dictionary<string, object>();
+        parameters.Add(nameof(LevelId), LevelId);
+        parameters.Add(nameof(PartOfSpeechId), PartOfSpeechId);
+        parameters.Add(nameof(Mode), Mode);
+        navigationManager.NavigateTo(navigationManager.GetUriWithQueryParameters(parameters));
+
+    }
+
     private void LevelChanged(ChangeEventArgs e)
     {
         LevelId = int.Parse(e.Value.ToString());
+        ParameterChanged();
         CreateQuestions();
     }
 
     private void PartOfSpeechChanged(ChangeEventArgs e)
     {
         PartOfSpeechId = int.Parse(e.Value.ToString());
+        ParameterChanged();
         CreateQuestions();
     }
     private long prevAnswerId = 0;
@@ -269,6 +316,8 @@
     private void ModeChanged(ChangeEventArgs e)
     {
         IsTest = e.Value.ToString() == "試験";
+        Mode = e.Value.ToString();
+        ParameterChanged();
         CreateQuestions();
     }
 
