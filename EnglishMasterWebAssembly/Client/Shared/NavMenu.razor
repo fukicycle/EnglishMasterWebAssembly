@@ -1,4 +1,7 @@
 ﻿@inject NavigationManager navigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject HttpClient Http
+@using EnglishMasterWebAssembly.Shared.Models
 @using Microsoft.AspNetCore.WebUtilities
 <nav class="navbar navbar-light border-bottom box-shadow">
     <div class="container">
@@ -8,24 +11,51 @@
                 <span class="oi oi-home menu-item"></span>
             </NavLink>
             @*<NavLink class="nav-item" href="Dictionary">
-            <span class="oi oi-book menu-item"></span>
-            </NavLink>*@
+                <span class="oi oi-book menu-item"></span>
+                </NavLink>*@
             <NavLink class="nav-item" href="Info">
                 <span class="oi oi-info menu-item"></span>
             </NavLink>
-            <NavLink class="nav-item" @onclick=@NavigateToLoginPage>
-                <span class="oi oi-account-login menu-item"></span>
-            </NavLink>
+            @if (UserID == 0)
+            {
+                <NavLink class="nav-item" @onclick=@NavigateToLoginPage>
+                    <span class="oi oi-account-login menu-item"></span>
+                </NavLink>
+            }
+            else
+            {
+                <NavLink class="nav-item" @onclick=@NavigateToUserPage>
+                    <span class="oi menu-item">@User?.Email.Substring(0, 1).ToUpper()</span>
+                </NavLink>
+            }
         </div>
     </div>
 </nav>
 @code {
+    private long UserID = 0;
+    private User? User = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        UserID = await localStorage.GetItemAsync<long>("USER_ID");
+        User = await Http.GetFromJsonAsync<User>($"User?id={UserID}");
+    }
+
     private void NavigateToLoginPage()
     {
         var queryParameter = new Dictionary<string, string>
-            {
-                ["RedirectURL"] = navigationManager.Uri
-            };
+        {
+            ["RedirectURL"] = navigationManager.Uri
+        };
         navigationManager.NavigateTo(QueryHelpers.AddQueryString("Login", queryParameter));
+    }
+
+    private void NavigateToUserPage()
+    {
+        var queryParameter = new Dictionary<string, string>
+        {
+            ["RedirectURL"] = navigationManager.Uri
+        };
+        navigationManager.NavigateTo(QueryHelpers.AddQueryString("UserPage",queryParameter));
     }
 }

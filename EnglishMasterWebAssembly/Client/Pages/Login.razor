@@ -32,10 +32,10 @@
     {
         Message = "";
         var user = new User
-            {
-                Email = Email,
-                Password = Password
-            };
+        {
+            Email = Email,
+            Password = Password
+        };
         HttpContent content = new StringContent(JsonConvert.SerializeObject(user), System.Text.Encoding.UTF8, "application/json");
         HttpResponseMessage response = await Http.PostAsync("user/post/login", content);
         var result = await response.Content.ReadAsStringAsync();
@@ -47,7 +47,7 @@
         else
         {
             await localStorage.SetItemAsync<long>("USER_ID", long.Parse(result));
-            navigationManager.NavigateTo(RedirectURL);
+            navigationManager.NavigateTo(RedirectURL,true);
         }
     }
 
