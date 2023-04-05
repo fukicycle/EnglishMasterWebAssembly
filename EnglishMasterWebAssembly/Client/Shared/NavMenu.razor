@@ -7,15 +7,15 @@
     <div class="container">
         <a class="navbar-brand" href="">English Master</a>
         <div class="d-flex justify-right">
-            <NavLink class="nav-item" href="">
+            @*<NavLink class="nav-item" href="">
                 <span class="oi oi-home menu-item"></span>
-            </NavLink>
+            </NavLink>*@
             @*<NavLink class="nav-item" href="Dictionary">
                 <span class="oi oi-book menu-item"></span>
                 </NavLink>*@
-            <NavLink class="nav-item" href="Info">
+@*            <NavLink class="nav-item" href="Info">
                 <span class="oi oi-info menu-item"></span>
-            </NavLink>
+            </NavLink>*@
             @if (UserID == 0)
             {
                 <NavLink class="nav-item" @onclick=@NavigateToLoginPage>
