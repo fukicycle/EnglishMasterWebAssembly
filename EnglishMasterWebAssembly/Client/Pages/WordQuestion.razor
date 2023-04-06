@@ -9,57 +9,51 @@
 <PageTitle>Word</PageTitle>
 <div class="container">
     <div class="content-area">
-        @*@if (!IsTest)
-            {
-            <div class="achivement-area">
-            <p class="text-primary">@TotalAnswerCount</p>
-            <p class="text-success">@TotalCorrectCount</p>
-            <p class="text-danger">@TotalIncorrectCount</p>
-            </div>
-            }*@
         <div class="spinner-area">
-            <p>モード</p>
-            <select @onchange="@ModeChanged" disabled="@Timer.Enabled">
-                @if (Mode == "練習")
-                {
-                    <option selected>練習</option>
-                    <option>試験</option>
+            @*<p>モード</p>
+        <select @onchange="@ModeChanged" disabled="@Timer.Enabled">
+            @if (Mode == "練習")
+            {
+                <option selected>練習</option>
+                <option>試験</option>
 
-                }
-                else
-                {
-                    <option>練習</option>
-                    <option selected>試験</option>
-                }
-            </select>
+            }
+            else
+            {
+                <option>練習</option>
+                <option selected>試験</option>
+            }
+        </select>*@
             <p>レベル</p>
-            <select @onchange="@LevelChanged" disabled="@Timer.Enabled">
-                @foreach (var item in LevelList)
-                {
-                    if (LevelId == item.Id)
+            @*<select @onchange="@LevelChanged" disabled="@Timer.Enabled">*@
+                <select @onchange="@LevelChanged">
+                    @foreach (var item in LevelList)
                     {
-                        <option selected value="@item.Id">@item.Name</option>
+                        if (LevelId == item.Id)
+                        {
+                            <option selected value="@item.Id">@item.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
                     }
-                    else
+                </select>
+                <p>品詞</p>
+                @*<select @onchange="@PartOfSpeechChanged" disabled="@Timer.Enabled">*@
+                <select @onchange="@PartOfSpeechChanged">
+                    @foreach (var item in PartOfSpeechList)
                     {
-                        <option value="@item.Id">@item.Name</option>
+                        if (PartOfSpeechId == item.Id)
+                        {
+                            <option selected value="@item.Id">@item.InJapanese</option>
+                        }
+                        else
+                        {
+                            <option value="@item.Id">@item.InJapanese</option>
+                        }
                     }
-                }
-            </select>
-            <p>品詞</p>
-            <select @onchange="@PartOfSpeechChanged" disabled="@Timer.Enabled">
-                @foreach (var item in PartOfSpeechList)
-                {
-                    if (PartOfSpeechId == item.Id)
-                    {
-                        <option selected value="@item.Id">@item.InJapanese</option>
-                    }
-                    else
-                    {
-                        <option value="@item.Id">@item.InJapanese</option>
-                    }
-                }
-            </select>
+                </select>
         </div>
         <div class="question-area">
             @if (WordList == null || Questions == null)
@@ -79,7 +73,7 @@
                 }
                 else if (IsPass == null)
                 {
-                    if (IsTest)
+                    @*if (IsTest)
                     {
                         if (Timer.Enabled)
                         {
@@ -98,13 +92,13 @@
                         }
                     }
                     else
-                    {
+                    {*@
                         <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
                         <p>-</p>
                         <hr />
                         <p class="count">@(Idx + 1)/@Questions.Count</p>
+                        //}
                     }
-                }
                 else if (IsPass == true)
                 {
                     <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
@@ -130,38 +124,49 @@
             {
                 @if (Question.WordId != 0)
                 {
-                    @if (IsTest && !IsEnd && !Timer.Enabled)
+                    @*@if (IsTest && !IsEnd && !Timer.Enabled)
+                {
+                    <button class="btn-base" @onclick="StartButtonOnClick">Start</button>
+                }
+                else if (!IsEnd)
+                {
+                    @foreach (var item in AnswerList)
                     {
-                        <button class="btn-base" @onclick="StartButtonOnClick">Start</button>
+                        <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))">@item.Meaning</button>
                     }
-                    else if (!IsEnd)
+                }
+                else
+                {
+                    if (IsTest)
+                    {
+                        <button class="btn-base" @onclick="@(() => navigationManager.NavigateTo("./Result"))">Show Result</button>
+                    }
+                    else
+                    {
+                        <button class="btn-base" @onclick="ReturnButtonOnClick">Return top</button>
+                    }
+                }*@
+                    @if (IsEnd)
+                    {
+                        <button class="btn-base" @onclick="ReturnButtonOnClick">Return top</button>
+                    }
+                    else
                     {
                         @foreach (var item in AnswerList)
                         {
                             <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))">@item.Meaning</button>
                         }
                     }
-                    else
-                    {
-                        if (IsTest)
-                        {
-                            <button class="btn-base" @onclick="@(() => navigationManager.NavigateTo("./Result"))">Show Result</button>
-                        }
-                        else
-                        {
-                            <button class="btn-base" @onclick="ReturnButtonOnClick">Return top</button>
-                        }
-                    }
                 }
             }
         </div>
-        <div class="navigation-area">
+        @*<div class="navigation-area">
             @if (Question != null && !IsTest)
             {
                 <button class="btn-base" @onclick="@MovePrev"><span class="oi oi-chevron-left"></span></button>
                 <button class="btn-base" @onclick="@MoveNext"><span class="oi oi-chevron-right"></span></button>
             }
-        </div>
+        </div>*@
     </div>
 </div>
 @code {
@@ -182,15 +187,15 @@
     [SupplyParameterFromQuery]
     [Parameter]
     public long PartOfSpeechId { get; set; } = 0;
-    [SupplyParameterFromQuery]
-    [Parameter]
-    public string Mode { get; set; } = "";
+    //[SupplyParameterFromQuery]
+    //[Parameter]
+    //public string Mode { get; set; } = "";
 
     //Test mode property
-    private bool IsTest = false;
-    private Timer Timer = new Timer(1000);
-    private TimeSpan LimitTime = TimeSpan.FromSeconds(90);
-    private Dictionary<long, bool> TestResult = new();
+    //private bool IsTest = false;
+    //private Timer Timer = new Timer(1000);
+    //private TimeSpan LimitTime = TimeSpan.FromSeconds(90);
+    //private Dictionary<long, bool> TestResult = new();
     private int TotalAnswerCount = 0;
     private int TotalCorrectCount = 0;
     private int TotalIncorrectCount = 0;
@@ -206,41 +211,41 @@
             PartOfSpeechId = PartOfSpeechList.First().Id;
         if (LevelId == 0)
             LevelId = LevelList.First().Id;
-        if (string.IsNullOrEmpty(Mode))
-            Mode = "練習";
+        //if (string.IsNullOrEmpty(Mode))
+        //    Mode = "練習";
         CreateQuestions();
-        Timer.Elapsed += (s, e) =>
-        {
-            LimitTime = LimitTime.Subtract(TimeSpan.FromSeconds(1));
-            if (LimitTime == TimeSpan.Zero)
-            {
-                IsEnd = true;
-                Timer.Stop();
-            }
-            StateHasChanged();
-        };
+        //Timer.Elapsed += (s, e) =>
+        //{
+        //    LimitTime = LimitTime.Subtract(TimeSpan.FromSeconds(1));
+        //    if (LimitTime == TimeSpan.Zero)
+        //    {
+        //        IsEnd = true;
+        //        Timer.Stop();
+        //    }
+        //    StateHasChanged();
+        //};
         TotalAnswerCount = await localStorage.GetItemAsync<int>("ALL_COUNT");
         TotalCorrectCount = await localStorage.GetItemAsync<int>("CORRECT_COUNT");
         TotalIncorrectCount = await localStorage.GetItemAsync<int>("IN_CORRECT_COUNT");
         IsLoad = false;
     }
 
-    private void MovePrev()
-    {
-        IsEnd = false;
-        if (Questions.Count == 0) return;
-        IsPass = null;
-        Idx = Idx - 1;
-        if (Idx < 0)
-        {
-            Idx = 0;
-        }
-        else
-        {
-            Question = Questions[Idx];
-            AnswerList = VocabularyList.GetAnswer(Question).ToList();
-        }
-    }
+    //private void MovePrev()
+    //{
+    //    IsEnd = false;
+    //    if (Questions.Count == 0) return;
+    //    IsPass = null;
+    //    Idx = Idx - 1;
+    //    if (Idx < 0)
+    //    {
+    //        Idx = 0;
+    //    }
+    //    else
+    //    {
+    //        Question = Questions[Idx];
+    //        AnswerList = VocabularyList.GetAnswer(Question).ToList();
+    //    }
+    //}
 
     private void MoveNext()
     {
@@ -251,7 +256,7 @@
         {
             IsEnd = true;
             Idx = Questions.Count - 1;
-            if (IsTest) Timer.Stop();
+            //if (IsTest) Timer.Stop();
         }
         else
         {
@@ -265,7 +270,7 @@
         Dictionary<string, object> parameters = new Dictionary<string, object>();
         parameters.Add(nameof(LevelId), LevelId);
         parameters.Add(nameof(PartOfSpeechId), PartOfSpeechId);
-        parameters.Add(nameof(Mode), Mode);
+        //parameters.Add(nameof(Mode), Mode);
         navigationManager.NavigateTo(navigationManager.GetUriWithQueryParameters(parameters));
 
     }
@@ -303,35 +308,38 @@
                 await localStorage.SetItemAsync<int>("IN_CORRECT_COUNT", TotalIncorrectCount);
             }
         }
-        if (IsTest)
-        {
-            bool testResult = Question.Id == id;
-            TestResult.Add(Question.Id, testResult);
-            await sessionStorage.SetItemAsStringAsync("TestResult", JsonConvert.SerializeObject(TestResult));
-            MoveNext();
-        }
-        else IsPass = Question.Id == id;
+        //if (IsTest)
+        //{
+        //    bool testResult = Question.Id == id;
+        //    TestResult.Add(Question.Id, testResult);
+        //    await sessionStorage.SetItemAsStringAsync("TestResult", JsonConvert.SerializeObject(TestResult));
+        //    MoveNext();
+        //}
+        //else IsPass = Question.Id == id;
+        IsPass = Question.Id == id;
+        MoveNext();
     }
 
-    private void ModeChanged(ChangeEventArgs e)
-    {
-        IsTest = e.Value.ToString() == "試験";
-        Mode = e.Value.ToString();
-        ParameterChanged();
-        CreateQuestions();
-    }
+    //private void ModeChanged(ChangeEventArgs e)
+    //{
+    //    IsTest = e.Value.ToString() == "試験";
+    //    Mode = e.Value.ToString();
+    //    ParameterChanged();
+    //    CreateQuestions();
+    //}
 
-    private void StartButtonOnClick()
-    {
-        Timer.Start();
-    }
+    //private void StartButtonOnClick()
+    //{
+    //    Timer.Start();
+    //}
 
     private void CreateQuestions()
     {
         IsPass = null;
         Idx = 0;
-        if (IsTest) Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId && a.LevelId == LevelId).GetQuestions().Take(25).ToList();
-        else Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId && a.LevelId == LevelId).GetQuestions().ToList();
+        //if (IsTest) Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId && a.LevelId == LevelId).GetQuestions().Take(25).ToList();
+        //else Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId && a.LevelId == LevelId).GetQuestions().ToList();
+        Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId && a.LevelId == LevelId).GetQuestions().ToList();
         if (Questions.Count > 0)
             Question = Questions[Idx];
         else
