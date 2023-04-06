@@ -1,24 +1,4 @@
-﻿.icon {
-    min-width: 54px;
-    min-height: 54px;
-}
-
-    .icon > a {
-        margin: 7px;
-        display: block;
-    }
-
-        .icon > a > img {
-            width: 40px;
-            height: 40px;
-            margin: 0;
-        }
-
-.text-description {
-    font-size: 0.9rem;
-}
-
-.wave-area {
+﻿.wave-area {
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     margin: 0 auto;
