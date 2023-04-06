@@ -3,10 +3,10 @@
     position: fixed;
     bottom: 0;
     margin: 0;
-    padding: 10px;
     background-color: #05429E;
-    height: 70px;
+    height: 80px;
     color: white;
+    padding-bottom:env(safe-area-inset-bottom);
 }
 
 .contents {
@@ -19,9 +19,19 @@
 
 .footer-item {
     margin: auto 0;
+    height:60px;
+    width:60px;
+    font-size:1.4rem;
 }
 
     .footer-item:hover {
         color: #438BF9;
         cursor: pointer;
+    }
+
+    .footer-item > span{
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100%;
     }
