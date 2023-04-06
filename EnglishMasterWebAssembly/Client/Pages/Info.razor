@@ -1,20 +1,43 @@
 ﻿@page "/Info"
-<div class="main-area text-center">
-    <div class="info-item">
-        <span>Application name</span>
-        <div>English Master</div>
-    </div>
-    <div class="info-item">
-        <span>Developed by</span>
-        <div>Fuki Sato</div>
-    </div>
-    <div class="info-item">
-        <span>Data created by</span>
-        <div>Junya Kaneko</div>
-    </div>
-    <div class="info-item">
-        <span>Version</span>
-        <div>2.1.1</div>
+<div class="wave-area">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 200" width="1200" height="200">
+        <defs>
+            <path d="M 0,0 v 100,0 q 150,50 300,0 t 300,0 q 150,50 300,0 t 300,0 v 0,-100 Z" id="wave" />
+        </defs>
+        <use xlink:href="#wave" />
+        <use xlink:href="#wave" x="-30" y="10" />
+        <use xlink:href="#wave" x="-60" />
+    </svg>
+    <div class="p-1" style="transform:translateY(-50px);">
+        <h2>About English Master</h2>
+        <div class="text-wrap text-description">&ensp;このアプリケーションは<a href="https://dotnet.microsoft.com/ja-jp/apps/aspnet/web-apps/blazor" target="_blank">Blazor</a>とWebアプリの勉強のために作成しました。今後も様々な機能を追加していきたいと思いますのでたまに見に来ると変わっているかもしれません。<a href="https://github.com/fukicycle/EnglishMasterWebAssembly" target="_blank">ソース</a>はすべて公開します。</div>
+        <div class="p-1">
+            <div class="fw-bold">Developed by</div>
+            <div class="p-1 px-3 w-100">
+                <div class="d-flex">
+                    <div class="my-auto w-100">Fuki Sato</div>
+                    <div class="icon">
+                        <a href="https://www.instagram.com/" target="_blank" class="text-center text-decoration-none">
+                            <img src="imgs/Instagram_Glyph_Gradient_RGB.svg" />
+                        </a>
+                    </div>
+                    <div class="icon">
+                        <a href="https://github.com/fukicycle" target="_blank" class="text-center text-decoration-none">
+                            <img src="imgs/github-mark.svg" />
+                        </a>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="my-auto w-100">Junya Kaneko</div>
+                    <div class="icon">
+                        <a href="https://www.instagram.com/" target="_blank" class="text-center text-decoration-none">
+                            <img src="imgs/Instagram_Glyph_Gradient_RGB.svg" />
+                        </a>
+                    </div>
+                    <div class="icon"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @code {

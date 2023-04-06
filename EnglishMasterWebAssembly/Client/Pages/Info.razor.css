@@ -1,0 +1,54 @@
+﻿.icon {
+    min-width: 55px;
+    min-height: 55px;
+}
+
+    .icon > a {
+        margin: auto 10px;
+    }
+
+        .icon > a > img {
+            width: 40px;
+            height: 40px;
+        }
+
+.text-description {
+    font-size: 0.9rem;
+}
+
+.wave-area {
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    margin: 0 auto;
+    max-width: 550px;
+    height: 100vh;
+    background-color: #fff;
+}
+
+    .wave-area svg use {
+        fill: #05429E;
+        animation: wave linear 4s infinite;
+    }
+
+        .wave-area svg use:nth-of-type(2),
+        .wave-area svg use:nth-of-type(3) {
+            opacity: 0.2;
+        }
+
+        .wave-area svg use:nth-of-type(2) {
+            animation-duration: 5s;
+        }
+
+        .wave-area svg use:nth-of-type(3) {
+            animation-duration: 3s;
+        }
+
+@keyframes wave {
+    from {
+        transform: translate(0);
+    }
+
+    to {
+        transform: translate(-50%);
+    }
+}

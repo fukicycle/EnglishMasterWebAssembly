@@ -4,12 +4,12 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: #D7E7FE;
     font-size: clamp(17px,3vw,20px);
+    overflow: hidden;
+    margin-bottom: env(safe-area-inset-bottom);
     /*    background-image: url('../imgs/background.jpg');
     background-size: cover;*/
 }
-body{
-    padding-bottom: env(safe-area-inset-bottom);
-}
+
 h1:focus {
     outline: none;
 }

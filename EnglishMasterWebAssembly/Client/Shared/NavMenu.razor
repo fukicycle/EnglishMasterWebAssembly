@@ -3,19 +3,10 @@
 @inject HttpClient Http
 @using EnglishMasterWebAssembly.Shared.Models
 @using Microsoft.AspNetCore.WebUtilities
-<nav class="navbar navbar-light border-bottom box-shadow">
+<nav class="navbar navbar-light box-shadow">
     <div class="container">
         <a class="navbar-brand" href="">English Master</a>
         <div class="d-flex justify-right">
-            @*<NavLink class="nav-item" href="">
-                <span class="oi oi-home menu-item"></span>
-            </NavLink>*@
-            @*<NavLink class="nav-item" href="Dictionary">
-                <span class="oi oi-book menu-item"></span>
-                </NavLink>*@
-@*            <NavLink class="nav-item" href="Info">
-                <span class="oi oi-info menu-item"></span>
-            </NavLink>*@
             @if (UserID == 0)
             {
                 <NavLink class="nav-item" @onclick=@NavigateToLoginPage>
@@ -44,18 +35,18 @@
     private void NavigateToLoginPage()
     {
         var queryParameter = new Dictionary<string, string>
-        {
-            ["RedirectURL"] = navigationManager.Uri
-        };
+            {
+                ["RedirectURL"] = navigationManager.Uri
+            };
         navigationManager.NavigateTo(QueryHelpers.AddQueryString("Login", queryParameter));
     }
 
     private void NavigateToUserPage()
     {
         var queryParameter = new Dictionary<string, string>
-        {
-            ["RedirectURL"] = navigationManager.Uri
-        };
-        navigationManager.NavigateTo(QueryHelpers.AddQueryString("UserPage",queryParameter));
+            {
+                ["RedirectURL"] = navigationManager.Uri
+            };
+        navigationManager.NavigateTo(QueryHelpers.AddQueryString("UserPage", queryParameter));
     }
 }
