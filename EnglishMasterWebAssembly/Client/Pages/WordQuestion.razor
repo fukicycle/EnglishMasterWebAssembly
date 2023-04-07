@@ -10,6 +10,21 @@
 <div class="container">
     <div class="content-area">
         <div class="spinner-area">
+            <p>問題数</p>
+            <select @onchange="@LimitChanged">
+                @for (int i = 25; i <= 100; i += 25)
+                {
+                    @if (Limit == i)
+                    {
+                        <option selected value="@i">@i</option>
+                    }
+                    else
+                    {
+                        <option value="@i">@i</option>
+                    }
+                }
+            </select>
+            <p>レベル</p>
             <select @onchange="@LevelChanged">
                 @foreach (var item in LevelList)
                 {
@@ -88,7 +103,7 @@
                 {
                     @if (IsEnd)
                     {
-                        <button class="btn-base" @onclick="ReturnButtonOnClick">Return top</button>
+                        <button class="btn-base" @onclick="ReturnButtonOnClick">Result</button>
                     }
                     else
                     {
@@ -120,6 +135,9 @@
     [SupplyParameterFromQuery]
     [Parameter]
     public long PartOfSpeechId { get; set; } = 0;
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public int Limit { get; set; } = 25;
 
     private int TotalAnswerCount = 0;
     private int TotalCorrectCount = 0;
@@ -136,6 +154,8 @@
             PartOfSpeechId = PartOfSpeechList.First().Id;
         if (LevelId == 0)
             LevelId = LevelList.First().Id;
+        if (Limit == 0)
+            Limit = 25;
         CreateQuestions();
         TotalAnswerCount = await localStorage.GetItemAsync<int>("ALL_COUNT");
         TotalCorrectCount = await localStorage.GetItemAsync<int>("CORRECT_COUNT");
@@ -165,8 +185,16 @@
         Dictionary<string, object> parameters = new Dictionary<string, object>();
         parameters.Add(nameof(LevelId), LevelId);
         parameters.Add(nameof(PartOfSpeechId), PartOfSpeechId);
+        parameters.Add(nameof(Limit), Limit);
         navigationManager.NavigateTo(navigationManager.GetUriWithQueryParameters(parameters));
 
+    }
+
+    private void LimitChanged(ChangeEventArgs e)
+    {
+        Limit = int.Parse(e.Value.ToString());
+        ParameterChanged();
+        CreateQuestions();
     }
 
     private void LevelChanged(ChangeEventArgs e)
@@ -182,6 +210,7 @@
         ParameterChanged();
         CreateQuestions();
     }
+
     private long prevAnswerId = 0;
     private async Task AnswerButtonOnClick(long id)
     {
@@ -212,7 +241,7 @@
     {
         IsPass = null;
         Idx = 0;
-        Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId && a.LevelId == LevelId).GetQuestions().ToList();
+        Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId && a.LevelId == LevelId).GetQuestions().Take(Limit).ToList();
         if (Questions.Count > 0)
             Question = Questions[Idx];
         else
@@ -222,7 +251,6 @@
 
     private void ReturnButtonOnClick()
     {
-        IsEnd = false;
-        CreateQuestions();
+        navigationManager.NavigateTo("Result");
     }
 }
