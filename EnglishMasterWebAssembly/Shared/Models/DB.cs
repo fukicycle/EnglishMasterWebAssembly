@@ -31,7 +31,8 @@ namespace EnglishMasterWebAssembly.Shared.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Name=ConnectionStrings:DB");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("user id=sa;password=P@ssWord;server=172.17.1.101;initial catalog=EnglishMaster;");
             }
         }
 
@@ -143,16 +144,24 @@ namespace EnglishMasterWebAssembly.Shared.Models
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasIndex(e => e.Email, "UQ_Users_Email")
+                entity.HasIndex(e => e.Username, "UQ_Users_Email")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.Email)
+                entity.Property(e => e.FirstName).HasMaxLength(50);
+
+                entity.Property(e => e.Icon)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LastName).HasMaxLength(50);
+
+                entity.Property(e => e.Password)
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Password)
+                entity.Property(e => e.Username)
                     .HasMaxLength(50)
                     .IsUnicode(false);
             });
