@@ -16,7 +16,7 @@
             else
             {
                 <NavLink class="nav-item" @onclick=@NavigateToUserPage>
-                    <span class="oi menu-item">@User?.Email.Substring(0, 1).ToUpper()</span>
+                    <span class="oi menu-item">@User?.FirstName.Substring(0, 1).ToUpper()</span>
                 </NavLink>
             }
         </div>

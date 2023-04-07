@@ -8,7 +8,7 @@
     <h3 class="text-center">Login</h3>
     <div class="input-area">
         <span>Username</span>
-        <input type="text" @bind="Email" />
+        <input type="text" @bind="Username" />
     </div>
     <div class="input-area">
         <span>Password</span>
@@ -27,15 +27,15 @@
     public string? RedirectURL { get; set; }
     private string Message = "";
     private string Password = "";
-    private string Email = "";
+    private string Username = "";
     private async Task LoginButtonOnClick()
     {
         Message = "";
         var user = new User
-        {
-            Email = Email,
-            Password = Password
-        };
+            {
+                Username = Username,
+                Password = Password
+            };
         HttpContent content = new StringContent(JsonConvert.SerializeObject(user), System.Text.Encoding.UTF8, "application/json");
         HttpResponseMessage response = await Http.PostAsync("user/post/login", content);
         var result = await response.Content.ReadAsStringAsync();
@@ -47,7 +47,7 @@
         else
         {
             await localStorage.SetItemAsync<long>("USER_ID", long.Parse(result));
-            navigationManager.NavigateTo(RedirectURL,true);
+            navigationManager.NavigateTo(RedirectURL, true);
         }
     }
 
