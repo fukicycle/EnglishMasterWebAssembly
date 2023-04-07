@@ -11,49 +11,49 @@
     <div class="content-area">
         <div class="spinner-area">
             @*<p>モード</p>
-        <select @onchange="@ModeChanged" disabled="@Timer.Enabled">
+            <select @onchange="@ModeChanged" disabled="@Timer.Enabled">
             @if (Mode == "練習")
             {
-                <option selected>練習</option>
-                <option>試験</option>
+            <option selected>練習</option>
+            <option>試験</option>
 
             }
             else
             {
-                <option>練習</option>
-                <option selected>試験</option>
+            <option>練習</option>
+            <option selected>試験</option>
             }
-        </select>*@
+            </select>*@
             <p>レベル</p>
             @*<select @onchange="@LevelChanged" disabled="@Timer.Enabled">*@
-                <select @onchange="@LevelChanged">
-                    @foreach (var item in LevelList)
+            <select @onchange="@LevelChanged">
+                @foreach (var item in LevelList)
+                {
+                    if (LevelId == item.Id)
                     {
-                        if (LevelId == item.Id)
-                        {
-                            <option selected value="@item.Id">@item.Name</option>
-                        }
-                        else
-                        {
-                            <option value="@item.Id">@item.Name</option>
-                        }
+                        <option selected value="@item.Id">@item.Name</option>
                     }
-                </select>
-                <p>品詞</p>
-                @*<select @onchange="@PartOfSpeechChanged" disabled="@Timer.Enabled">*@
-                <select @onchange="@PartOfSpeechChanged">
-                    @foreach (var item in PartOfSpeechList)
+                    else
                     {
-                        if (PartOfSpeechId == item.Id)
-                        {
-                            <option selected value="@item.Id">@item.InJapanese</option>
-                        }
-                        else
-                        {
-                            <option value="@item.Id">@item.InJapanese</option>
-                        }
+                        <option value="@item.Id">@item.Name</option>
                     }
-                </select>
+                }
+            </select>
+            <p>品詞</p>
+            @*<select @onchange="@PartOfSpeechChanged" disabled="@Timer.Enabled">*@
+            <select @onchange="@PartOfSpeechChanged">
+                @foreach (var item in PartOfSpeechList)
+                {
+                    if (PartOfSpeechId == item.Id)
+                    {
+                        <option selected value="@item.Id">@item.InJapanese</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Id">@item.InJapanese</option>
+                    }
+                }
+            </select>
         </div>
         <div class="question-area">
             @if (WordList == null || Questions == null)
@@ -74,31 +74,31 @@
                 else if (IsPass == null)
                 {
                     @*if (IsTest)
-                    {
-                        if (Timer.Enabled)
-                        {
-                            <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
-                            <p>@LimitTime.ToString(@"mm\:ss")</p>
-                            <hr />
-                            <p class="count">@(Idx + 1)/@Questions.Count</p>
-                        }
-                        else
-                        {
-                            <p class="question">Please click the start!</p>
-                            <p>@LimitTime.ToString(@"mm\:ss")</p>
-                            <hr />
-                            <p class="count">@(Idx + 1)/@Questions.Count</p>
+            {
+            if (Timer.Enabled)
+            {
+            <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+            <p>@LimitTime.ToString(@"mm\:ss")</p>
+            <hr />
+            <p class="count">@(Idx + 1)/@Questions.Count</p>
+            }
+            else
+            {
+            <p class="question">Please click the start!</p>
+            <p>@LimitTime.ToString(@"mm\:ss")</p>
+            <hr />
+            <p class="count">@(Idx + 1)/@Questions.Count</p>
 
-                        }
-                    }
-                    else
-                    {*@
-                        <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
-                        <p>-</p>
-                        <hr />
-                        <p class="count">@(Idx + 1)/@Questions.Count</p>
-                        //}
-                    }
+            }
+            }
+            else
+            {*@
+                    <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+                    <p>-</p>
+                    <hr />
+                    <p class="count">@(Idx + 1)/@Questions.Count</p>
+                    //}
+                }
                 else if (IsPass == true)
                 {
                     <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
@@ -125,27 +125,27 @@
                 @if (Question.WordId != 0)
                 {
                     @*@if (IsTest && !IsEnd && !Timer.Enabled)
-                {
-                    <button class="btn-base" @onclick="StartButtonOnClick">Start</button>
-                }
-                else if (!IsEnd)
-                {
-                    @foreach (var item in AnswerList)
-                    {
-                        <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))">@item.Meaning</button>
-                    }
-                }
-                else
-                {
-                    if (IsTest)
-                    {
-                        <button class="btn-base" @onclick="@(() => navigationManager.NavigateTo("./Result"))">Show Result</button>
-                    }
-                    else
-                    {
-                        <button class="btn-base" @onclick="ReturnButtonOnClick">Return top</button>
-                    }
-                }*@
+            {
+            <button class="btn-base" @onclick="StartButtonOnClick">Start</button>
+            }
+            else if (!IsEnd)
+            {
+            @foreach (var item in AnswerList)
+            {
+            <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))">@item.Meaning</button>
+            }
+            }
+            else
+            {
+            if (IsTest)
+            {
+            <button class="btn-base" @onclick="@(() => navigationManager.NavigateTo("./Result"))">Show Result</button>
+            }
+            else
+            {
+            <button class="btn-base" @onclick="ReturnButtonOnClick">Return top</button>
+            }
+            }*@
                     @if (IsEnd)
                     {
                         <button class="btn-base" @onclick="ReturnButtonOnClick">Return top</button>
@@ -154,18 +154,18 @@
                     {
                         @foreach (var item in AnswerList)
                         {
-                            <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))">@item.Meaning</button>
+                            <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))" disabled="@(IsPass != null)">@item.Meaning</button>
                         }
                     }
                 }
             }
         </div>
         @*<div class="navigation-area">
-            @if (Question != null && !IsTest)
-            {
-                <button class="btn-base" @onclick="@MovePrev"><span class="oi oi-chevron-left"></span></button>
-                <button class="btn-base" @onclick="@MoveNext"><span class="oi oi-chevron-right"></span></button>
-            }
+        @if (Question != null && !IsTest)
+        {
+        <button class="btn-base" @onclick="@MovePrev"><span class="oi oi-chevron-left"></span></button>
+        <button class="btn-base" @onclick="@MoveNext"><span class="oi oi-chevron-right"></span></button>
+        }
         </div>*@
     </div>
 </div>
@@ -317,6 +317,8 @@
         //}
         //else IsPass = Question.Id == id;
         IsPass = Question.Id == id;
+        StateHasChanged();
+        await Task.Delay(200);
         MoveNext();
     }
 
