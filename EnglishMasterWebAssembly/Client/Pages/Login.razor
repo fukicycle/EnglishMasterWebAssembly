@@ -4,7 +4,7 @@
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @using EnglishMasterWebAssembly.Shared.Models
 @using Newtonsoft.Json
-<div class="login-area">
+@*<div class="login-area">
     <h3 class="text-center">Login</h3>
     <div class="input-area">
         <span>Username</span>
@@ -20,6 +20,20 @@
         <a class="text-secondary" href="#">Register</a>
     </div>
     <div class="alert-danger text-center">@Message</div>
+</div>*@
+<div class="container">
+    <div>
+        <div class="login-field">
+            <input type="text" class="login-input text-center" placeholder="Username" @bind=Username>
+        </div>
+        <div class="login-field">
+            <input type="password" class="login-input text-center" placeholder="Password" @bind=Password>
+        </div>
+        <button class="button login-submit text-center" @onclick="@LoginButtonOnClick">Sign in</button>
+        <div class="text-secondary text-center">or</div>
+        <button class="button login-submit text-center">Register</button>
+        <div class="text-danger text-center">@Message</div>
+    </div>
 </div>
 @code {
     [SupplyParameterFromQuery]
@@ -34,7 +48,9 @@
         var user = new User
             {
                 Username = Username,
-                Password = Password
+                Password = Password,
+                FirstName = "",
+                LastName = ""
             };
         HttpContent content = new StringContent(JsonConvert.SerializeObject(user), System.Text.Encoding.UTF8, "application/json");
         HttpResponseMessage response = await Http.PostAsync("user/post/login", content);
