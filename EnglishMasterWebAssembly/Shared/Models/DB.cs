@@ -23,6 +23,7 @@ namespace EnglishMasterWebAssembly.Shared.Models
         public virtual DbSet<MeaningOfIdiom> MeaningOfIdioms { get; set; } = null!;
         public virtual DbSet<PartOfSpeech> PartOfSpeeches { get; set; } = null!;
         public virtual DbSet<PracticeResult> PracticeResults { get; set; } = null!;
+        public virtual DbSet<Room> Rooms { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Vocabulary> Vocabularies { get; set; } = null!;
         public virtual DbSet<Word> Words { get; set; } = null!;
@@ -32,7 +33,7 @@ namespace EnglishMasterWebAssembly.Shared.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("user id=sa;password=P@ssWord;server=172.17.1.101;initial catalog=EnglishMaster;");
+                optionsBuilder.UseSqlServer("user id=sa;password=P@ssWord;server=192.168.10.10;initial catalog=EnglishMaster;");
             }
         }
 
@@ -142,6 +143,20 @@ namespace EnglishMasterWebAssembly.Shared.Models
                     .HasConstraintName("FK_PracticeResults_Vocabularies");
             });
 
+            modelBuilder.Entity<Room>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(6)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Date).HasColumnType("datetime");
+
+                entity.Property(e => e.Title).HasMaxLength(20);
+            });
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasIndex(e => e.Username, "UQ_Users_Email")
@@ -149,16 +164,20 @@ namespace EnglishMasterWebAssembly.Shared.Models
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.FirstName).HasMaxLength(50);
+                entity.Property(e => e.FirstName).HasMaxLength(100);
 
                 entity.Property(e => e.Icon)
-                    .HasMaxLength(255)
+                    .HasMaxLength(3000)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LastName).HasMaxLength(50);
+                entity.Property(e => e.LastName).HasMaxLength(100);
 
                 entity.Property(e => e.Password)
                     .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Token)
+                    .HasMaxLength(64)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Username)
