@@ -1,0 +1,23 @@
+﻿@inject NavigationManager navigationManager
+<footer>
+    <div class="contents">
+        <div class="footer-item item-quiz" @onclick=@(() => navigationManager.NavigateTo("WordQuestion"))>
+             <span class="oi oi-pencil"></span>
+        </div>
+        <div class="footer-item item-battle" @onclick=@(() => navigationManager.NavigateTo("Battle"))>
+            <span class="oi oi-people"></span>
+        </div>
+        <div class="footer-item item-home" @onclick=@(() => navigationManager.NavigateTo(navigationManager.BaseUri))>
+            <span class="oi oi-home"></span>
+        </div>
+        <div class="footer-item item-dictionary" @onclick=@(() => navigationManager.NavigateTo("Dictionary"))>
+            <span class="oi oi-book"></span>
+        </div>
+        <div class="footer-item item-info" @onclick=@(() => navigationManager.NavigateTo("Info"))>
+            <span class="oi oi-info"></span>
+        </div>
+    </div>
+</footer>
+@code {
+
+}

@@ -2,11 +2,18 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background-color: #D7E7FE;
+    /*background-color: #D7E7FE;*/
     font-size: clamp(17px,3vw,20px);
+    overflow: hidden;
+    margin-bottom: env(safe-area-inset-bottom);
+    height: 100vh;
     /*    background-image: url('../imgs/background.jpg');
     background-size: cover;*/
 }
+
+    body > div {
+        height: 100%;
+    }
 
 h1:focus {
     outline: none;
@@ -271,19 +278,21 @@ a, .btn-link {
 
 .navbar {
     background-color: #05429E;
+    padding-top: 10px;
+    padding-left: 10px;
 }
 
 .navbar-brand {
     color: #D7E7FE !important;
 }
 
-.login-area {
+/*.login-area {
     max-width: 450px;
     background-color: #A6C8FC;
     margin: auto;
     padding: 30px;
     border-radius: 30px;
-}
+}*/
 
 .input-area > span {
     margin-top: 10px;
@@ -297,21 +306,6 @@ a, .btn-link {
     border-bottom: solid 1px #D7E7FE;
     background-color: #A6C8FC;
 }
-
-.info-item {
-    margin-bottom: 5px;
-}
-
-    .info-item > div {
-        font-weight: bold;
-        padding: 5px;
-    }
-
-/*.menu-area {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-}*/
 
 .btn-menu {
     width: 100%;

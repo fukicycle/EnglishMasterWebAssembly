@@ -1,0 +1,56 @@
+﻿@page "/Battle"
+@using EnglishMasterWebAssembly.Shared.Models
+@inject HttpClient Http
+<div class="display-area">
+    @if (_mode == 0)
+    {
+        <div class="menu-area">
+            <div class="horizontal horizontal-center">
+                <button class="btn-base" @onclick="@(() => ButtonOnClick(1))">Create a room</button>
+                <button class="btn-base" @onclick="@(() => ButtonOnClick(2))">Enter a code</button>
+            </div>
+            <div class="text-center text-secondary">or</div>
+            <button class="btn-base" @onclick="@(() => ButtonOnClick(3))">Join open rooms!</button>
+        </div>
+    }
+    else
+    {
+        <div>
+            <div>
+                @if (_mode == 1)
+                {
+
+                }
+                @if (_mode == 2)
+                {
+                }
+                @if (_mode == 3)
+                {
+                    <div>
+                        @foreach (var item in RoomList)
+                        {
+                            <button class="btn-base">@item.Title</button>
+                        }
+                    </div>
+                }
+            </div>
+            <button class="btn-base" @onclick="@(() => ButtonOnClick(0))">Back</button>
+        </div>
+    }
+</div>
+
+@code {
+    private List<Room> RoomList = new();
+    private int _mode = 0;
+    protected override async Task OnInitializedAsync()
+    {
+        RoomList = await Http.GetFromJsonAsync<List<Room>>("Room") ?? new();
+    }
+
+    private void ButtonOnClick(int mode = 0)
+    {
+        _mode = mode;
+        StateHasChanged();
+    }
+}
+

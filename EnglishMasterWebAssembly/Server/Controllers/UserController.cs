@@ -21,7 +21,7 @@ namespace EnglishMasterWebAssembly.Server.Controllers
         public async Task<User> Get(long id)
         {
             var user = await db.Users.FindAsync(id);
-            if (user == null) return new User { Email = string.Empty };
+            if (user == null) return new User { Username = string.Empty };
             return user;
         }
 
@@ -30,7 +30,7 @@ namespace EnglishMasterWebAssembly.Server.Controllers
         {
             try
             {
-                var login = await db.Users.FirstOrDefaultAsync(a => a.Email == user.Email && a.Password == user.Password);
+                var login = await db.Users.FirstOrDefaultAsync(a => a.Username == user.Username && a.Password == user.Password);
                 if (login == null) throw new Exception("Authentication failed.");
                 return login.Id.ToString();
             }
