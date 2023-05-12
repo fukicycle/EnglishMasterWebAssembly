@@ -12,14 +12,14 @@ namespace EnglishMasterWebAssembly.Server.Controllers
     [ApiController]
     public class VocabularyController : ControllerBase
     {
-        private DB db;
+        private DB _db;
         public VocabularyController(DB db)
         {
-            this.db = db;
+            this._db = db;
         }
         public async Task<IEnumerable<Vocabulary>> Get()
         {
-            return await db.Vocabularies.ToListAsync();
+            return await _db.Vocabularies.ToListAsync();
         }
     }
 }

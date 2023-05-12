@@ -12,14 +12,14 @@ namespace EnglishMasterWebAssembly.Server.Controllers
     [ApiController]
     public class LevelController : ControllerBase
     {
-        private DB db;
+        private DB _db;
         public LevelController(DB db)
         {
-            this.db = db;
+            this._db = db;
         }
         public async Task<IEnumerable<Level>> Get()
         {
-            return await db.Levels.ToListAsync();
+            return await _db.Levels.ToListAsync();
         }
     }
 }

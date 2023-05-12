@@ -1,22 +1,22 @@
-﻿@page "/Result"
+﻿@page "/result"
 @using Newtonsoft.Json
 @using EnglishMasterWebAssembly.Shared.Models
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
-@inject HttpClient Http
+@inject HttpClient http
 <div class="result-area">
     <h3>Result</h3>
-    <p>Answer count: @ResultList.Count/25</p>
-    <p>Incorrect count: @ResultList.Count(a => a.Value == false)</p>
-    <p>Correct count: @ResultList.Count(a => a.Value)</p>
-    @if (ResultList.Count(a => a.Value) == 25)
+    <p>Answer count: @_resultList.Count/25</p>
+    <p>Incorrect count: @_resultList.Count(a => a.Value == false)</p>
+    <p>Correct count: @_resultList.Count(a => a.Value)</p>
+    @if (_resultList.Count(a => a.Value) == 25)
     {
         <h4 class="text-success">Excellent!</h4>
     }
-    else if (ResultList.Count(a => a.Value) >= 23)
+    else if (_resultList.Count(a => a.Value) >= 23)
     {
         <h4 class="text-info">Good!</h4>
     }
-    else if (ResultList.Count(a => a.Value) <= 10)
+    else if (_resultList.Count(a => a.Value) <= 10)
     {
         <h4 class="text-danger">Bad...</h4>
     }
@@ -26,23 +26,23 @@
     }
 </div>
 <div class="detail-area">
-    @foreach (var item in ResultList.Where(a => a.Value == false))
+    @foreach (var item in _resultList.Where(a => a.Value == false))
     {
-        var vocaburary = VocabularyList.First(a => a.Id == item.Key);
-        var word = WordList.First(a => a.Id == vocaburary.WordId);
+        var vocaburary = _vocabularyList.First(a => a.Id == item.Key);
+        var word = _wordList.First(a => a.Id == vocaburary.WordId);
         <div class="header">@word.Word1</div>
         <div class="contents">@vocaburary.Meaning</div>
     }
 </div>
 @code {
-    private List<Vocabulary> VocabularyList;
-    private List<Word> WordList;
-    private Dictionary<long, bool> ResultList = new();
+    private List<Vocabulary> _vocabularyList = new();
+    private List<Word> _wordList = new();
+    private Dictionary<long, bool> _resultList = new();
     protected override async Task OnInitializedAsync()
     {
-        WordList = await Http.GetFromJsonAsync<List<Word>>("Word") ?? new();
-        VocabularyList = await Http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
-        ResultList = JsonConvert.DeserializeObject<Dictionary<long, bool>>(await sessionStorage.GetItemAsStringAsync("TestResult"));
+        _wordList = await http.GetFromJsonAsync<List<Word>>("Word") ?? new();
+        _vocabularyList = await http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
+        _resultList = JsonConvert.DeserializeObject<Dictionary<long, bool>>(await sessionStorage.GetItemAsStringAsync("TestResult"));
     }
 }
 

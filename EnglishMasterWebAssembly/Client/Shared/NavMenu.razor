@@ -1,13 +1,13 @@
 ﻿@inject NavigationManager navigationManager
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
-@inject HttpClient Http
+@inject HttpClient http
 @using EnglishMasterWebAssembly.Shared.Models
 @using Microsoft.AspNetCore.WebUtilities
 <nav class="navbar navbar-light box-shadow">
     <div class="container">
         <a class="navbar-brand" href="">English Master</a>
         <div class="d-flex justify-right">
-            @if (UserID == 0)
+            @if (_userID == 0)
             {
                 <NavLink class="nav-item" @onclick=@NavigateToLoginPage>
                     <span class="oi oi-account-login menu-item"></span>
@@ -16,20 +16,20 @@
             else
             {
                 <NavLink class="nav-item" @onclick=@NavigateToUserPage>
-                    <span class="oi menu-item">@User?.FirstName.Substring(0, 1).ToUpper()</span>
+                    <span class="oi menu-item">@_user?.FirstName?.Substring(0, 1).ToUpper()</span>
                 </NavLink>
             }
         </div>
     </div>
 </nav>
 @code {
-    private long UserID = 0;
-    private User? User = null;
+    private long _userID = 0;
+    private User? _user = null;
 
     protected override async Task OnInitializedAsync()
     {
-        UserID = await localStorage.GetItemAsync<long>("USER_ID");
-        User = await Http.GetFromJsonAsync<User>($"User?id={UserID}");
+        _userID = await localStorage.GetItemAsync<long>("USER_ID");
+        _user = await http.GetFromJsonAsync<User>($"User?id={_userID}");
     }
 
     private void NavigateToLoginPage()

@@ -1,8 +1,8 @@
-﻿@page "/WordQuestion"
+﻿@page "/wordQuestion"
 @using EnglishMasterWebAssembly.Shared.Models
 @using System.Timers
 @using Newtonsoft.Json
-@inject HttpClient Http
+@inject HttpClient http
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager navigationManager
@@ -26,7 +26,7 @@
             </select>
             <p>レベル</p>
             <select @onchange="@LevelChanged">
-                @foreach (var item in LevelList)
+                @foreach (var item in _levelList)
                 {
                     if (LevelId == item.Id)
                     {
@@ -40,7 +40,7 @@
             </select>
             <p>品詞</p>
             <select @onchange="@PartOfSpeechChanged">
-                @foreach (var item in PartOfSpeechList)
+                @foreach (var item in _partOfSpeechList)
                 {
                     if (PartOfSpeechId == item.Id)
                     {
@@ -54,7 +54,7 @@
             </select>
         </div>
         <div class="question-area">
-            @if (WordList == null || Questions == null)
+            @if (_wordList == null || _questions == null)
             {
                 <p class="question">Loading...</p>
                 <hr />
@@ -62,54 +62,54 @@
             }
             else
             {
-                if (IsEnd)
+                if (_isEnd)
                 {
                     <p class="question">Completed!</p>
                     <p>-</p>
                     <hr />
-                    <p class="count">@(Idx + 1)/@Questions.Count</p>
+                    <p class="count">@(_idx + 1)/@_questions.Count</p>
                 }
-                else if (IsPass == null)
+                else if (_isPass == null)
                 {
-                    <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+                    <p class="question">@(_wordList.FirstOrDefault(a => a.Id == _question.WordId)?.Word1 ?? "No word")</p>
                     <p>-</p>
                     <hr />
-                    <p class="count">@(Idx + 1)/@Questions.Count</p>
+                    <p class="count">@(_idx + 1)/@_questions.Count</p>
                 }
-                else if (IsPass == true)
+                else if (_isPass == true)
                 {
-                    <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+                    <p class="question">@(_wordList.FirstOrDefault(a => a.Id == _question.WordId)?.Word1 ?? "No word")</p>
                     <p class="text-success">Correct !</p>
                     <hr />
-                    <p class="count">@(Idx + 1)/@Questions.Count</p>
+                    <p class="count">@(_idx + 1)/@_questions.Count</p>
                 }
                 else
                 {
-                    <p class="question">@(WordList.FirstOrDefault(a => a.Id == Question.WordId)?.Word1 ?? "No word")</p>
+                    <p class="question">@(_wordList.FirstOrDefault(a => a.Id == _question.WordId)?.Word1 ?? "No word")</p>
                     <p class="text-danger">Incorrect !</p>
                     <hr />
-                    <p class="count">@(Idx + 1)/@Questions.Count</p>
+                    <p class="count">@(_idx + 1)/@_questions.Count</p>
                 }
             }
         </div>
         <div class="answer-area">
-            @if (IsLoad)
+            @if (_isLoad)
             {
                 <div class="spinner-border"></div>
             }
             else
             {
-                @if (Question.WordId != 0)
+                @if (_question.WordId != 0)
                 {
-                    @if (IsEnd)
+                    @if (_isEnd)
                     {
                         <button class="btn-base" @onclick="ReturnButtonOnClick">Result</button>
                     }
                     else
                     {
-                        @foreach (var item in AnswerList)
+                        @foreach (var item in _answerList)
                         {
-                            <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))" disabled="@(IsPass != null)">@item.Meaning</button>
+                            <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))" disabled="@(_isPass != null)">@item.Meaning</button>
                         }
                     }
                 }
@@ -118,17 +118,17 @@
     </div>
 </div>
 @code {
-    private List<Level> LevelList = new();
-    private List<Vocabulary> VocabularyList = new();
-    private List<Word> WordList = new();
-    private List<PartOfSpeech> PartOfSpeechList = new();
-    private List<Vocabulary> Questions = new();
-    private Vocabulary Question = new();
-    private List<Vocabulary> AnswerList = new();
-    private int Idx = 0;
-    private bool? IsPass = null;
-    private bool IsEnd = false;
-    private bool IsLoad = false;
+    private List<Level> _levelList = new();
+    private List<Vocabulary> _vocabularyList = new();
+    private List<Word> _wordList = new();
+    private List<PartOfSpeech> _partOfSpeechList = new();
+    private List<Vocabulary> _questions = new();
+    private Vocabulary _question = new();
+    private List<Vocabulary> _answerList = new();
+    private int _idx = 0;
+    private bool? _isPass = null;
+    private bool _isEnd = false;
+    private bool _isLoad = false;
     [SupplyParameterFromQuery]
     [Parameter]
     public long LevelId { get; set; } = 0;
@@ -139,44 +139,44 @@
     [Parameter]
     public int Limit { get; set; } = 25;
 
-    private int TotalAnswerCount = 0;
-    private int TotalCorrectCount = 0;
-    private int TotalIncorrectCount = 0;
+    private int _totalAnswerCount = 0;
+    private int _totalCorrectCount = 0;
+    private int _totalIncorrectCount = 0;
 
     protected override async Task OnInitializedAsync()
     {
-        IsLoad = true;
-        LevelList = await Http.GetFromJsonAsync<List<Level>>("Level") ?? new();
-        WordList = await Http.GetFromJsonAsync<List<Word>>("Word") ?? new();
-        PartOfSpeechList = await Http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech") ?? new();
-        VocabularyList = await Http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
+        _isLoad = true;
+        _levelList = await http.GetFromJsonAsync<List<Level>>("Level") ?? new();
+        _wordList = await http.GetFromJsonAsync<List<Word>>("Word") ?? new();
+        _partOfSpeechList = await http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech") ?? new();
+        _vocabularyList = await http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
         if (PartOfSpeechId == 0)
-            PartOfSpeechId = PartOfSpeechList.First().Id;
+            PartOfSpeechId = _partOfSpeechList.First().Id;
         if (LevelId == 0)
-            LevelId = LevelList.First().Id;
+            LevelId = _levelList.First().Id;
         if (Limit == 0)
             Limit = 25;
         CreateQuestions();
-        TotalAnswerCount = await localStorage.GetItemAsync<int>("ALL_COUNT");
-        TotalCorrectCount = await localStorage.GetItemAsync<int>("CORRECT_COUNT");
-        TotalIncorrectCount = await localStorage.GetItemAsync<int>("IN_CORRECT_COUNT");
-        IsLoad = false;
+        _totalAnswerCount = await localStorage.GetItemAsync<int>("ALL_COUNT");
+        _totalCorrectCount = await localStorage.GetItemAsync<int>("CORRECT_COUNT");
+        _totalIncorrectCount = await localStorage.GetItemAsync<int>("IN_CORRECT_COUNT");
+        _isLoad = false;
     }
 
     private void MoveNext()
     {
-        if (Questions.Count == 0) return;
-        IsPass = null;
-        Idx = Idx + 1;
-        if (Idx >= Questions.Count)
+        if (_questions.Count == 0) return;
+        _isPass = null;
+        _idx = _idx + 1;
+        if (_idx >= _questions.Count)
         {
-            IsEnd = true;
-            Idx = Questions.Count - 1;
+            _isEnd = true;
+            _idx = _questions.Count - 1;
         }
         else
         {
-            Question = Questions[Idx];
-            AnswerList = VocabularyList.GetAnswer(Question).ToList();
+            _question = _questions[_idx];
+            _answerList = _vocabularyList.GetAnswer(_question).ToList();
         }
     }
 
@@ -214,24 +214,24 @@
     private long prevAnswerId = 0;
     private async Task AnswerButtonOnClick(long id)
     {
-        IsPass = null;
+        _isPass = null;
         if (prevAnswerId != id)
         {
             prevAnswerId = id;
-            TotalAnswerCount++;
-            await localStorage.SetItemAsync<int>("ALL_COUNT", TotalAnswerCount);
-            if (Question.Id == id)
+            _totalAnswerCount++;
+            await localStorage.SetItemAsync<int>("ALL_COUNT", _totalAnswerCount);
+            if (_question.Id == id)
             {
-                TotalCorrectCount++;
-                await localStorage.SetItemAsync<int>("CORRECT_COUNT", TotalCorrectCount);
+                _totalCorrectCount++;
+                await localStorage.SetItemAsync<int>("CORRECT_COUNT", _totalCorrectCount);
             }
             else
             {
-                TotalIncorrectCount++;
-                await localStorage.SetItemAsync<int>("IN_CORRECT_COUNT", TotalIncorrectCount);
+                _totalIncorrectCount++;
+                await localStorage.SetItemAsync<int>("IN_CORRECT_COUNT", _totalIncorrectCount);
             }
         }
-        IsPass = Question.Id == id;
+        _isPass = _question.Id == id;
         StateHasChanged();
         await Task.Delay(200);
         MoveNext();
@@ -239,14 +239,14 @@
 
     private void CreateQuestions()
     {
-        IsPass = null;
-        Idx = 0;
-        Questions = VocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId && a.LevelId == LevelId).GetQuestions().Take(Limit).ToList();
-        if (Questions.Count > 0)
-            Question = Questions[Idx];
+        _isPass = null;
+        _idx = 0;
+        _questions = _vocabularyList.Where(a => a.PartOfSpeechId == PartOfSpeechId && a.LevelId == LevelId).GetQuestions().Take(Limit).ToList();
+        if (_questions.Count > 0)
+            _question = _questions[_idx];
         else
-            Question = new Vocabulary();
-        AnswerList = VocabularyList.GetAnswer(Question).ToList();
+            _question = new Vocabulary();
+        _answerList = _vocabularyList.GetAnswer(_question).ToList();
     }
 
     private void ReturnButtonOnClick()

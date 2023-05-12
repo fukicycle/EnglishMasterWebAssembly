@@ -1,5 +1,5 @@
-﻿@page "/Login"
-@inject HttpClient Http
+﻿@page "/login"
+@inject HttpClient http
 @inject NavigationManager navigationManager
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @using EnglishMasterWebAssembly.Shared.Models
@@ -24,40 +24,40 @@
 <div class="container">
     <div>
         <div class="login-field">
-            <input type="text" class="login-input text-center" placeholder="Username" @bind=Username>
+            <input type="text" class="login-input text-center" placeholder="Username" @bind=_username>
         </div>
         <div class="login-field">
-            <input type="password" class="login-input text-center" placeholder="Password" @bind=Password>
+            <input type="password" class="login-input text-center" placeholder="Password" @bind=_password>
         </div>
         <button class="button login-submit text-center" @onclick="@LoginButtonOnClick">Sign in</button>
         <div class="text-secondary text-center">or</div>
-        <button class="button login-submit text-center" @onclick="@(() => Message = "Sorry, Not implemented yet.")">Register</button>
-        <div class="text-danger text-center">@Message</div>
+        <button class="button login-submit text-center" @onclick="@(() => _message = "Sorry, Not implemented yet.")">Register</button>
+        <div class="text-danger text-center">@_message</div>
     </div>
 </div>
 @code {
     [SupplyParameterFromQuery]
     [Parameter]
     public string? RedirectURL { get; set; }
-    private string Message = "";
-    private string Password = "";
-    private string Username = "";
+    private string _message = "";
+    private string _password = "";
+    private string _username = "";
     private async Task LoginButtonOnClick()
     {
-        Message = "";
+        _message = "";
         var user = new User
             {
-                Username = Username,
-                Password = Password,
+                Username = _username,
+                Password = _password,
                 FirstName = "",
                 LastName = ""
             };
         HttpContent content = new StringContent(JsonConvert.SerializeObject(user), System.Text.Encoding.UTF8, "application/json");
-        HttpResponseMessage response = await Http.PostAsync("user/post/login", content);
+        HttpResponseMessage response = await http.PostAsync("user/post/login", content);
         var result = await response.Content.ReadAsStringAsync();
         if (result.Contains("Authentication failed."))
         {
-            Message = result;
+            _message = result;
             return;
         }
         else

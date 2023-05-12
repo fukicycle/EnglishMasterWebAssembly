@@ -1,16 +1,16 @@
-﻿@page "/Dictionary"
+﻿@page "/dictionary"
 @using EnglishMasterWebAssembly.Shared.Models
 @using System.Timers
 @using Newtonsoft.Json
-@inject HttpClient Http
+@inject HttpClient http
 <div class="main-area">
     @if (_isDisplay)
     {
         <div>
             <div class="mean-area">
-                @foreach (var item in DisplayList)
+                @foreach (var item in _displayList)
                 {
-                    <div>@PartOfSpeechList.First(a => a.Id == item.PartOfSpeechId).InJapanese</div>
+                    <div>@_partOfSpeechList.First(a => a.Id == item.PartOfSpeechId).InJapanese</div>
                     <div>@item.Meaning</div>
                 }
             </div>
@@ -24,7 +24,7 @@
                  id="v-pills-tab"
                  role="tablist"
                  aria-orientation="vertical">
-                @foreach (var item in WordList.GroupBy(a => a.Word1.ToUpper().First()).OrderBy(a => Convert.ToInt16(a.Key)))
+                @foreach (var item in _wordList.GroupBy(a => a.Word1.ToUpper().First()).OrderBy(a => Convert.ToInt16(a.Key)))
                 {
                     string class1 = "";
                     if (item.Key == 'A')
@@ -48,7 +48,7 @@
                 }
             </div>
             <div class="tab-content" id="v-pills-tabContent">
-                @foreach (var item in WordList.GroupBy(a => a.Word1.ToUpper().First()).OrderBy(a => Convert.ToInt16(a.Key)))
+                @foreach (var item in _wordList.GroupBy(a => a.Word1.ToUpper().First()).OrderBy(a => Convert.ToInt16(a.Key)))
                 {
                     string class1 = "";
                     if (item.Key == 'A')
@@ -74,22 +74,22 @@
     }
 </div>
 @code {
-    private List<Vocabulary> VocabularyList = new();
-    private List<Vocabulary> DisplayList = new();
-    private List<PartOfSpeech> PartOfSpeechList = new();
-    private List<Word> WordList = new();
+    private List<Vocabulary> _vocabularyList = new();
+    private List<Vocabulary> _displayList = new();
+    private List<PartOfSpeech> _partOfSpeechList = new();
+    private List<Word> _wordList = new();
     private bool _isDisplay = false;
     protected override async Task OnInitializedAsync()
     {
-        WordList = await Http.GetFromJsonAsync<List<Word>>("Word") ?? new();
-        VocabularyList = await Http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
-        PartOfSpeechList = await Http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech") ?? new();
+        _wordList = await http.GetFromJsonAsync<List<Word>>("Word") ?? new();
+        _vocabularyList = await http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
+        _partOfSpeechList = await http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech") ?? new();
     }
 
     private void OnClickWord(long id)
     {
         _isDisplay = true;
-        DisplayList = VocabularyList.Where(a => a.WordId == id).ToList();
+        _displayList = _vocabularyList.Where(a => a.WordId == id).ToList();
     }
 }
 

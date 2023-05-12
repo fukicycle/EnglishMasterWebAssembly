@@ -13,15 +13,15 @@ namespace EnglishMasterWebAssembly.Server.Controllers
     [Route("[controller]")]
     public class RoomController : ControllerBase
     {
-        private DB db;
+        private DB _db;
         public RoomController(DB db)
         {
-            this.db = db;
+            this._db = db;
         }
 
         public async Task<List<Room>> Get()
         {
-            return await db.Rooms.Where(a => a.IsOpen == 1).ToListAsync();
+            return await _db.Rooms.Where(a => a.IsOpen == 1).ToListAsync();
         }
     }
 }
