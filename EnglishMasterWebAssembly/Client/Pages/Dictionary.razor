@@ -3,72 +3,82 @@
 @using System.Timers
 @using Newtonsoft.Json
 @inject HttpClient Http
-<div class="mean-area">
-    @foreach (var item in DisplayList)
-    {
-        <div>@PartOfSpeechList.First(a => a.Id == item.PartOfSpeechId).InJapanese</div>
-        <div>@item.Meaning</div>
-    }
-</div>
 <div class="main-area">
-    <div class="d-flex align-items-start">
-        <div class="nav flex-column nav-pills"
-             id="v-pills-tab"
-             role="tablist"
-             aria-orientation="vertical">
-            @foreach (var item in WordList.GroupBy(a => a.Word1.ToUpper().First()).OrderBy(a => Convert.ToInt16(a.Key)))
-            {
-                string class1 = "";
-                if (item.Key == 'A')
+    @if (_isDisplay)
+    {
+        <div>
+            <div class="mean-area">
+                @foreach (var item in DisplayList)
                 {
-                    class1 = "nav-link nav-icon-round active";
+                    <div>@PartOfSpeechList.First(a => a.Id == item.PartOfSpeechId).InJapanese</div>
+                    <div>@item.Meaning</div>
                 }
-                else
-                {
-                    class1 = "nav-link nav-icon-round";
-                }
-                <button class="@class1"
-                        id="v-pills-home-tab"
-                        data-bs-toggle="pill"
-                        data-bs-target="#v-pills-@item.Key"
-                        type="button"
-                        role="tab"
-                        aria-controls="v-pills-home"
-                        aria-selected="true">
-                    @item.Key
-                </button>
-            }
+            </div>
+            <button @onclick="(() => _isDisplay = false)" class="btn-base">Back to list</button>
         </div>
-        <div class="tab-content" id="v-pills-tabContent">
-            @foreach (var item in WordList.GroupBy(a => a.Word1.ToUpper().First()).OrderBy(a => Convert.ToInt16(a.Key)))
-            {
-                string class1 = "";
-                if (item.Key == 'A')
+    }
+    else
+    {
+        <div class="d-flex align-items-start">
+            <div class="nav flex-column nav-pills"
+                 id="v-pills-tab"
+                 role="tablist"
+                 aria-orientation="vertical">
+                @foreach (var item in WordList.GroupBy(a => a.Word1.ToUpper().First()).OrderBy(a => Convert.ToInt16(a.Key)))
                 {
-                    class1 = "dictionary-list tab-pane fade show active";
-                }
-                else
-                {
-                    class1 = "dictionary-list tab-pane fade show";
-                }
-                <div class="@class1"
-                     id="v-pills-@item.Key"
-                     role="tabpanel"
-                     aria-labelledby="v-pills-home-tab">
-                    @foreach (var item1 in item.OrderBy(a => a.Word1))
+                    string class1 = "";
+                    if (item.Key == 'A')
                     {
-                        <button class="btn-base btn-no-outline" @onclick="@(() => OnClickWord(item1.Id))">@item1.Word1</button>
+                        class1 = "nav-link nav-icon-round active";
                     }
-                </div>
-            }
+                    else
+                    {
+                        class1 = "nav-link nav-icon-round";
+                    }
+                    <button class="@class1"
+                            id="v-pills-home-tab"
+                            data-bs-toggle="pill"
+                            data-bs-target="#v-pills-@item.Key"
+                            type="button"
+                            role="tab"
+                            aria-controls="v-pills-home"
+                            aria-selected="true">
+                        @item.Key
+                    </button>
+                }
+            </div>
+            <div class="tab-content" id="v-pills-tabContent">
+                @foreach (var item in WordList.GroupBy(a => a.Word1.ToUpper().First()).OrderBy(a => Convert.ToInt16(a.Key)))
+                {
+                    string class1 = "";
+                    if (item.Key == 'A')
+                    {
+                        class1 = "dictionary-list tab-pane fade show active";
+                    }
+                    else
+                    {
+                        class1 = "dictionary-list tab-pane fade show";
+                    }
+                    <div class="@class1"
+                         id="v-pills-@item.Key"
+                         role="tabpanel"
+                         aria-labelledby="v-pills-home-tab">
+                        @foreach (var item1 in item.OrderBy(a => a.Word1))
+                        {
+                            <button class="btn-base btn-no-outline" @onclick="@(() => OnClickWord(item1.Id))">@item1.Word1</button>
+                        }
+                    </div>
+                }
+            </div>
         </div>
-    </div>
+    }
 </div>
 @code {
     private List<Vocabulary> VocabularyList = new();
     private List<Vocabulary> DisplayList = new();
     private List<PartOfSpeech> PartOfSpeechList = new();
     private List<Word> WordList = new();
+    private bool _isDisplay = false;
     protected override async Task OnInitializedAsync()
     {
         WordList = await Http.GetFromJsonAsync<List<Word>>("Word") ?? new();
@@ -78,6 +88,7 @@
 
     private void OnClickWord(long id)
     {
+        _isDisplay = true;
         DisplayList = VocabularyList.Where(a => a.WordId == id).ToList();
     }
 }
