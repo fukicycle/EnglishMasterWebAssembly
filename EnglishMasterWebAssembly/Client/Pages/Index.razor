@@ -1,6 +1,7 @@
 ﻿@page "/"
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject HttpClient http
+@inject NavigationManager navigationManager
 @using EnglishMasterWebAssembly.Shared.Models
 @using Microsoft.AspNetCore.WebUtilities
 <PageTitle>Menu</PageTitle>
@@ -18,6 +19,13 @@
         {
             <div class="w-100 d-flex justify-content-center">
                 <div class="spinner-border"></div>
+            </div>
+        }
+        else if (_fullName.Equals("Guest"))
+        {
+            <div class="d-flex">
+                <h3 class="m-auto">Welcome back, @_fullName !</h3>
+                <button class="m-auto px-1 btn-base w-25 py-1" @onclick="NavigateToLoginPage">Sign in</button>
             </div>
         }
         else
@@ -50,6 +58,10 @@
                 </tbody>
             </table>
         </div>
+        @if (!_fullName.Equals("Guest"))
+        {
+            <button class="btn-base" @onclick="SignOutButtonOnClick">Sign out</button>
+        }
     </div>
 </div>
 @code {
@@ -62,10 +74,25 @@
     {
         var userID = await localStorage.GetItemAsync<long>("USER_ID");
         var user = await http.GetFromJsonAsync<User>($"User?id={userID}");
-        _fullName = user == null ? "Guest" : $"{user.FirstName} {user.LastName}";
+        _fullName = string.IsNullOrEmpty(user?.Username) ? "Guest" : $"{user.FirstName} {user.LastName}";
         _isLoading = false;
         _totalAnswerCount = await localStorage.GetItemAsync<int>("ALL_COUNT");
         _totalCorrectCount = await localStorage.GetItemAsync<int>("CORRECT_COUNT");
         _totalIncorrectCount = await localStorage.GetItemAsync<int>("IN_CORRECT_COUNT");
+    }
+
+    private void NavigateToLoginPage()
+    {
+        var queryParameter = new Dictionary<string, string>
+            {
+                ["RedirectURL"] = navigationManager.Uri
+            };
+        navigationManager.NavigateTo(QueryHelpers.AddQueryString("Login", queryParameter));
+    }
+
+    private async void SignOutButtonOnClick()
+    {
+        await localStorage.SetItemAsync<long>("USER_ID", 0);
+        navigationManager.NavigateTo(navigationManager.BaseUri, true);
     }
 }

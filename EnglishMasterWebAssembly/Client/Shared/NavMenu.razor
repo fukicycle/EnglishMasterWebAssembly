@@ -15,7 +15,7 @@
             }
             else
             {
-                <NavLink class="nav-item" @onclick=@NavigateToUserPage>
+                <NavLink class="nav-item" @onclick=@NavigateToHome>
                     <span class="oi menu-item">@_user?.FirstName?.Substring(0, 1).ToUpper()</span>
                 </NavLink>
             }
@@ -41,12 +41,8 @@
         navigationManager.NavigateTo(QueryHelpers.AddQueryString("Login", queryParameter));
     }
 
-    private void NavigateToUserPage()
+    private void NavigateToHome()
     {
-        var queryParameter = new Dictionary<string, string>
-            {
-                ["RedirectURL"] = navigationManager.Uri
-            };
-        navigationManager.NavigateTo(QueryHelpers.AddQueryString("UserPage", queryParameter));
+        navigationManager.NavigateTo(navigationManager.BaseUri);
     }
 }
