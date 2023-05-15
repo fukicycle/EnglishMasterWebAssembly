@@ -32,7 +32,7 @@
         else
         {
             <h3>Welcome back, @_fullName !</h3>
-            <button class="btn-base" @onclick="SignOutButtonOnClick">Sign out</button>
+            @*<button class="btn-base" @onclick="SignOutButtonOnClick">Sign out</button>*@
             <div class="p-1">
                 <div class="spinner-area">
                     <p>Month:</p>
@@ -81,9 +81,9 @@
         navigationManager.NavigateTo(QueryHelpers.AddQueryString("Login", queryParameter));
     }
 
-    private async void SignOutButtonOnClick()
-    {
-        await localStorage.SetItemAsync<long>("USER_ID", 0);
-        navigationManager.NavigateTo(navigationManager.BaseUri, true);
-    }
+    //private async void SignOutButtonOnClick()
+    //{
+    //    await localStorage.SetItemAsync<long>("USER_ID", 0);
+    //    navigationManager.NavigateTo(navigationManager.BaseUri, true);
+    //}
 }

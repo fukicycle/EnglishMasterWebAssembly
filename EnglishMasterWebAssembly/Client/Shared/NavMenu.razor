@@ -15,15 +15,17 @@
             }
             else
             {
-                <NavLink class="nav-item" @onclick=@NavigateToHome>
+                <NavLink class="nav-item" @onclick="(() => _confirmDialog.ShowDialog())">
                     <span class="oi menu-item">@_user?.FirstName?.Substring(0, 1).ToUpper()</span>
                 </NavLink>
+                <ConfirmDialog @ref="_confirmDialog" Title="Confirm" Message="Do you sign out?" OKButtonCaption="Yes" CancelButtonCaption="No" ActionSelected="ActionSelected"></ConfirmDialog>
             }
         </div>
     </div>
 </nav>
 @code {
     private User? _user = null;
+    private ConfirmDialog _confirmDialog;
 
     protected override async Task OnInitializedAsync()
     {
@@ -42,5 +44,14 @@
     private void NavigateToHome()
     {
         navigationManager.NavigateTo(navigationManager.BaseUri);
+    }
+
+    private async void ActionSelected(bool dialogResult)
+    {
+        if (dialogResult)
+        {
+            await localStorage.SetItemAsync<long>("USER_ID", 0);
+            navigationManager.NavigateTo(navigationManager.Uri, true);
+        }
     }
 }
