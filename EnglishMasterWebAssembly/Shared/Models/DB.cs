@@ -16,16 +16,15 @@ namespace EnglishMasterWebAssembly.Shared.Models
         {
         }
 
-        public virtual DbSet<ExamResult> ExamResults { get; set; } = null!;
-        public virtual DbSet<ExamResultIncorrect> ExamResultIncorrects { get; set; } = null!;
         public virtual DbSet<Idiom> Idioms { get; set; } = null!;
         public virtual DbSet<Level> Levels { get; set; } = null!;
         public virtual DbSet<MeaningOfIdiom> MeaningOfIdioms { get; set; } = null!;
+        public virtual DbSet<MeaningOfWord> MeaningOfWords { get; set; } = null!;
+        public virtual DbSet<MeaningOfWordLearningHistory> MeaningOfWordLearningHistories { get; set; } = null!;
         public virtual DbSet<PartOfSpeech> PartOfSpeeches { get; set; } = null!;
-        public virtual DbSet<PracticeResult> PracticeResults { get; set; } = null!;
         public virtual DbSet<Room> Rooms { get; set; } = null!;
+        public virtual DbSet<RoomUser> RoomUsers { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
-        public virtual DbSet<Vocabulary> Vocabularies { get; set; } = null!;
         public virtual DbSet<Word> Words { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -33,48 +32,12 @@ namespace EnglishMasterWebAssembly.Shared.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Name=DB;");
+                optionsBuilder.UseSqlServer("user id=sa;password=P@ssWord;server=172.17.1.101;initial catalog=EnglishMaster;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ExamResult>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.Date).HasColumnType("datetime");
-
-                entity.Property(e => e.UserId).HasColumnName("UserID");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.ExamResults)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ExamResults_Users");
-            });
-
-            modelBuilder.Entity<ExamResultIncorrect>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.ExamResultId).HasColumnName("ExamResultID");
-
-                entity.Property(e => e.VocabularyId).HasColumnName("VocabularyID");
-
-                entity.HasOne(d => d.ExamResult)
-                    .WithMany(p => p.ExamResultIncorrects)
-                    .HasForeignKey(d => d.ExamResultId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ExamResultIncorrects_ExamResults");
-
-                entity.HasOne(d => d.Vocabulary)
-                    .WithMany(p => p.ExamResultIncorrects)
-                    .HasForeignKey(d => d.VocabularyId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ExamResultIncorrects_Vocabularies");
-            });
-
             modelBuilder.Entity<Idiom>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
@@ -107,85 +70,7 @@ namespace EnglishMasterWebAssembly.Shared.Models
                     .HasConstraintName("FK_MeaningOfIdioms_Idioms");
             });
 
-            modelBuilder.Entity<PartOfSpeech>(entity =>
-            {
-                entity.ToTable("PartOfSpeech");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.InJapanese).HasMaxLength(50);
-
-                entity.Property(e => e.Name)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<PracticeResult>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.Date).HasColumnType("datetime");
-
-                entity.Property(e => e.UserId).HasColumnName("UserID");
-
-                entity.Property(e => e.VocabularyId).HasColumnName("VocabularyID");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.PracticeResults)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_PracticeResults_Users");
-
-                entity.HasOne(d => d.Vocabulary)
-                    .WithMany(p => p.PracticeResults)
-                    .HasForeignKey(d => d.VocabularyId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_PracticeResults_Vocabularies");
-            });
-
-            modelBuilder.Entity<Room>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.Code)
-                    .HasMaxLength(6)
-                    .IsUnicode(false)
-                    .IsFixedLength();
-
-                entity.Property(e => e.Date).HasColumnType("datetime");
-
-                entity.Property(e => e.Title).HasMaxLength(20);
-            });
-
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.HasIndex(e => e.Username, "UQ_Users_Email")
-                    .IsUnique();
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.FirstName).HasMaxLength(100);
-
-                entity.Property(e => e.Icon)
-                    .HasMaxLength(3000)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.LastName).HasMaxLength(100);
-
-                entity.Property(e => e.Password)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Token)
-                    .HasMaxLength(64)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Username)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<Vocabulary>(entity =>
+            modelBuilder.Entity<MeaningOfWord>(entity =>
             {
                 entity.HasIndex(e => e.Id, "IX_Vocabularies");
 
@@ -200,22 +85,133 @@ namespace EnglishMasterWebAssembly.Shared.Models
                 entity.Property(e => e.WordId).HasColumnName("WordID");
 
                 entity.HasOne(d => d.Level)
-                    .WithMany(p => p.Vocabularies)
+                    .WithMany(p => p.MeaningOfWords)
                     .HasForeignKey(d => d.LevelId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Vocabularies_Levels");
 
                 entity.HasOne(d => d.PartOfSpeech)
-                    .WithMany(p => p.Vocabularies)
+                    .WithMany(p => p.MeaningOfWords)
                     .HasForeignKey(d => d.PartOfSpeechId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Vocabularies_PartOfSpeech");
 
                 entity.HasOne(d => d.Word)
-                    .WithMany(p => p.Vocabularies)
+                    .WithMany(p => p.MeaningOfWords)
                     .HasForeignKey(d => d.WordId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Vocabularies_Words");
+            });
+
+            modelBuilder.Entity<MeaningOfWordLearningHistory>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AnswerMeaningOfWordId).HasColumnName("AnswerMeaningOfWordID");
+
+                entity.Property(e => e.Date).HasColumnType("datetime");
+
+                entity.Property(e => e.QuestionMeaningOfWordId).HasColumnName("QuestionMeaningOfWordID");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.HasOne(d => d.AnswerMeaningOfWord)
+                    .WithMany(p => p.MeaningOfWordLearningHistoryAnswerMeaningOfWords)
+                    .HasForeignKey(d => d.AnswerMeaningOfWordId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_MeaningOfWordHistories_MeaningOfWords1");
+
+                entity.HasOne(d => d.QuestionMeaningOfWord)
+                    .WithMany(p => p.MeaningOfWordLearningHistoryQuestionMeaningOfWords)
+                    .HasForeignKey(d => d.QuestionMeaningOfWordId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_MeaningOfWordHistories_MeaningOfWords");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.MeaningOfWordLearningHistories)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_MeaningOfWordHistories_Users");
+            });
+
+            modelBuilder.Entity<PartOfSpeech>(entity =>
+            {
+                entity.ToTable("PartOfSpeech");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.InJapanese).HasMaxLength(50);
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Room>(entity =>
+            {
+                entity.HasIndex(e => e.Id, "IX_Rooms")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(6)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Date).HasColumnType("datetime");
+
+                entity.Property(e => e.Title).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<RoomUser>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.RoomId).HasColumnName("RoomID");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.HasOne(d => d.Room)
+                    .WithMany(p => p.RoomUsers)
+                    .HasForeignKey(d => d.RoomId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_RoomUsers_Rooms");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.RoomUsers)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_RoomUsers_Users");
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasIndex(e => e.Username, "UQ_Users_Email")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.FirstName).HasMaxLength(50);
+
+                entity.Property(e => e.Icon)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LastName).HasMaxLength(50);
+
+                entity.Property(e => e.Password)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Token)
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Username)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Word>(entity =>

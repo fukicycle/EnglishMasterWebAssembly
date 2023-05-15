@@ -129,6 +129,8 @@
     private bool? _isPass = null;
     private bool _isEnd = false;
     private bool _isLoad = false;
+    private Dictionary<long, bool> _result = new Dictionary<long, bool>();
+
     [SupplyParameterFromQuery]
     [Parameter]
     public long LevelId { get; set; } = 0;

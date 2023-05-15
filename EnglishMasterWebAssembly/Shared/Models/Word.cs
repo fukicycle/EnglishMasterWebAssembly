@@ -7,12 +7,12 @@ namespace EnglishMasterWebAssembly.Shared.Models
     {
         public Word()
         {
-            Vocabularies = new HashSet<Vocabulary>();
+            MeaningOfWords = new HashSet<MeaningOfWord>();
         }
 
         public long Id { get; set; }
         public string Word1 { get; set; } = null!;
 
-        public virtual ICollection<Vocabulary> Vocabularies { get; set; }
+        public virtual ICollection<MeaningOfWord> MeaningOfWords { get; set; }
     }
 }

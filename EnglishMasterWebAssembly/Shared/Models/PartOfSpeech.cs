@@ -7,13 +7,13 @@ namespace EnglishMasterWebAssembly.Shared.Models
     {
         public PartOfSpeech()
         {
-            Vocabularies = new HashSet<Vocabulary>();
+            MeaningOfWords = new HashSet<MeaningOfWord>();
         }
 
         public long Id { get; set; }
         public string Name { get; set; } = null!;
         public string InJapanese { get; set; } = null!;
 
-        public virtual ICollection<Vocabulary> Vocabularies { get; set; }
+        public virtual ICollection<MeaningOfWord> MeaningOfWords { get; set; }
     }
 }

@@ -42,7 +42,7 @@
     {
         _wordList = await http.GetFromJsonAsync<List<Word>>("Word") ?? new();
         _vocabularyList = await http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
-        _resultList = JsonConvert.DeserializeObject<Dictionary<long, bool>>(await sessionStorage.GetItemAsStringAsync("TestResult"));
+        _resultList = JsonConvert.DeserializeObject<Dictionary<long, bool>>(await sessionStorage.GetItemAsStringAsync("Result"));
     }
 }
 

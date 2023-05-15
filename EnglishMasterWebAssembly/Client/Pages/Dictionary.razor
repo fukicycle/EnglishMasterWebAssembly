@@ -16,7 +16,14 @@
                     <div>@item.Meaning</div>
                 }
             </div>
-            <button @onclick="BackButtonOnClick" class="btn-base">Back to list</button>
+            @if (OriginalSrc is null)
+            {
+                <button @onclick="BackButtonOnClick" class="btn-base">Back to list</button>
+            }
+            else
+            {
+                <button @onclick="BackButtonOnClick" class="btn-base">Back to result</button>
+            }
         </div>
     }
     else
@@ -90,6 +97,10 @@
     [SupplyParameterFromQuery]
     [Parameter]
     public long WordID { get; set; }
+
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string? OriginalSrc { get; set; }
     protected override async Task OnInitializedAsync()
     {
         _wordList = await http.GetFromJsonAsync<List<Word>>("Word") ?? new();
@@ -123,9 +134,16 @@
 
     private void BackButtonOnClick()
     {
-        WordID = 0;
-        _word = null;
-        ParameterChanged();
+        @if (OriginalSrc is null)
+        {
+            WordID = 0;
+            _word = null;
+            ParameterChanged();
+        }
+        else
+        {
+            navigationManager.NavigateTo(OriginalSrc);
+        }
     }
 }
 
