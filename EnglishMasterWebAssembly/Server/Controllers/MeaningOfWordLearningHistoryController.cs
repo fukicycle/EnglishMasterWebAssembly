@@ -19,11 +19,25 @@ namespace EnglishMasterWebAssembly.Server.Controllers
         {
             this._db = db;
         }
+
         [HttpGet]
-        public async Task<IEnumerable<MeaningOfWordLearningHistory>> Get(int count, int userId)
+        public async Task<IEnumerable<WordResult>> Get(int count, int userId)
         {
-            var list = await _db.MeaningOfWordLearningHistories.Where(a => a.UserId == userId).ToListAsync();
-            return list.OrderByDescending(a => a.Date).Take(count);
+            var list = await _db.MeaningOfWordLearningHistories
+                .Include(a => a.QuestionMeaningOfWord)
+                .ThenInclude(a => a.Word)
+                .Include(a => a.AnswerMeaningOfWord)
+                .ThenInclude(a => a.Word)
+                .Where(a => a.UserId == userId).ToListAsync();
+            return list.OrderByDescending(a => a.Date).Take(count).Select(a => new WordResult
+            {
+                Word = a.QuestionMeaningOfWord.Word.Word1,
+                WordID = a.QuestionMeaningOfWord.WordId,
+                Question = a.QuestionMeaningOfWord.Meaning,
+                Answer = a.AnswerMeaningOfWord.Meaning,
+                IsCorrect = a.AnswerMeaningOfWordId == a.QuestionMeaningOfWordId,
+                Date = a.Date
+            });
         }
 
         [HttpPost]

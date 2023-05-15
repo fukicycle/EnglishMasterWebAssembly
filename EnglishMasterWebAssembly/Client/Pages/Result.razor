@@ -12,14 +12,13 @@
         <div class="overflow-auto h-100">
             @foreach (var item in _resultList.OrderBy(a => a.Date))
             {
-                Word word = _wordList.First(b => b.Id == _meaningOfWordList.First(a => a.Id == item.QuestionMeaningOfWordId).WordId);
                 <div class="card mb-2 p-2 mx-1">
                     <div class="d-flex">
-                        <div class="fw-bold mx-1 m-auto text-start fs-2">@word.Word1</div>
-                        <button class="ms-1 m-auto btn" @onclick="(() => DictionaryOpenButtonOnClick(word.Word1.ToUpper().First().ToString(),word.Id.ToString()))">
+                        <div class="fw-bold mx-1 m-auto text-start fs-2">@item.Word</div>
+                        <button class="ms-1 m-auto btn" @onclick="(() => DictionaryOpenButtonOnClick(item.Word.ToUpper().First().ToString(),item.WordID.ToString()))">
                             <div class="oi oi-external-link"></div>
                         </button>
-                        @if (item.AnswerMeaningOfWordId == item.QuestionMeaningOfWordId)
+                        @if (item.IsCorrect)
                         {
                             <div class="text-success mx-3 me-1 m-auto oi oi-circle-check"></div>
                         }
@@ -30,11 +29,11 @@
                     </div>
                     <div class="row p-0 w-100">
                         <div class="col-5">Correct:</div>
-                        <div class="col-7">@_meaningOfWordList.First(a => a.Id == item.QuestionMeaningOfWordId).Meaning</div>
+                        <div class="col-7">@item.Question</div>
                     </div>
                     <div class="row p-0 w-100">
                         <div class="col-5">Your answer:</div>
-                        <div class="col-7">@_meaningOfWordList.First(a => a.Id == item.AnswerMeaningOfWordId).Meaning</div>
+                        <div class="col-7">@item.Answer</div>
                     </div>
                 </div>
             }
@@ -51,19 +50,15 @@
     }
 </div>
 @code {
-    private List<MeaningOfWord> _meaningOfWordList = new();
-    private List<Word> _wordList = new();
-    private List<MeaningOfWordLearningHistory> _resultList = new();
+    private List<WordResult> _resultList = new();
 
     [SupplyParameterFromQuery]
     [Parameter]
     public int Count { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        _wordList = await http.GetFromJsonAsync<List<Word>>("Word") ?? new();
-        _meaningOfWordList = await http.GetFromJsonAsync<List<MeaningOfWord>>("MeaningOfWord") ?? new();
         var user = await UserInfo.GetUserInfo(localStorage, http);
-        _resultList = await http.GetFromJsonAsync<List<MeaningOfWordLearningHistory>>(nameof(MeaningOfWordLearningHistory) + $"?count={Count}&userId={user.Id}") ?? new();
+        _resultList = await http.GetFromJsonAsync<List<WordResult>>(nameof(MeaningOfWordLearningHistory) + $"?count={Count}&userId={user.Id}") ?? new();
     }
 
     private void DictionaryOpenButtonOnClick(string initial, string id)
