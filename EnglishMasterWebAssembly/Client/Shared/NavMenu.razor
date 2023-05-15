@@ -15,7 +15,7 @@
             }
             else
             {
-                <NavLink class="nav-item" @onclick="(() => _confirmDialog.ShowDialog())">
+                <NavLink class="nav-item" @onclick="(() => _confirmDialog!.ShowDialog())">
                     <span class="oi menu-item">@_user?.FirstName?.Substring(0, 1).ToUpper()</span>
                 </NavLink>
                 <ConfirmDialog @ref="_confirmDialog" Title="Confirm" Message="Do you sign out?" OKButtonCaption="Yes" CancelButtonCaption="No" ActionSelected="ActionSelected"></ConfirmDialog>
@@ -25,7 +25,7 @@
 </nav>
 @code {
     private User? _user = null;
-    private ConfirmDialog _confirmDialog;
+    private ConfirmDialog? _confirmDialog;
 
     protected override async Task OnInitializedAsync()
     {

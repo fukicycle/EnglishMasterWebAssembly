@@ -126,7 +126,7 @@
 
     private void ParameterChanged()
     {
-        Dictionary<string, object> parameters = new Dictionary<string, object>();
+        Dictionary<string, object?> parameters = new Dictionary<string, object?>();
         parameters.Add(nameof(Initial), Initial);
         parameters.Add(nameof(WordID), WordID);
         navigationManager.NavigateTo(navigationManager.GetUriWithQueryParameters(parameters));

@@ -187,7 +187,7 @@
 
     private void ParameterChanged()
     {
-        Dictionary<string, object> parameters = new Dictionary<string, object>();
+        Dictionary<string, object?> parameters = new Dictionary<string, object?>();
         parameters.Add(nameof(LevelId), LevelId);
         parameters.Add(nameof(PartOfSpeechId), PartOfSpeechId);
         parameters.Add(nameof(Limit), Limit);
@@ -197,21 +197,27 @@
 
     private void LimitChanged(ChangeEventArgs e)
     {
-        Limit = int.Parse(e.Value.ToString());
+        var value = e.Value?.ToString();
+        if (value is null) return;
+        Limit = int.Parse(value);
         ParameterChanged();
         CreateQuestions();
     }
 
     private void LevelChanged(ChangeEventArgs e)
     {
-        LevelId = int.Parse(e.Value.ToString());
+        var value = e.Value?.ToString();
+        if (value is null) return;
+        LevelId = int.Parse(value);
         ParameterChanged();
         CreateQuestions();
     }
 
     private void PartOfSpeechChanged(ChangeEventArgs e)
     {
-        PartOfSpeechId = int.Parse(e.Value.ToString());
+        var value = e.Value?.ToString();
+        if (value is null) return;
+        PartOfSpeechId = int.Parse(value);
         ParameterChanged();
         CreateQuestions();
     }

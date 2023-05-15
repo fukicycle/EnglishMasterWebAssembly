@@ -58,7 +58,7 @@
     protected override async Task OnInitializedAsync()
     {
         var user = await UserInfo.GetUserInfo(localStorage, http);
-        _resultList = await http.GetFromJsonAsync<List<WordResult>>(nameof(MeaningOfWordLearningHistory) + $"?count={Count}&userId={user.Id}") ?? new();
+        _resultList = await http.GetFromJsonAsync<List<WordResult>>(nameof(MeaningOfWordLearningHistory) + $"?count={Count}&userId={user?.Id}") ?? new();
     }
 
     private void DictionaryOpenButtonOnClick(string initial, string id)
