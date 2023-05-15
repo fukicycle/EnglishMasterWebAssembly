@@ -34,6 +34,27 @@
             <h3>Welcome back, @_fullName !</h3>
             <button class="btn-base" @onclick="SignOutButtonOnClick">Sign out</button>
             <div class="p-1">
+                <div class="spinner-area">
+                    <p>Month:</p>
+                    <select>
+                        @foreach (var item in _summary.GroupBy(a => a.Date.ToString("yyyy-MM")))
+                        {
+                            <option>@item.Key</option>
+                        }
+                    </select>
+                </div>
+                <div class="row p-0 w-100">
+                    <div class="col-4">Total:</div>
+                    <div class="col-8">@_summary.Where(a => a.Date.Year == 2023 && a.Date.Month == 5).Sum(a => a.Total)</div>
+                </div>
+                <div class="row p-0 w-100">
+                    <div class="col-4">Correct:</div>
+                    <div class="col-8">@_summary.Where(a => a.Date.Year == 2023 && a.Date.Month == 5).Sum(a => a.Correct)</div>
+                </div>
+                <div class="row p-0 w-100">
+                    <div class="col-4">Incorrect:</div>
+                    <div class="col-8">@_summary.Where(a => a.Date.Year == 2023 && a.Date.Month == 5).Sum(a => a.Incorrect)</div>
+                </div>
             </div>
         }
     </div>
@@ -41,10 +62,13 @@
 @code {
     private bool _isLoading = true;
     private string _fullName = "Guest";
+    private List<Summary> _summary = new();
+
     protected override async Task OnInitializedAsync()
     {
         var user = await UserInfo.GetUserInfo(localStorage, http);
         _fullName = string.IsNullOrEmpty(user?.Username) ? "Guest" : $"{user.FirstName} {user.LastName}";
+        _summary = await http.GetFromJsonAsync<List<Summary>>(nameof(MeaningOfWordLearningHistory) + $"/summary?userId={user.Id}");
         _isLoading = false;
     }
 

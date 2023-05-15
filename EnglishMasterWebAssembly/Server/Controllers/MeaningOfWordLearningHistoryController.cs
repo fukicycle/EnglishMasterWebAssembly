@@ -54,5 +54,17 @@ namespace EnglishMasterWebAssembly.Server.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("summary")]
+        public async Task<IEnumerable<Summary>> Get(long userId)
+        {
+            return await _db.MeaningOfWordLearningHistories.Where(a => a.UserId == userId).GroupBy(a => a.Date.Date).Select(a => new Summary
+            {
+                Total = a.Count(),
+                Correct = a.Count(b => b.QuestionMeaningOfWordId == b.AnswerMeaningOfWordId),
+                Incorrect = a.Count(b => b.QuestionMeaningOfWordId != b.AnswerMeaningOfWordId),
+                Date = a.Key
+            }).ToListAsync();
+        }
     }
 }
