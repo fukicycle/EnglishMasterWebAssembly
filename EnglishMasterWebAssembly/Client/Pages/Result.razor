@@ -8,7 +8,7 @@
     @if (_resultList.Any())
     {
         <div class="overflow-auto h-100">
-            @foreach (var item in _resultList)
+            @foreach (var item in _resultList.OrderBy(a => a.Date))
             {
                 <div class="card mb-2 p-2 mx-1">
                     <div class="d-flex">
