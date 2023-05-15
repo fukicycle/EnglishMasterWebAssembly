@@ -1,18 +1,24 @@
 ﻿@page "/result"
 @using Newtonsoft.Json
 @using EnglishMasterWebAssembly.Shared.Models
+@using Microsoft.AspNetCore.WebUtilities
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject HttpClient http
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager navigationManager
 <div class="h-100 m-auto" style="max-width:600px;">
     @if (_resultList.Any())
     {
         <div class="overflow-auto h-100">
             @foreach (var item in _resultList.OrderBy(a => a.Date))
             {
+                Word word = _wordList.First(b => b.Id == _meaningOfWordList.First(a => a.Id == item.QuestionMeaningOfWordId).WordId);
                 <div class="card mb-2 p-2 mx-1">
                     <div class="d-flex">
-                        <div class="fw-bold ms-1 m-auto text-start fs-2">@_wordList.First(b => b.Id == _meaningOfWordList.First(a => a.Id == item.QuestionMeaningOfWordId).WordId).Word1</div>
+                        <div class="fw-bold mx-1 m-auto text-start fs-2">@word.Word1</div>
+                        <button class="ms-1 m-auto btn" @onclick="(() => DictionaryOpenButtonOnClick(word.Word1.ToUpper().First().ToString(),word.Id.ToString()))">
+                            <div class="oi oi-external-link"></div>
+                        </button>
                         @if (item.AnswerMeaningOfWordId == item.QuestionMeaningOfWordId)
                         {
                             <div class="text-success mx-3 me-1 m-auto oi oi-circle-check"></div>
@@ -58,6 +64,17 @@
         _meaningOfWordList = await http.GetFromJsonAsync<List<MeaningOfWord>>("MeaningOfWord") ?? new();
         var user = await UserInfo.GetUserInfo(localStorage, http);
         _resultList = await http.GetFromJsonAsync<List<MeaningOfWordLearningHistory>>(nameof(MeaningOfWordLearningHistory) + $"?count={Count}&userId={user.Id}") ?? new();
+    }
+
+    private void DictionaryOpenButtonOnClick(string initial, string id)
+    {
+        var queryParameter = new Dictionary<string, string>
+            {
+                ["Initial"] = initial,
+                ["WordId"] = id,
+                ["OriginalSrc"] = navigationManager.Uri
+            };
+        navigationManager.NavigateTo(QueryHelpers.AddQueryString("Dictionary", queryParameter));
     }
 }
 
