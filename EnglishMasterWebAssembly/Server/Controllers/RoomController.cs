@@ -21,7 +21,7 @@ namespace EnglishMasterWebAssembly.Server.Controllers
 
         public async Task<List<Room>> Get()
         {
-            return await _db.Rooms.Where(a => a.IsOpen == 1).ToListAsync();
+            return await _db.Rooms.Where(a => a.IsOpen).ToListAsync();
         }
     }
 }

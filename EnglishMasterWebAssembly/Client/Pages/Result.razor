@@ -28,20 +28,20 @@
 <div class="detail-area">
     @foreach (var item in _resultList.Where(a => a.Value == false))
     {
-        var vocaburary = _vocabularyList.First(a => a.Id == item.Key);
+        var vocaburary = _meaningOfWordList.First(a => a.Id == item.Key);
         var word = _wordList.First(a => a.Id == vocaburary.WordId);
         <div class="header">@word.Word1</div>
         <div class="contents">@vocaburary.Meaning</div>
     }
 </div>
 @code {
-    private List<Vocabulary> _vocabularyList = new();
+    private List<MeaningOfWord> _meaningOfWordList = new();
     private List<Word> _wordList = new();
     private Dictionary<long, bool> _resultList = new();
     protected override async Task OnInitializedAsync()
     {
         _wordList = await http.GetFromJsonAsync<List<Word>>("Word") ?? new();
-        _vocabularyList = await http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
+        _meaningOfWordList = await http.GetFromJsonAsync<List<MeaningOfWord>>("MeaningOfWord") ?? new();
         _resultList = JsonConvert.DeserializeObject<Dictionary<long, bool>>(await sessionStorage.GetItemAsStringAsync("Result"));
     }
 }

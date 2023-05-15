@@ -4,14 +4,14 @@ namespace EnglishMasterWebAssembly.Client
 {
     public static class Question
     {
-        public static IEnumerable<Vocabulary> GetQuestions(this IEnumerable<Vocabulary> items)
+        public static IEnumerable<MeaningOfWord> GetQuestions(this IEnumerable<MeaningOfWord> items)
         {
             return items.Select(a => new { a, o = Guid.NewGuid() }).OrderBy(a => a.o).Select(a => a.a);
         }
 
-        public static IEnumerable<Vocabulary> GetAnswer(this IEnumerable<Vocabulary> items, Vocabulary vocabulary)
+        public static IEnumerable<MeaningOfWord> GetAnswer(this IEnumerable<MeaningOfWord> items, MeaningOfWord vocabulary)
         {
-            List<Vocabulary> answers = new()
+            List<MeaningOfWord> answers = new()
             {
                 vocabulary
             };

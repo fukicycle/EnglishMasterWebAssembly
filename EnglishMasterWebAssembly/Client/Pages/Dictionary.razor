@@ -84,8 +84,8 @@
     }
 </div>
 @code {
-    private List<Vocabulary> _vocabularyList = new();
-    private List<Vocabulary> _displayList = new();
+    private List<MeaningOfWord> _meaningOfWordList = new();
+    private List<MeaningOfWord> _displayList = new();
     private List<PartOfSpeech> _partOfSpeechList = new();
     private List<Word> _wordList = new();
     private Word? _word = null;
@@ -104,7 +104,7 @@
     protected override async Task OnInitializedAsync()
     {
         _wordList = await http.GetFromJsonAsync<List<Word>>("Word") ?? new();
-        _vocabularyList = await http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
+        _meaningOfWordList = await http.GetFromJsonAsync<List<MeaningOfWord>>("MeaningOfWord") ?? new();
         _partOfSpeechList = await http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech") ?? new();
         if (string.IsNullOrEmpty(Initial)) Initial = "A";
         OnClickWord(WordID, true);
@@ -113,7 +113,7 @@
     private void OnClickWord(long id, bool isInitialized = false)
     {
         _word = _wordList.FirstOrDefault(a => a.Id == id);
-        _displayList = _vocabularyList.Where(a => a.WordId == id).ToList();
+        _displayList = _meaningOfWordList.Where(a => a.WordId == id).ToList();
         WordID = id;
         if (!isInitialized) ParameterChanged();
     }
