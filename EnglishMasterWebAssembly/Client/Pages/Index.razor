@@ -27,57 +27,25 @@
                 <h3 class="m-auto">Welcome back, @_fullName !</h3>
                 <button class="m-auto px-1 btn-base w-25 py-1" @onclick="NavigateToLoginPage">Sign in</button>
             </div>
+            <div class="p-1">Sign in to see all results.</div>
         }
         else
         {
             <h3>Welcome back, @_fullName !</h3>
-        }
-        <div class="p-1">
-            <h4>Your score</h4>
-            <div></div>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Count</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Total</td>
-                        <td>@_totalAnswerCount</td>
-                    </tr>
-                    <tr>
-                        <td>Correct</td>
-                        <td>@_totalCorrectCount</td>
-                    </tr>
-                    <tr>
-                        <td>Incorrect</td>
-                        <td>@_totalIncorrectCount</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        @if (!_fullName.Equals("Guest"))
-        {
             <button class="btn-base" @onclick="SignOutButtonOnClick">Sign out</button>
+            <div class="p-1">
+            </div>
         }
     </div>
 </div>
 @code {
     private bool _isLoading = true;
     private string _fullName = "Guest";
-    private int? _totalAnswerCount = null;
-    private int? _totalCorrectCount = null;
-    private int? _totalIncorrectCount = null;
     protected override async Task OnInitializedAsync()
     {
         var user = await UserInfo.GetUserInfo(localStorage, http);
         _fullName = string.IsNullOrEmpty(user?.Username) ? "Guest" : $"{user.FirstName} {user.LastName}";
         _isLoading = false;
-        _totalAnswerCount = await localStorage.GetItemAsync<int>("ALL_COUNT");
-        _totalCorrectCount = await localStorage.GetItemAsync<int>("CORRECT_COUNT");
-        _totalIncorrectCount = await localStorage.GetItemAsync<int>("IN_CORRECT_COUNT");
     }
 
     private void NavigateToLoginPage()
