@@ -10,16 +10,16 @@ namespace EnglishMasterWebAssembly.Server.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class VocabularyController : ControllerBase
+    public class MeaningOfWordController : ControllerBase
     {
-        private DB db;
-        public VocabularyController(DB db)
+        private DB _db;
+        public MeaningOfWordController(DB db)
         {
-            this.db = db;
+            this._db = db;
         }
-        public async Task<IEnumerable<Vocabulary>> Get()
+        public async Task<IEnumerable<MeaningOfWord>> Get()
         {
-            return await db.Vocabularies.ToListAsync();
+            return await _db.MeaningOfWords.ToListAsync();
         }
     }
 }

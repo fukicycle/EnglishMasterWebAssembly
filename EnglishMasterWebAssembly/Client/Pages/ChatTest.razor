@@ -27,10 +27,10 @@
 </ul>
 
 @code {
-    private HubConnection hubConnection;
+    private HubConnection hubConnection = null!;
     private List<string> messages = new List<string>();
-    private string userInput;
-    private string messageInput;
+    private string? userInput;
+    private string? messageInput;
 
     protected override async Task OnInitializedAsync()
     {

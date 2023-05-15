@@ -1,8 +1,8 @@
-﻿@page "/IdiomQuestion"
+﻿@page "/idiomQuestion"
 @using EnglishMasterWebAssembly.Shared.Models
 @using System.Timers
 @using Newtonsoft.Json
-@inject HttpClient Http
+@inject HttpClient http
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager navigationManager
@@ -10,13 +10,13 @@
 <div class="container">
     <div class="content-area">
         @*@if (!IsTest)
-            {
-                <div class="achivement-area">
-                    <p class="text-primary">@TotalAnswerCount</p>
-                    <p class="text-success">@TotalCorrectCount</p>
-                    <p class="text-danger">@TotalIncorrectCount</p>
-                </div>
-            }*@
+        {
+        <div class="achivement-area">
+        <p class="text-primary">@TotalAnswerCount</p>
+        <p class="text-success">@TotalCorrectCount</p>
+        <p class="text-danger">@TotalIncorrectCount</p>
+        </div>
+        }*@
         <div class="spinner-area">
             <p>モード</p>
             @*<select @onchange="@ModeChanged" disabled="@Timer.Enabled">*@
@@ -26,7 +26,7 @@
             </select>
         </div>
         <div class="question-area">
-            @if (IdiomList == null || Questions == null)
+            @if (_idiomList == null || _questions == null)
             {
                 <p class="question">Loading...</p>
                 <hr />
@@ -34,78 +34,78 @@
             }
             else
             {
-                if (IsEnd)
+                if (_isEnd)
                 {
                     <p class="question">Completed!</p>
                     <p>-</p>
                     <hr />
-                    <p class="count">@(Idx + 1)/@Questions.Count</p>
+                    <p class="count">@(_idx + 1)/@_questions.Count</p>
                 }
-                else if (IsPass == null)
+                else if (_isPass == null)
                 {
-                    if (IsTest)
+                    if (_isTest)
                     {
-                        if (Timer.Enabled)
+                        if (_timer.Enabled)
                         {
-                            <p class="question">@(IdiomList.FirstOrDefault(a => a.Id == Question.IdiomId)?.Idiom1 ?? "No word")</p>
-                            <p>@LimitTime.ToString(@"mm\:ss")</p>
+                            <p class="question">@(_idiomList.FirstOrDefault(a => a.Id == _question.IdiomId)?.Idiom1 ?? "No word")</p>
+                            <p>@_limitTime.ToString(@"mm\:ss")</p>
                             <hr />
-                            <p class="count">@(Idx + 1)/@Questions.Count</p>
+                            <p class="count">@(_idx + 1)/@_questions.Count</p>
                         }
                         else
                         {
                             <p class="question">Please click the start!</p>
-                            <p>@LimitTime.ToString(@"mm\:ss")</p>
+                            <p>@_limitTime.ToString(@"mm\:ss")</p>
                             <hr />
-                            <p class="count">@(Idx + 1)/@Questions.Count</p>
+                            <p class="count">@(_idx + 1)/@_questions.Count</p>
 
                         }
                     }
                     else
                     {
-                        <p class="question">@(IdiomList.FirstOrDefault(a => a.Id == Question.IdiomId)?.Idiom1 ?? "No word")</p>
+                        <p class="question">@(_idiomList.FirstOrDefault(a => a.Id == _question.IdiomId)?.Idiom1 ?? "No word")</p>
                         <p>-</p>
                         <hr />
-                        <p class="count">@(Idx + 1)/@Questions.Count</p>
+                        <p class="count">@(_idx + 1)/@_questions.Count</p>
                     }
                 }
-                else if (IsPass == true)
+                else if (_isPass == true)
                 {
-                    <p class="question">@(IdiomList.FirstOrDefault(a => a.Id == Question.IdiomId)?.Idiom1 ?? "No word")</p>
+                    <p class="question">@(_idiomList.FirstOrDefault(a => a.Id == _question.IdiomId)?.Idiom1 ?? "No word")</p>
                     <p class="text-success">Correct !</p>
                     <hr />
-                    <p class="count">@(Idx + 1)/@Questions.Count</p>
+                    <p class="count">@(_idx + 1)/@_questions.Count</p>
                 }
                 else
                 {
-                    <p class="question">@(IdiomList.FirstOrDefault(a => a.Id == Question.IdiomId)?.Idiom1 ?? "No word")</p>
+                    <p class="question">@(_idiomList.FirstOrDefault(a => a.Id == _question.IdiomId)?.Idiom1 ?? "No word")</p>
                     <p class="text-danger">Incorrect !</p>
                     <hr />
-                    <p class="count">@(Idx + 1)/@Questions.Count</p>
+                    <p class="count">@(_idx + 1)/@_questions.Count</p>
                 }
             }
         </div>
         <div class="answer-area">
-            @if (Question.IdiomId == 0)
+            @if (_question.IdiomId == 0)
             {
                 <div class="spinner-border"></div>
             }
             else
             {
-                @if (IsTest && !IsEnd && !Timer.Enabled)
+                @if (_isTest && !_isEnd && !_timer.Enabled)
                 {
                     <button class="btn-base" @onclick="StartButtonOnClick">Start</button>
                 }
-                else if (!IsEnd)
+                else if (!_isEnd)
                 {
-                    @foreach (var item in AnswerList)
+                    @foreach (var item in _answerList)
                     {
                         <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))">@item.Meaning</button>
                     }
                 }
                 else
                 {
-                    if (IsTest)
+                    if (_isTest)
                     {
                         <button class="btn-base" @onclick="@(() => navigationManager.NavigateTo("./Result"))">Show Result</button>
                     }
@@ -117,7 +117,7 @@
             }
         </div>
         <div class="navigation-area">
-            @if (Question != null && !IsTest)
+            @if (_question != null && !_isTest)
             {
                 <button class="btn-base" @onclick="@MovePrev"><span class="oi oi-chevron-left"></span></button>
                 <button class="btn-base" @onclick="@MoveNext"><span class="oi oi-chevron-right"></span></button>
@@ -126,138 +126,140 @@
     </div>
 </div>
 @code {
-    private List<MeaningOfIdiom> MeaningOfIdiomList = new();
-    private List<Idiom> IdiomList = new();
-    private List<MeaningOfIdiom> Questions = new();
-    private MeaningOfIdiom Question = new();
-    private List<MeaningOfIdiom> AnswerList = new();
-    private int Idx = 0;
-    private bool? IsPass = null;
-    private bool IsEnd = false;
+    private List<MeaningOfIdiom> _meaningOfIdiomList = new();
+    private List<Idiom> _idiomList = new();
+    private List<MeaningOfIdiom> _questions = new();
+    private MeaningOfIdiom _question = new();
+    private List<MeaningOfIdiom> _answerList = new();
+    private int _idx = 0;
+    private bool? _isPass = null;
+    private bool _isEnd = false;
 
     //Test mode property
-    private bool IsTest = false;
-    private Timer Timer = new Timer(1000);
-    private TimeSpan LimitTime = TimeSpan.FromSeconds(90);
-    private Dictionary<long, bool> TestResult = new();
-    private int TotalAnswerCount = 0;
-    private int TotalCorrectCount = 0;
-    private int TotalIncorrectCount = 0;
+    private bool _isTest = false;
+    private Timer _timer = new Timer(1000);
+    private TimeSpan _limitTime = TimeSpan.FromSeconds(90);
+    private Dictionary<long, bool> _testResult = new();
+    private int _totalAnswerCount = 0;
+    private int _totalCorrectCount = 0;
+    private int _totalIncorrectCount = 0;
 
     protected override async Task OnInitializedAsync()
     {
-        IdiomList = await Http.GetFromJsonAsync<List<Idiom>>("Idiom") ?? new();
-        MeaningOfIdiomList = await Http.GetFromJsonAsync<List<MeaningOfIdiom>>("MeaningOfIdiom") ?? new();
-        Questions = MeaningOfIdiomList.GetQuestions().ToList() ?? new();
-        Question = Questions[Idx];
-        AnswerList = MeaningOfIdiomList.GetAnswer(Question).ToList();
-        Timer.Elapsed += (s, e) =>
+        _idiomList = await http.GetFromJsonAsync<List<Idiom>>("Idiom") ?? new();
+        _meaningOfIdiomList = await http.GetFromJsonAsync<List<MeaningOfIdiom>>("MeaningOfIdiom") ?? new();
+        _questions = _meaningOfIdiomList.GetQuestions().ToList() ?? new();
+        _question = _questions[_idx];
+        _answerList = _meaningOfIdiomList.GetAnswer(_question).ToList();
+        _timer.Elapsed += (s, e) =>
         {
-            LimitTime = LimitTime.Subtract(TimeSpan.FromSeconds(1));
-            if (LimitTime == TimeSpan.Zero)
+            _limitTime = _limitTime.Subtract(TimeSpan.FromSeconds(1));
+            if (_limitTime == TimeSpan.Zero)
             {
-                IsEnd = true;
-                Timer.Stop();
+                _isEnd = true;
+                _timer.Stop();
             }
             StateHasChanged();
         };
-        TotalAnswerCount = await localStorage.GetItemAsync<int>("ALL_COUNT");
-        TotalCorrectCount = await localStorage.GetItemAsync<int>("CORRECT_COUNT");
-        TotalIncorrectCount = await localStorage.GetItemAsync<int>("IN_CORRECT_COUNT");
+        _totalAnswerCount = await localStorage.GetItemAsync<int>("ALL_COUNT");
+        _totalCorrectCount = await localStorage.GetItemAsync<int>("CORRECT_COUNT");
+        _totalIncorrectCount = await localStorage.GetItemAsync<int>("IN_CORRECT_COUNT");
     }
 
     private void MovePrev()
     {
-        IsEnd = false;
-        if (Questions.Count == 0) return;
-        IsPass = null;
-        Idx = Idx - 1;
-        if (Idx < 0)
+        _isEnd = false;
+        if (_questions.Count == 0) return;
+        _isPass = null;
+        _idx = _idx - 1;
+        if (_idx < 0)
         {
-            Idx = 0;
+            _idx = 0;
         }
         else
         {
-            Question = Questions[Idx];
-            AnswerList = MeaningOfIdiomList.GetAnswer(Question).ToList();
+            _question = _questions[_idx];
+            _answerList = _meaningOfIdiomList.GetAnswer(_question).ToList();
         }
     }
 
     private void MoveNext()
     {
-        if (Questions.Count == 0) return;
-        IsPass = null;
-        Idx = Idx + 1;
-        if (Idx >= Questions.Count)
+        if (_questions.Count == 0) return;
+        _isPass = null;
+        _idx = _idx + 1;
+        if (_idx >= _questions.Count)
         {
-            IsEnd = true;
-            Idx = Questions.Count - 1;
-            if (IsTest) Timer.Stop();
+            _isEnd = true;
+            _idx = _questions.Count - 1;
+            if (_isTest) _timer.Stop();
         }
         else
         {
-            Question = Questions[Idx];
-            AnswerList = MeaningOfIdiomList.GetAnswer(Question).ToList();
+            _question = _questions[_idx];
+            _answerList = _meaningOfIdiomList.GetAnswer(_question).ToList();
         }
     }
 
     private long prevAnswerId = 0;
     private async Task AnswerButtonOnClick(long id)
     {
-        IsPass = null;
+        _isPass = null;
         if (prevAnswerId != id)
         {
             prevAnswerId = id;
-            TotalAnswerCount++;
-            await localStorage.SetItemAsync<int>("ALL_COUNT", TotalAnswerCount);
-            if (Question.Id == id)
+            _totalAnswerCount++;
+            await localStorage.SetItemAsync<int>("ALL_COUNT", _totalAnswerCount);
+            if (_question.Id == id)
             {
-                TotalCorrectCount++;
-                await localStorage.SetItemAsync<int>("CORRECT_COUNT", TotalCorrectCount);
+                _totalCorrectCount++;
+                await localStorage.SetItemAsync<int>("CORRECT_COUNT", _totalCorrectCount);
             }
             else
             {
-                TotalIncorrectCount++;
-                await localStorage.SetItemAsync<int>("IN_CORRECT_COUNT", TotalIncorrectCount);
+                _totalIncorrectCount++;
+                await localStorage.SetItemAsync<int>("IN_CORRECT_COUNT", _totalIncorrectCount);
             }
         }
-        if (IsTest)
+        if (_isTest)
         {
-            bool testResult = Question.Id == id;
-            TestResult.Add(Question.Id, testResult);
-            await sessionStorage.SetItemAsStringAsync("TestResult", JsonConvert.SerializeObject(TestResult));
+            bool testResult = _question.Id == id;
+            _testResult.Add(_question.Id, testResult);
+            await sessionStorage.SetItemAsStringAsync("TestResult", JsonConvert.SerializeObject(_testResult));
             MoveNext();
         }
-        else IsPass = Question.Id == id;
+        else _isPass = _question.Id == id;
     }
 
     private void ModeChanged(ChangeEventArgs e)
     {
-        IsTest = e.Value.ToString() == "試験";
+        var value = e.Value?.ToString();
+        if (value is null) return;
+        _isTest = value == "試験";
         CreateQuestions();
     }
 
     private void StartButtonOnClick()
     {
-        Timer.Start();
+        _timer.Start();
     }
 
     private void CreateQuestions()
     {
-        IsPass = null;
-        Idx = 0;
-        if (IsTest) Questions = MeaningOfIdiomList.GetQuestions().Take(25).ToList();
-        else Questions = MeaningOfIdiomList.GetQuestions().ToList();
-        if (Questions.Count > 0)
-            Question = Questions[Idx];
+        _isPass = null;
+        _idx = 0;
+        if (_isTest) _questions = _meaningOfIdiomList.GetQuestions().Take(25).ToList();
+        else _questions = _meaningOfIdiomList.GetQuestions().ToList();
+        if (_questions.Count > 0)
+            _question = _questions[_idx];
         else
-            Question = new MeaningOfIdiom();
-        AnswerList = MeaningOfIdiomList.GetAnswer(Question).ToList();
+            _question = new MeaningOfIdiom();
+        _answerList = _meaningOfIdiomList.GetAnswer(_question).ToList();
     }
 
     private void ReturnButtonOnClick()
     {
-        IsEnd = false;
+        _isEnd = false;
         CreateQuestions();
     }
 }

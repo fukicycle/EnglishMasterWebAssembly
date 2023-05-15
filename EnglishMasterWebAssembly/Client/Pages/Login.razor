@@ -1,71 +1,57 @@
-﻿@page "/Login"
-@inject HttpClient Http
+﻿@page "/login"
+@inject HttpClient http
 @inject NavigationManager navigationManager
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @using EnglishMasterWebAssembly.Shared.Models
 @using Newtonsoft.Json
-@*<div class="login-area">
-    <h3 class="text-center">Login</h3>
-    <div class="input-area">
-        <span>Username</span>
-        <input type="text" @bind="Username" />
-    </div>
-    <div class="input-area">
-        <span>Password</span>
-        <input type="password" @bind="Password" />
-    </div>
-    <button class="btn-base" style="border:none;margin-top:10px;" @onclick="@LoginButtonOnClick">Login</button>
-    <div class="text-secondary text-center" style="margin:10px;">or</div>
-    <div class="text-center">
-        <a class="text-secondary" href="#">Register</a>
-    </div>
-    <div class="alert-danger text-center">@Message</div>
-</div>*@
 <div class="container">
     <div>
         <div class="login-field">
-            <input type="text" class="login-input text-center" placeholder="Username" @bind=Username>
+            <input type="text" class="login-input text-center" placeholder="Username" @bind=_username>
         </div>
         <div class="login-field">
-            <input type="password" class="login-input text-center" placeholder="Password" @bind=Password>
+            <input type="password" class="login-input text-center" placeholder="Password" @bind=_password>
         </div>
         <button class="button login-submit text-center" @onclick="@LoginButtonOnClick">Sign in</button>
         <div class="text-secondary text-center">or</div>
-        <button class="button login-submit text-center" @onclick="@(() => Message = "Sorry, Not implemented yet.")">Register</button>
-        <div class="text-danger text-center">@Message</div>
+        <button class="button login-submit text-center" @onclick="@(() => _message = "Sorry, Not implemented yet.")">Register</button>
+        <div class="text-danger text-center">@_message</div>
     </div>
 </div>
 @code {
     [SupplyParameterFromQuery]
     [Parameter]
     public string? RedirectURL { get; set; }
-    private string Message = "";
-    private string Password = "";
-    private string Username = "";
+    private string _message = "";
+    private string _password = "";
+    private string _username = "";
     private async Task LoginButtonOnClick()
     {
-        Message = "";
+        _message = "";
         var user = new User
             {
-                Username = Username,
-                Password = Password,
+                Username = _username,
+                Password = _password,
                 FirstName = "",
                 LastName = ""
             };
         HttpContent content = new StringContent(JsonConvert.SerializeObject(user), System.Text.Encoding.UTF8, "application/json");
-        HttpResponseMessage response = await Http.PostAsync("user/post/login", content);
+        HttpResponseMessage response = await http.PostAsync("user/post/login", content);
         var result = await response.Content.ReadAsStringAsync();
         if (result.Contains("Authentication failed."))
         {
-            Message = result;
+            _message = result;
             return;
         }
-        else
+        else if (RedirectURL is not null)
         {
             await localStorage.SetItemAsync<long>("USER_ID", long.Parse(result));
             navigationManager.NavigateTo(RedirectURL, true);
         }
+        else
+        {
+            navigationManager.NavigateTo(navigationManager.BaseUri, true);
+        }
     }
-
 }
 

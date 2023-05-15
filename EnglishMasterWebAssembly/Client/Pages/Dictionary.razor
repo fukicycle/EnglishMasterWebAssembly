@@ -1,84 +1,149 @@
-﻿@page "/Dictionary"
+﻿@page "/dictionary"
 @using EnglishMasterWebAssembly.Shared.Models
 @using System.Timers
 @using Newtonsoft.Json
-@inject HttpClient Http
-<div class="mean-area">
-    @foreach (var item in DisplayList)
-    {
-        <div>@PartOfSpeechList.First(a => a.Id == item.PartOfSpeechId).InJapanese</div>
-        <div>@item.Meaning</div>
-    }
-</div>
+@inject HttpClient http
+@inject NavigationManager navigationManager
 <div class="main-area">
-    <div class="d-flex align-items-start">
-        <div class="nav flex-column nav-pills"
-             id="v-pills-tab"
-             role="tablist"
-             aria-orientation="vertical">
-            @foreach (var item in WordList.GroupBy(a => a.Word1.ToUpper().First()).OrderBy(a => Convert.ToInt16(a.Key)))
+    @if (_word is not null)
+    {
+        <div>
+            <div class="text-center fw-bold h1 py-3">@_word.Word1</div>
+            <div class="mean-area">
+                @foreach (var item in _displayList)
+                {
+                    <div>@_partOfSpeechList.First(a => a.Id == item.PartOfSpeechId).InJapanese</div>
+                    <div>@item.Meaning</div>
+                }
+            </div>
+            @if (OriginalSrc is null)
             {
-                string class1 = "";
-                if (item.Key == 'A')
-                {
-                    class1 = "nav-link nav-icon-round active";
-                }
-                else
-                {
-                    class1 = "nav-link nav-icon-round";
-                }
-                <button class="@class1"
-                        id="v-pills-home-tab"
-                        data-bs-toggle="pill"
-                        data-bs-target="#v-pills-@item.Key"
-                        type="button"
-                        role="tab"
-                        aria-controls="v-pills-home"
-                        aria-selected="true">
-                    @item.Key
-                </button>
+                <button @onclick="BackButtonOnClick" class="btn-base">Back to list</button>
+            }
+            else
+            {
+                <button @onclick="BackButtonOnClick" class="btn-base">Back to result</button>
             }
         </div>
-        <div class="tab-content" id="v-pills-tabContent">
-            @foreach (var item in WordList.GroupBy(a => a.Word1.ToUpper().First()).OrderBy(a => Convert.ToInt16(a.Key)))
-            {
-                string class1 = "";
-                if (item.Key == 'A')
+    }
+    else
+    {
+        <div class="d-flex align-items-start">
+            <div class="nav flex-column nav-pills"
+                 id="v-pills-tab"
+                 role="tablist"
+                 aria-orientation="vertical">
+                @foreach (var item in _wordList.GroupBy(a => a.Word1.ToUpper().First()).OrderBy(a => Convert.ToInt16(a.Key)))
                 {
-                    class1 = "dictionary-list tab-pane fade show active";
-                }
-                else
-                {
-                    class1 = "dictionary-list tab-pane fade show";
-                }
-                <div class="@class1"
-                     id="v-pills-@item.Key"
-                     role="tabpanel"
-                     aria-labelledby="v-pills-home-tab">
-                    @foreach (var item1 in item.OrderBy(a => a.Word1))
+                    string class1 = "";
+                    if (Initial == item.Key.ToString())
                     {
-                        <button class="btn-base btn-no-outline" @onclick="@(() => OnClickWord(item1.Id))">@item1.Word1</button>
+                        class1 = "nav-link nav-icon-round active";
                     }
-                </div>
-            }
+                    else
+                    {
+                        class1 = "nav-link nav-icon-round";
+                    }
+                    <button class="@class1"
+                            id="v-pills-home-tab"
+                            data-bs-toggle="pill"
+                            data-bs-target="#v-pills-@item.Key"
+                            type="button"
+                            role="tab"
+                            aria-controls="v-pills-home"
+                            aria-selected="true"
+                    @onclick="(() => SetKeyValue(item.Key))">
+                        @item.Key
+                    </button>
+                }
+            </div>
+            <div class="tab-content" id="v-pills-tabContent">
+                @foreach (var item in _wordList.GroupBy(a => a.Word1.ToUpper().First()).OrderBy(a => Convert.ToInt16(a.Key)))
+                {
+                    string class1 = "";
+                    if (Initial == item.Key.ToString())
+                    {
+                        class1 = "dictionary-list tab-pane fade show active";
+                    }
+                    else
+                    {
+                        class1 = "dictionary-list tab-pane fade show";
+                    }
+                    <div class="@class1"
+                         id="v-pills-@item.Key"
+                         role="tabpanel"
+                         aria-labelledby="v-pills-home-tab">
+                        @foreach (var item1 in item.OrderBy(a => a.Word1))
+                        {
+                            <button class="btn-base btn-no-outline" @onclick="@(() => OnClickWord(item1.Id))">@item1.Word1</button>
+                        }
+                    </div>
+                }
+            </div>
         </div>
-    </div>
+    }
 </div>
 @code {
-    private List<Vocabulary> VocabularyList = new();
-    private List<Vocabulary> DisplayList = new();
-    private List<PartOfSpeech> PartOfSpeechList = new();
-    private List<Word> WordList = new();
+    private List<MeaningOfWord> _meaningOfWordList = new();
+    private List<MeaningOfWord> _displayList = new();
+    private List<PartOfSpeech> _partOfSpeechList = new();
+    private List<Word> _wordList = new();
+    private Word? _word = null;
+
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string Initial { get; set; } = "A";
+
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public long WordID { get; set; }
+
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string? OriginalSrc { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        WordList = await Http.GetFromJsonAsync<List<Word>>("Word") ?? new();
-        VocabularyList = await Http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
-        PartOfSpeechList = await Http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech") ?? new();
+        _wordList = await http.GetFromJsonAsync<List<Word>>("Word") ?? new();
+        _meaningOfWordList = await http.GetFromJsonAsync<List<MeaningOfWord>>("MeaningOfWord") ?? new();
+        _partOfSpeechList = await http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech") ?? new();
+        if (string.IsNullOrEmpty(Initial)) Initial = "A";
+        OnClickWord(WordID, true);
     }
 
-    private void OnClickWord(long id)
+    private void OnClickWord(long id, bool isInitialized = false)
     {
-        DisplayList = VocabularyList.Where(a => a.WordId == id).ToList();
+        _word = _wordList.FirstOrDefault(a => a.Id == id);
+        _displayList = _meaningOfWordList.Where(a => a.WordId == id).ToList();
+        WordID = id;
+        if (!isInitialized) ParameterChanged();
+    }
+
+    private void SetKeyValue(char item)
+    {
+        Initial = item.ToString();
+        ParameterChanged();
+    }
+
+    private void ParameterChanged()
+    {
+        Dictionary<string, object?> parameters = new Dictionary<string, object?>();
+        parameters.Add(nameof(Initial), Initial);
+        parameters.Add(nameof(WordID), WordID);
+        navigationManager.NavigateTo(navigationManager.GetUriWithQueryParameters(parameters));
+    }
+
+    private void BackButtonOnClick()
+    {
+        @if (OriginalSrc is null)
+        {
+            WordID = 0;
+            _word = null;
+            ParameterChanged();
+        }
+        else
+        {
+            navigationManager.NavigateTo(OriginalSrc);
+        }
     }
 }
 

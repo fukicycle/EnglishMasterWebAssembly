@@ -1,0 +1,21 @@
+﻿.main-area {
+    overflow-y: auto;
+    max-width: 500px;
+    margin: auto;
+    padding: 5px;
+    height: 100%;
+}
+
+    .main-area > div {
+        overflow-y: auto;
+        height: 100%;
+        box-sizing: border-box;
+    }
+
+.mean-area {
+    max-width: 500px;
+    padding: 5px;
+    text-align: center;
+    display: grid;
+    grid-template-columns: 20% 80%;
+}

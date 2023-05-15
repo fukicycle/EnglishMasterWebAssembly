@@ -13,14 +13,14 @@ namespace EnglishMasterWebAssembly.Server.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private DB db;
+        private DB _db;
         public UserController(DB db)
         {
-            this.db = db;
+            this._db = db;
         }
         public async Task<User> Get(long id)
         {
-            var user = await db.Users.FindAsync(id);
+            var user = await _db.Users.FindAsync(id);
             if (user == null) return new User { Username = string.Empty };
             return user;
         }
@@ -30,7 +30,7 @@ namespace EnglishMasterWebAssembly.Server.Controllers
         {
             try
             {
-                var login = await db.Users.FirstOrDefaultAsync(a => a.Username == user.Username && a.Password == user.Password);
+                var login = await _db.Users.FirstOrDefaultAsync(a => a.Username == user.Username && a.Password == user.Password);
                 if (login == null) throw new Exception("Authentication failed.");
                 return login.Id.ToString();
             }

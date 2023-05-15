@@ -207,14 +207,6 @@ a, .btn-link {
     padding: 2px;
 }
 
-.main-area {
-    max-width: 500px;
-    background-color: #A6C8FC;
-    margin: auto;
-    padding: 15px;
-    border-radius: 30px;
-}
-
 .nav-icon-round {
     border-radius: 20px !important;
     height: 40px;
@@ -237,16 +229,6 @@ a, .btn-link {
     border: none !important;
 }
 
-.mean-area {
-    max-width: 500px;
-    padding: 20px;
-    margin: 5px auto;
-    text-align: center;
-    background-color: #A6C8FC;
-    border-radius: 30px;
-    display: grid;
-    grid-template-columns: 20% 80%;
-}
 
 .navigation-bar-area {
     height: 100px;

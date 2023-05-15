@@ -12,14 +12,14 @@ namespace EnglishMasterWebAssembly.Server.Controllers
     [ApiController]
     public class MeaningOfIdiomController : ControllerBase
     {
-        private DB db;
+        private DB _db;
         public MeaningOfIdiomController(DB db)
         {
-            this.db = db;
+            this._db = db;
         }
         public async Task<IEnumerable<MeaningOfIdiom>> Get()
         {
-            return await db.MeaningOfIdioms.ToListAsync();
+            return await _db.MeaningOfIdioms.ToListAsync();
         }
     }
 }

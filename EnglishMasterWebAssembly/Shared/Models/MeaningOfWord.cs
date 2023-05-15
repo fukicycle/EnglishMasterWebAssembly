@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace EnglishMasterWebAssembly.Shared.Models
 {
-    public partial class Vocabulary
+    public partial class MeaningOfWord
     {
-        public Vocabulary()
+        public MeaningOfWord()
         {
-            ExamResultIncorrects = new HashSet<ExamResultIncorrect>();
-            PracticeResults = new HashSet<PracticeResult>();
+            MeaningOfWordLearningHistoryAnswerMeaningOfWords = new HashSet<MeaningOfWordLearningHistory>();
+            MeaningOfWordLearningHistoryQuestionMeaningOfWords = new HashSet<MeaningOfWordLearningHistory>();
         }
 
         public long Id { get; set; }
@@ -20,7 +20,7 @@ namespace EnglishMasterWebAssembly.Shared.Models
         public virtual Level Level { get; set; } = null!;
         public virtual PartOfSpeech PartOfSpeech { get; set; } = null!;
         public virtual Word Word { get; set; } = null!;
-        public virtual ICollection<ExamResultIncorrect> ExamResultIncorrects { get; set; }
-        public virtual ICollection<PracticeResult> PracticeResults { get; set; }
+        public virtual ICollection<MeaningOfWordLearningHistory> MeaningOfWordLearningHistoryAnswerMeaningOfWords { get; set; }
+        public virtual ICollection<MeaningOfWordLearningHistory> MeaningOfWordLearningHistoryQuestionMeaningOfWords { get; set; }
     }
 }

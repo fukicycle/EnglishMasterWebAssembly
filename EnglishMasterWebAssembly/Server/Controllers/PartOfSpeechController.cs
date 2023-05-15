@@ -12,14 +12,14 @@ namespace EnglishMasterWebAssembly.Server.Controllers
     [ApiController]
     public class PartOfSpeechController : ControllerBase
     {
-        private DB db;
+        private DB _db;
         public PartOfSpeechController(DB db)
         {
-            this.db = db;
+            this._db = db;
         }
         public async Task<IEnumerable<PartOfSpeech>> Get()
         {
-            return await db.PartOfSpeeches.ToListAsync();
+            return await _db.PartOfSpeeches.ToListAsync();
         }
     }
 }

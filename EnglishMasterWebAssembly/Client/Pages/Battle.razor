@@ -1,6 +1,6 @@
 ﻿@page "/Battle"
 @using EnglishMasterWebAssembly.Shared.Models
-@inject HttpClient Http
+@inject HttpClient http
 <div class="display-area">
     @if (_mode == 0)
     {
@@ -27,7 +27,7 @@
                 @if (_mode == 3)
                 {
                     <div>
-                        @foreach (var item in RoomList)
+                        @foreach (var item in _roomList)
                         {
                             <button class="btn-base">@item.Title</button>
                         }
@@ -40,11 +40,11 @@
 </div>
 
 @code {
-    private List<Room> RoomList = new();
+    private List<Room> _roomList = new();
     private int _mode = 0;
     protected override async Task OnInitializedAsync()
     {
-        RoomList = await Http.GetFromJsonAsync<List<Room>>("Room") ?? new();
+        _roomList = await http.GetFromJsonAsync<List<Room>>("Room") ?? new();
     }
 
     private void ButtonOnClick(int mode = 0)
