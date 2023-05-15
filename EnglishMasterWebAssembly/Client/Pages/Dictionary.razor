@@ -4,9 +4,10 @@
 @using Newtonsoft.Json
 @inject HttpClient http
 <div class="main-area">
-    @if (_isDisplay)
+    @if (_word is not null)
     {
         <div>
+            <div class="text-center fw-bold h1 py-3">@_word.Word1</div>
             <div class="mean-area">
                 @foreach (var item in _displayList)
                 {
@@ -14,7 +15,7 @@
                     <div>@item.Meaning</div>
                 }
             </div>
-            <button @onclick="(() => _isDisplay = false)" class="btn-base">Back to list</button>
+            <button @onclick="(() => _word = null)" class="btn-base">Back to list</button>
         </div>
     }
     else
@@ -78,7 +79,7 @@
     private List<Vocabulary> _displayList = new();
     private List<PartOfSpeech> _partOfSpeechList = new();
     private List<Word> _wordList = new();
-    private bool _isDisplay = false;
+    private Word? _word = null;
     protected override async Task OnInitializedAsync()
     {
         _wordList = await http.GetFromJsonAsync<List<Word>>("Word") ?? new();
@@ -88,7 +89,7 @@
 
     private void OnClickWord(long id)
     {
-        _isDisplay = true;
+        _word = _wordList.FirstOrDefault(a => a.Id == id);
         _displayList = _vocabularyList.Where(a => a.WordId == id).ToList();
     }
 }
