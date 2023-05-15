@@ -5,32 +5,44 @@
 @inject HttpClient http
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 <div class="h-100 m-auto" style="max-width:600px;">
-    <div class="overflow-auto h-100">
-        @foreach (var item in _resultList)
-        {
-            <div class="card mb-2 p-2 mx-1">
-                <div class="d-flex">
-                    <div class="fw-bold ms-1 m-auto text-start fs-2">@_wordList.First(b => b.Id == _meaningOfWordList.First(a => a.Id == item.QuestionMeaningOfWordId).WordId).Word1</div>
-                    @if (item.AnswerMeaningOfWordId == item.QuestionMeaningOfWordId)
-                    {
-                        <div class="text-success mx-3 me-1 m-auto oi oi-circle-check"></div>
-                    }
-                    else
-                    {
-                        <div class="text-danger mx-3 me-1 m-auto oi oi-circle-x"></div>
-                    }
+    @if (_resultList.Any())
+    {
+        <div class="overflow-auto h-100">
+            @foreach (var item in _resultList)
+            {
+                <div class="card mb-2 p-2 mx-1">
+                    <div class="d-flex">
+                        <div class="fw-bold ms-1 m-auto text-start fs-2">@_wordList.First(b => b.Id == _meaningOfWordList.First(a => a.Id == item.QuestionMeaningOfWordId).WordId).Word1</div>
+                        @if (item.AnswerMeaningOfWordId == item.QuestionMeaningOfWordId)
+                        {
+                            <div class="text-success mx-3 me-1 m-auto oi oi-circle-check"></div>
+                        }
+                        else
+                        {
+                            <div class="text-danger mx-3 me-1 m-auto oi oi-circle-x"></div>
+                        }
+                    </div>
+                    <div class="row p-0 w-100">
+                        <div class="col-5">Correct:</div>
+                        <div class="col-7">@_meaningOfWordList.First(a => a.Id == item.QuestionMeaningOfWordId).Meaning</div>
+                    </div>
+                    <div class="row p-0 w-100">
+                        <div class="col-5">Your answer:</div>
+                        <div class="col-7">@_meaningOfWordList.First(a => a.Id == item.AnswerMeaningOfWordId).Meaning</div>
+                    </div>
                 </div>
-                <div class="row p-0 w-100">
-                    <div class="col-5">Correct:</div>
-                    <div class="col-7">@_meaningOfWordList.First(a => a.Id == item.AnswerMeaningOfWordId).Meaning</div>
-                </div>
-                <div class="row p-0 w-100">
-                    <div class="col-5">Your answer:</div>
-                    <div class="col-7">@_meaningOfWordList.First(a => a.Id == item.QuestionMeaningOfWordId).Meaning</div>
-                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="h-100 align-items-center d-flex justify-content-center">
+            <div class="text-center">
+                <div>Loading...</div>
+                <div class="spinner-border"></div>
             </div>
-        }
-    </div>
+        </div>
+    }
 </div>
 @code {
     private List<MeaningOfWord> _meaningOfWordList = new();

@@ -2,6 +2,7 @@
 @using EnglishMasterWebAssembly.Shared.Models
 @using System.Timers
 @using Newtonsoft.Json
+@using Microsoft.AspNetCore.WebUtilities
 @inject HttpClient http
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
@@ -130,6 +131,7 @@
     private bool _isEnd = false;
     private bool _isLoad = false;
     private Dictionary<long, bool> _result = new Dictionary<long, bool>();
+    private User? _user;
 
     [SupplyParameterFromQuery]
     [Parameter]
@@ -162,6 +164,7 @@
         _totalAnswerCount = await localStorage.GetItemAsync<int>("ALL_COUNT");
         _totalCorrectCount = await localStorage.GetItemAsync<int>("CORRECT_COUNT");
         _totalIncorrectCount = await localStorage.GetItemAsync<int>("IN_CORRECT_COUNT");
+        _user = await UserInfo.GetUserInfo(localStorage, http);
         _isLoad = false;
     }
 
@@ -254,19 +257,26 @@
 
     private void ReturnButtonOnClick()
     {
-        navigationManager.NavigateTo("Result");
+        if (_user is not null)
+        {
+            var queryParameter = new Dictionary<string, string>
+                {
+                    ["count"] = Limit.ToString(),
+                    ["userId"] = _user.Id.ToString()
+                };
+            navigationManager.NavigateTo(QueryHelpers.AddQueryString("Result", queryParameter));
+        }
     }
 
     private async void SubmitResult(long id)
     {
-        var tmp = await UserInfo.GetUserInfo(localStorage, http);
-        if (tmp is null) return;
+        if (_user is null) return;
         MeaningOfWordLearningHistory meaningOfWordLearningHistory = new MeaningOfWordLearningHistory
             {
                 QuestionMeaningOfWordId = _question.Id,
                 AnswerMeaningOfWordId = id,
                 Date = DateTime.Now,
-                UserId = tmp.Id,
+                UserId = _user.Id,
                 IsDone = _question.Id == id
             };
         await http.PostAsJsonAsync(nameof(MeaningOfWordLearningHistory), meaningOfWordLearningHistory);
