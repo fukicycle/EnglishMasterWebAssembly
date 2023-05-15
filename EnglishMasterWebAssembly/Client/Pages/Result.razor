@@ -3,46 +3,49 @@
 @using EnglishMasterWebAssembly.Shared.Models
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject HttpClient http
-<div class="result-area">
-    <h3>Result</h3>
-    <p>Answer count: @_resultList.Count/25</p>
-    <p>Incorrect count: @_resultList.Count(a => a.Value == false)</p>
-    <p>Correct count: @_resultList.Count(a => a.Value)</p>
-    @if (_resultList.Count(a => a.Value) == 25)
-    {
-        <h4 class="text-success">Excellent!</h4>
-    }
-    else if (_resultList.Count(a => a.Value) >= 23)
-    {
-        <h4 class="text-info">Good!</h4>
-    }
-    else if (_resultList.Count(a => a.Value) <= 10)
-    {
-        <h4 class="text-danger">Bad...</h4>
-    }
-    else
-    {
-        <h4 class="text-secondary">Normal</h4>
-    }
-</div>
-<div class="detail-area">
-    @foreach (var item in _resultList.Where(a => a.Value == false))
-    {
-        var vocaburary = _meaningOfWordList.First(a => a.Id == item.Key);
-        var word = _wordList.First(a => a.Id == vocaburary.WordId);
-        <div class="header">@word.Word1</div>
-        <div class="contents">@vocaburary.Meaning</div>
-    }
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+<div class="h-100 m-auto" style="max-width:600px;">
+    <div class="overflow-auto h-100">
+        @foreach (var item in _resultList)
+        {
+            <div class="card mb-2 p-2 mx-1">
+                <div class="d-flex">
+                    <div class="fw-bold ms-1 m-auto text-start fs-2">@_wordList.First(b => b.Id == _meaningOfWordList.First(a => a.Id == item.QuestionMeaningOfWordId).WordId).Word1</div>
+                    @if (item.AnswerMeaningOfWordId == item.QuestionMeaningOfWordId)
+                    {
+                        <div class="text-success mx-3 me-1 m-auto oi oi-circle-check"></div>
+                    }
+                    else
+                    {
+                        <div class="text-danger mx-3 me-1 m-auto oi oi-circle-x"></div>
+                    }
+                </div>
+                <div class="row p-0 w-100">
+                    <div class="col-5">Correct:</div>
+                    <div class="col-7">@_meaningOfWordList.First(a => a.Id == item.AnswerMeaningOfWordId).Meaning</div>
+                </div>
+                <div class="row p-0 w-100">
+                    <div class="col-5">Your answer:</div>
+                    <div class="col-7">@_meaningOfWordList.First(a => a.Id == item.QuestionMeaningOfWordId).Meaning</div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
 @code {
     private List<MeaningOfWord> _meaningOfWordList = new();
     private List<Word> _wordList = new();
-    private Dictionary<long, bool> _resultList = new();
+    private List<MeaningOfWordLearningHistory> _resultList = new();
+
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public int Count { get; set; }
     protected override async Task OnInitializedAsync()
     {
         _wordList = await http.GetFromJsonAsync<List<Word>>("Word") ?? new();
         _meaningOfWordList = await http.GetFromJsonAsync<List<MeaningOfWord>>("MeaningOfWord") ?? new();
-        _resultList = JsonConvert.DeserializeObject<Dictionary<long, bool>>(await sessionStorage.GetItemAsStringAsync("Result"));
+        var user = await UserInfo.GetUserInfo(localStorage, http);
+        _resultList = await http.GetFromJsonAsync<List<MeaningOfWordLearningHistory>>(nameof(MeaningOfWordLearningHistory) + $"?count={Count}&userId={user.Id}") ?? new();
     }
 }
 
