@@ -72,8 +72,7 @@
     private int? _totalIncorrectCount = null;
     protected override async Task OnInitializedAsync()
     {
-        var userID = await localStorage.GetItemAsync<long>("USER_ID");
-        var user = await http.GetFromJsonAsync<User>($"User?id={userID}");
+        var user = await UserInfo.GetUserInfo(localStorage, http);
         _fullName = string.IsNullOrEmpty(user?.Username) ? "Guest" : $"{user.FirstName} {user.LastName}";
         _isLoading = false;
         _totalAnswerCount = await localStorage.GetItemAsync<int>("ALL_COUNT");

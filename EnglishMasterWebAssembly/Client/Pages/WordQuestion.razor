@@ -232,6 +232,7 @@
                 _totalIncorrectCount++;
                 await localStorage.SetItemAsync<int>("IN_CORRECT_COUNT", _totalIncorrectCount);
             }
+            SubmitResult(id);
         }
         _isPass = _question.Id == id;
         StateHasChanged();
@@ -254,5 +255,20 @@
     private void ReturnButtonOnClick()
     {
         navigationManager.NavigateTo("Result");
+    }
+
+    private async void SubmitResult(long id)
+    {
+        var tmp = await UserInfo.GetUserInfo(localStorage, http);
+        if (tmp is null) return;
+        MeaningOfWordLearningHistory meaningOfWordLearningHistory = new MeaningOfWordLearningHistory
+            {
+                QuestionMeaningOfWordId = _question.Id,
+                AnswerMeaningOfWordId = id,
+                Date = DateTime.Now,
+                UserId = tmp.Id,
+                IsDone = _question.Id == id
+            };
+        await http.PostAsJsonAsync(nameof(MeaningOfWordLearningHistory), meaningOfWordLearningHistory);
     }
 }
