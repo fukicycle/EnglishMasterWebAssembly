@@ -3,6 +3,7 @@
 @using System.Timers
 @using Newtonsoft.Json
 @inject HttpClient http
+@inject NavigationManager navigationManager
 <div class="main-area">
     @if (_word is not null)
     {
@@ -15,7 +16,7 @@
                     <div>@item.Meaning</div>
                 }
             </div>
-            <button @onclick="(() => _word = null)" class="btn-base">Back to list</button>
+            <button @onclick="BackButtonOnClick" class="btn-base">Back to list</button>
         </div>
     }
     else
@@ -28,7 +29,7 @@
                 @foreach (var item in _wordList.GroupBy(a => a.Word1.ToUpper().First()).OrderBy(a => Convert.ToInt16(a.Key)))
                 {
                     string class1 = "";
-                    if (item.Key == 'A')
+                    if (Initial == item.Key.ToString())
                     {
                         class1 = "nav-link nav-icon-round active";
                     }
@@ -43,7 +44,8 @@
                             type="button"
                             role="tab"
                             aria-controls="v-pills-home"
-                            aria-selected="true">
+                            aria-selected="true"
+                    @onclick="(() => SetKeyValue(item.Key))">
                         @item.Key
                     </button>
                 }
@@ -52,7 +54,7 @@
                 @foreach (var item in _wordList.GroupBy(a => a.Word1.ToUpper().First()).OrderBy(a => Convert.ToInt16(a.Key)))
                 {
                     string class1 = "";
-                    if (item.Key == 'A')
+                    if (Initial == item.Key.ToString())
                     {
                         class1 = "dictionary-list tab-pane fade show active";
                     }
@@ -80,17 +82,50 @@
     private List<PartOfSpeech> _partOfSpeechList = new();
     private List<Word> _wordList = new();
     private Word? _word = null;
+
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string Initial { get; set; } = "A";
+
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public long WordID { get; set; }
     protected override async Task OnInitializedAsync()
     {
         _wordList = await http.GetFromJsonAsync<List<Word>>("Word") ?? new();
         _vocabularyList = await http.GetFromJsonAsync<List<Vocabulary>>("Vocabulary") ?? new();
         _partOfSpeechList = await http.GetFromJsonAsync<List<PartOfSpeech>>("PartOfSpeech") ?? new();
+        if (string.IsNullOrEmpty(Initial)) Initial = "A";
+        OnClickWord(WordID, true);
     }
 
-    private void OnClickWord(long id)
+    private void OnClickWord(long id, bool isInitialized = false)
     {
         _word = _wordList.FirstOrDefault(a => a.Id == id);
         _displayList = _vocabularyList.Where(a => a.WordId == id).ToList();
+        WordID = id;
+        if (!isInitialized) ParameterChanged();
+    }
+
+    private void SetKeyValue(char item)
+    {
+        Initial = item.ToString();
+        ParameterChanged();
+    }
+
+    private void ParameterChanged()
+    {
+        Dictionary<string, object> parameters = new Dictionary<string, object>();
+        parameters.Add(nameof(Initial), Initial);
+        parameters.Add(nameof(WordID), WordID);
+        navigationManager.NavigateTo(navigationManager.GetUriWithQueryParameters(parameters));
+    }
+
+    private void BackButtonOnClick()
+    {
+        WordID = 0;
+        _word = null;
+        ParameterChanged();
     }
 }
 
