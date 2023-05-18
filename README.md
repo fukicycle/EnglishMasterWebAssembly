@@ -3,7 +3,7 @@
 EnglishMasterのWebAssemblyバージョンとして開発中<br/>
 動作改善により初代サーバーサイドより高速動作可能
 ## 必要要件
-* .NET6
+* .NET7
 * IIS or Apache (Web server)
 
 ## 注意
@@ -19,7 +19,7 @@ EnglishMasterのWebAssemblyバージョンとして開発中<br/>
   },
   "AllowedHosts": "*",
   "ConnectionStrings": {
-    "DB": "user id=[USER_NAME];password=[PASSWORD];server=[SERVER_HOST];initial catalog=[DB_NAME]"
+    "DB": "user id=[USER_NAME];password=[PASSWORD];server=[SERVER_HOST];initial catalog=[DB_NAME];trust server certificate=true;"
   }
 }
 
