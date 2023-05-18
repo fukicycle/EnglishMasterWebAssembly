@@ -5,7 +5,20 @@
 
 version: 2
 updates:
+  # Client check
   - package-ecosystem: "nuget" # See documentation for possible values
-    directory: "/EnglishMasterWebAssembly" # Location of package manifests
+    directory: "/EnglishMasterWebAssembly/Client" # Location of package manifests
+    schedule:
+      interval: "weekly"
+      
+  # Server check
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/EnglishMasterWebAssembly/Server" # Location of package manifests
+    schedule:
+      interval: "weekly"
+      
+  # Shared check
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/EnglishMasterWebAssembly/Shared" # Location of package manifests
     schedule:
       interval: "weekly"
