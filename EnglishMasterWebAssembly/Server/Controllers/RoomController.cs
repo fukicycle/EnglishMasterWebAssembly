@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EnglishMasterWebAssembly.Shared.Models;
+﻿using EnglishMasterWebAssembly.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,4 +21,3 @@ namespace EnglishMasterWebAssembly.Server.Controllers
         }
     }
 }
-

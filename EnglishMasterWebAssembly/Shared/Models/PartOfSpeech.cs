@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace EnglishMasterWebAssembly.Shared.Models
+﻿namespace EnglishMasterWebAssembly.Shared.Models
 {
     public partial class PartOfSpeech
     {

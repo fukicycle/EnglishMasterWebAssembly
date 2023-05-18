@@ -3,11 +3,12 @@
 @inject HttpClient http
 @using EnglishMasterWebAssembly.Shared.Models
 @using Microsoft.AspNetCore.WebUtilities
+
 <nav class="navbar navbar-light box-shadow">
     <div class="container">
         <a class="navbar-brand" href="">English Master</a>
         <div class="d-flex justify-right">
-            @if (_user is null)
+            @if (_user is null || _user?.Username == string.Empty)
             {
                 <NavLink class="nav-item" @onclick=@NavigateToLoginPage>
                     <span class="oi oi-account-login menu-item"></span>
@@ -23,7 +24,9 @@
         </div>
     </div>
 </nav>
-@code {
+
+@code
+{
     private User? _user = null;
     private ConfirmDialog? _confirmDialog;
 

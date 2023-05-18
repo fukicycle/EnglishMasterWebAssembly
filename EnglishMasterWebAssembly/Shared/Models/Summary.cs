@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EnglishMasterWebAssembly.Shared.Models
+﻿namespace EnglishMasterWebAssembly.Shared.Models
 {
     public class Summary
     {
