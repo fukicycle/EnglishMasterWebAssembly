@@ -1,0 +1,12 @@
+﻿[
+  {
+    "outputFile": "wwwroot/css/dino.css",
+    "inputFile": "wwwroot/css/dino.scss",
+    "minify": {
+      "enabled": true
+    },
+    "options": {
+      "sourceMap": true
+    }
+  }
+]
