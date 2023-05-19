@@ -1,7 +1,7 @@
 ﻿[
   {
-    "outputFile": "wwwroot/css/dino.css",
-    "inputFile": "wwwroot/css/dino.scss",
+    "outputFile": "wwwroot/css/hamster.css",
+    "inputFile": "wwwroot/css/hamster.scss",
     "minify": {
       "enabled": true
     },
