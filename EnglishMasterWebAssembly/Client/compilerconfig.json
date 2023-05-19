@@ -1,7 +1,7 @@
 ﻿[
   {
-    "outputFile": "wwwroot/css/hamster.css",
-    "inputFile": "wwwroot/css/hamster.scss",
+    "outputFile": "wwwroot/css/cat.css",
+    "inputFile": "wwwroot/css/cat.scss",
     "minify": {
       "enabled": true
     },
