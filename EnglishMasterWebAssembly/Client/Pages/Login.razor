@@ -4,6 +4,7 @@
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @using EnglishMasterWebAssembly.Shared.Models
 @using Newtonsoft.Json
+@using Microsoft.AspNetCore.WebUtilities
 <div class="container">
     <div>
         <div class="login-field">
@@ -14,7 +15,7 @@
         </div>
         <button class="button login-submit text-center" @onclick="@LoginButtonOnClick">Sign in</button>
         <div class="text-secondary text-center">or</div>
-        <button class="button login-submit text-center" @onclick="@(() => _message = "Sorry, Not implemented yet.")">Register</button>
+        <button class="button login-submit text-center" @onclick="@RegisterButtonOnClick">Register</button>
         <div class="text-danger text-center">@_message</div>
     </div>
 </div>
@@ -52,6 +53,15 @@
         {
             navigationManager.NavigateTo(navigationManager.BaseUri, true);
         }
+    }
+
+    private void RegisterButtonOnClick()
+    {
+        var queryParameter = new Dictionary<string, string?>
+            {
+                ["RedirectURL"] = RedirectURL
+            };
+        navigationManager.NavigateTo(QueryHelpers.AddQueryString("Register", queryParameter));
     }
 }
 
