@@ -141,7 +141,7 @@ a, .btn-link {
 
 .btn-base {
     display: block;
-    margin-top: 5px;
+    margin-top: 5px!important;
     border: solid 2px #126DF7;
     border-radius: 10px;
     padding: 5px;

@@ -1,6 +1,65 @@
 ﻿@page "/register"
-<h3>Register</h3>
+<div class="m-auto h-100 d-flex justify-content-center align-items-center" style="max-width:500px;">
+    <div class="p-3">
+        <h3>Fill in the blanks!</h3>
+        <div class="row mb-2">
+            <div class="col-4 my-auto">Username:</div>
+            <div class="col-8">
+                <input class="form-control" type="text" placeholder="taylor1989" @bind="Username" />
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-4 my-auto">First name:</div>
+            <div class="col-8">
+                <input class="form-control" type="text" placeholder="Taylor" @bind="FirstName" />
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-4 my-auto">Last name:</div>
+            <div class="col-8">
+                <input class="form-control" type="text" placeholder="Swift" @bind="LastName" />
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-4 my-auto">Password:</div>
+            <div class="col-8">
+                <input class="form-control" type="password" placeholder="P@ssWord" @bind="Password" />
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-4 my-auto">Retype:</div>
+            <div class="col-8">
+                <input class="form-control" type="password" placeholder="P@ssWord" @bind="RePassword" />
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-4 my-auto">
+                <div>Icon:</div>
+                <div class="small">optional</div>
+            </div>
+            <div class="col-8 my-auto">
+                <InputFile class="form-control"></InputFile>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-4 my-auto"></div>
+            <div class="col-8">
+                <img class="w-50" style="aspect-ratio:1/1;" alt="icon" src="icon-192.png" />
+            </div>
+        </div>
+        <div class="row">
+            <button class="btn-base col-12">Submit</button>
+        </div>
+    </div>
+</div>
 
 @code {
-
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string? RedirectURL { get; set; }
+    public string Username { get; set; } = null!;
+    public string Password { get; set; } = null!;
+    public string RePassword { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
+    public string LastName { get; set; } = null!;
 }

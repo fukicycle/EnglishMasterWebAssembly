@@ -4,6 +4,7 @@
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @using EnglishMasterWebAssembly.Shared.Models
 @using Newtonsoft.Json
+@using Microsoft.AspNetCore.WebUtilities
 <div class="container">
     <div>
         <div class="login-field">
@@ -56,7 +57,11 @@
 
     private void RegisterButtonOnClick()
     {
-        navigationManager.NavigateTo("Register");
+        var queryParameter = new Dictionary<string, string?>
+            {
+                ["RedirectURL"] = RedirectURL
+            };
+        navigationManager.NavigateTo(QueryHelpers.AddQueryString("Register", queryParameter));
     }
 }
 
