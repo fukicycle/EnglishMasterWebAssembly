@@ -28,17 +28,12 @@
 		<None Remove="Blazored.LocalStorage" />
 	</ItemGroup>
 	<ItemGroup>
-		<Content Remove="compilerconfig.json" />
 		<Content Remove="wwwroot\imgs\" />
-	</ItemGroup>
-	<ItemGroup>
-	  <_ContentIncludedByDefault Remove="compilerconfig.json" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="wwwroot\imgs\" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Include="compilerconfig.json" />
 	  <None Include="wwwroot\bootstrap\css\bootstrap-grid.css.map" />
 	  <None Include="wwwroot\bootstrap\css\bootstrap-grid.min.css.map" />
 	  <None Include="wwwroot\bootstrap\css\bootstrap-grid.rtl.css.map" />
