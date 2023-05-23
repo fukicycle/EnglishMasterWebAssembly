@@ -46,7 +46,7 @@ a, .btn-link {
 }
 
 #blazor-error-ui {
-    background: lightyellow;
+    background: white;
     bottom: 0;
     box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
     display: none;
@@ -76,7 +76,7 @@ a, .btn-link {
 
 /* defined */
 .container {
-    text-align: center;
+    text-align: center !important;
 }
 
 .spinner-area {
@@ -141,7 +141,7 @@ a, .btn-link {
 
 .btn-base {
     display: block;
-    margin-top: 5px;
+    margin-top: 5px !important;
     border: solid 2px #126DF7;
     border-radius: 10px;
     padding: 5px;
@@ -212,7 +212,7 @@ a, .btn-link {
     height: 40px;
     width: 40px;
     margin: auto 15px 5px 5px;
-    padding: 0px;
+    padding: 0px !important;
 }
 
 .word-title {
@@ -259,22 +259,14 @@ a, .btn-link {
     }
 
 .navbar {
-    background-color: #05429E;
-    padding-top: 10px;
-    padding-left: 10px;
+    background-color: #05429E !important;
+    padding-top: 10px !important;
+    padding-left: 10px !important;
 }
 
 .navbar-brand {
     color: #D7E7FE !important;
 }
-
-/*.login-area {
-    max-width: 450px;
-    background-color: #A6C8FC;
-    margin: auto;
-    padding: 30px;
-    border-radius: 30px;
-}*/
 
 .input-area > span {
     margin-top: 10px;

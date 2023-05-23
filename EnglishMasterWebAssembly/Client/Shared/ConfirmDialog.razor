@@ -1,4 +1,4 @@
-﻿﻿<div class="modal fade @classShow" tabindex="-1" style="display: @display;">
+﻿﻿<div class="h-100 align-items-center modal fade @classShow" tabindex="-1" style="display: @display;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -38,7 +38,7 @@
 
     public async Task ShowDialog()
     {
-        display = "block";
+        display = "flex";
         await Task.Delay(50);
         classShow = "show";
         StateHasChanged();

@@ -1,7 +1,6 @@
 using EnglishMasterWebAssembly.Shared.Models;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
 using EnglishMasterWebAssembly.Server.Hubs;
 using Microsoft.AspNetCore.Mvc;
 

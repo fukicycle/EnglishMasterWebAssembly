@@ -34,5 +34,21 @@ namespace EnglishMasterWebAssembly.Server.Controllers
                 return ex.Message;
             }
         }
+
+        [Route("post/new")]
+        public async Task<string> Post([FromBody] User user)
+        {
+            try
+            {
+                if (_db.Users.Any(a => a.Username == user.Username)) return "The username is already used.";
+                _db.Users.Add(user);
+                await _db.SaveChangesAsync();
+                return user.Id.ToString();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
     }
 }

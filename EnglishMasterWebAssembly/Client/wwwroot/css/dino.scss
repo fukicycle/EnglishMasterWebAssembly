@@ -1,0 +1,419 @@
+﻿$duration: 40s;
+$points: 8,13,20,25,30,36,41,45,50,55,63,70,75,81,86,92,97;
+$cactus: length($points);
+$length: 1100vw;
+$color: #555;
+
+html, body {
+    --color: #{$color};
+    --duration: #{$duration};
+    --length: #{$length};
+    @for $i from 1 through $cactus {
+        --cactus#{$i}: #{0.01 * nth($points, $i)};
+    }
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-family: VT323, Courier, Courier New, monospace;
+}
+
+#pixelize:not(:checked) ~ form {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+input[type="checkbox"] {
+    position: absolute;
+    left: -1000em;
+}
+
+#label-pixels {
+    position: absolute;
+    font-size: 2vw;
+    top: 0.5vw;
+    left: 0.5vw;
+    z-index: 2;
+    display: inline-block;
+    color: var(--color);
+
+    &::before {
+        content: "";
+        width: 0.75em;
+        height: 0.75em;
+        border: 0.25vw solid var(--color);
+        display: inline-block;
+        vertical-align: text-bottom;
+        margin-right: 0.5vw;
+    }
+}
+
+#pixelize:checked + label::before {
+    box-shadow: inset 0 0 0 0.25vw white, inset 0 0 5vw var(--color);
+}
+
+#menu-start {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--color);
+    font-size: 9vw;
+    font-weight: bold;
+    text-shadow: 0px -2px white, 2px -2px white, 2px 0px white, 2px 2px white, 0px 2px white, -2px 2px white, -2px 0px white, -2px -2px white;
+    z-index: 1;
+
+    h1 {
+        font-size: 1em;
+        margin-bottom: 2vw;
+    }
+
+    label {
+        background: var(--color);
+        width: 15vw;
+        height: 8vw;
+        margin-bottom: 10vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &::before {
+            content: "\25b6";
+            color: white;
+            text-shadow: none;
+            font-size: 5vw;
+            margin-top: -0.5vw;
+        }
+    }
+}
+
+#start-game:checked ~ #menu-start {
+    display: none;
+}
+
+#pixelize:not(:checked) ~ form #menu-start label,
+#pixelize:not(:checked) ~ form #you-won input,
+#pixelize:not(:checked) ~ form #gameover input {
+    border-radius: 1vw;
+}
+
+@keyframes cactusSkipped {
+    0% {
+        --wrong: 0;
+    }
+
+    @for $i from 1 through $cactus {
+        #{nth($points, $i)}% {
+            --wrong: #{$i - 1};
+        }
+
+        #{nth($points, $i) + 0.5}% {
+            --wrong: #{$i};
+        }
+    }
+
+    100% {
+        --wrong: #{$cactus};
+    }
+}
+
+@keyframes showLabel {
+    0% {
+        --showLabel: 0;
+    }
+
+    @for $i from 1 through $cactus {
+        #{nth($points, $i) - 4}% {
+            --showLabel: #{$i - 1};
+        }
+
+        #{nth($points, $i)}% {
+            --showLabel: #{$i};
+        }
+    }
+
+    100% {
+        --showLabel: #{$cactus};
+    }
+}
+
+@for $i from 1 through $cactus {
+    $selector: "input[id^='cactus']:checked ";
+
+    @for $j from 1 to $i {
+        $selector: $selector + " ~ input[id^='cactus']:checked ";
+    }
+
+    #{$selector} ~ #game {
+        --correct: #{$i};
+    }
+}
+
+#game {
+    --showLabel: 0;
+    --wrong: 0;
+    --correct: 0;
+    animation: none;
+}
+
+#start-game:checked ~ #game {
+    animation: cactusSkipped var(--duration) steps(1000, start) 1, showLabel var(--duration) steps(1000, start) 1;
+    animation-fill-mode: forwards;
+}
+
+@keyframes moveCanvas {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+
+    100% {
+        transform: translate3d(-100%, 0, 0);
+    }
+}
+
+#canvas {
+    animation: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--length);
+    height: 100vh;
+    background-image: linear-gradient(to right, white 20%, transparent 0 22%, white 0 55%, transparent 0 56%, white 0 60%, transparent 0 62%, white 0 98.75%, transparent 0 100%, white 0), linear-gradient(to right, white 19%, transparent 0 21%, white 0 21.75%, transparent 0 22.5%, white 0 40%, transparent 0 42%, white 0 42.5%, transparent 0 44%, white 0 55%, transparent 0 57%, white 0 78%, transparent 0 80%, white 0 90%, transparent 0 91%, white 0), linear-gradient(transparent 70%, var(--color) 0 70.25%, transparent 0 70.5%, var(--color) 0 70.75%, transparent 0 71%, var(--color) 0 71.25%, transparent 0);
+    background-size: 100vw 0.5%, 100vw 0.5%, 100vw 100%;
+    background-position: 0 70.75%, 0 71.25%, bottom left;
+    background-repeat: repeat-x;
+}
+
+#start-game:checked ~ #game #canvas {
+    animation: moveCanvas var(--duration) linear 1;
+    animation-fill-mode: forwards;
+}
+
+#you-won {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    height: 100%;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 9vw;
+    font-weight: bold;
+    color: var(--color);
+    opacity: calc(1 - calc(var(--wrong) - var(--correct)));
+
+    h2 {
+        font-size: 1em;
+        margin-bottom: 2vw;
+    }
+
+    input {
+        background: var(--color);
+        border: 0;
+        width: 15vw;
+        height: 8vw;
+        color: white;
+        text-shadow: none;
+        font-size: 5vw;
+        box-sizing: border-box;
+    }
+}
+
+@for $i from 1 through $cactus {
+    #canvas label:nth-of-type(#{$i}) {
+        left: calc(var(--length) * var(--cactus#{$i}));
+    }
+}
+
+#canvas label {
+    width: 12vw;
+    height: 100vh;
+    height: calc(100vh * min(1, calc(var(--showLabel) - var(--correct))));
+    position: absolute;
+    top: 0;
+}
+
+#canvas label::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    display: block;
+    width: 12vw;
+    height: 16vw;
+    top: 70vh;
+    top: calc(70vh - 14vw);
+    left: 120%;
+    background-image: linear-gradient(var(--color), var(--color)), linear-gradient(var(--color), var(--color)), linear-gradient(var(--color), var(--color)), linear-gradient(var(--color), var(--color)), linear-gradient(var(--color), var(--color)), linear-gradient(var(--color), var(--color)), linear-gradient(var(--color), var(--color)), radial-gradient(circle, var(--color) 1vw, transparent 0), linear-gradient(var(--color), var(--color)), radial-gradient(circle, var(--color) 1vw, transparent 0);
+    background-size: 2vw 12vw, 1.25vw 1.25vw, 2vw 3vw, 1.25vw 1.25vw, 4vw 2vw, 1.25vw 1.25vw, 2vw 3vw, 1.25vw 1.25vw, 4vw 2vw, 1.25vw 1.25vw;
+    background-position: 6vw 3vw, 6.25vw 2.25vw, 3vw 8vw, 3.25vw 7.25vw, 4vw 10vw, 3vw 10vw, 8.5vw 7vw, 8.5vw 6vw, 6vw 9vw, 8.5vw 9vw;
+    background-repeat: no-repeat;
+}
+
+#canvas label:nth-of-type(3n+1)::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    display: block;
+    width: 12vw;
+    height: 16vw;
+    top: 70vh;
+    top: calc(70vh - 14vw);
+    left: 120%;
+    background-image: linear-gradient(var(--color), var(--color)), radial-gradient(circle, var(--color) 1vw, transparent 0);
+    background-size: 2vw 2vw, 1.25vw 1.25vw;
+    background-position: 9.25vw 13vw, 9.5vw 12.5vw;
+    background-repeat: no-repeat;
+}
+
+#pixelize:not(:checked) ~ form {
+    #canvas label::after {
+        background-image: linear-gradient(var(--color), var(--color)), radial-gradient(circle, var(--color) 1vw, transparent 0), linear-gradient(var(--color), var(--color)), radial-gradient(circle, var(--color) 1vw, transparent 0), linear-gradient(var(--color), var(--color)), radial-gradient(circle, var(--color) 1vw, transparent 0), linear-gradient(var(--color), var(--color)), radial-gradient(circle, var(--color) 1vw, transparent 0), linear-gradient(var(--color), var(--color)), radial-gradient(circle, var(--color) 1vw, transparent 0);
+        background-size: 2vw 12vw, 2vw 2vw, 2vw 3vw, 2vw 2vw, 4vw 2vw, 2vw 2vw, 2vw 3vw, 2vw 2vw, 4vw 2vw, 2vw 2vw;
+        background-position: 6vw 3vw, 6vw 2vw, 3vw 8vw, 3vw 7vw, 4vw 10vw, 3vw 10vw, 8.5vw 7vw, 8.5vw 6vw, 6vw 9vw, 8.5vw 9vw;
+        background-repeat: no-repeat;
+    }
+
+    #canvas label:nth-of-type(3n+1)::before {
+        background-size: 2vw 2vw, 2vw 2vw;
+        background-position: 9.25vw 13vw, 9.25vw 12vw;
+        background-repeat: no-repeat;
+    }
+}
+
+@keyframes walk {
+    0%, 100% {
+        background-position: 3vw 12vw, 5vw 10vw, top left, 0% 24%, top left, top left, top left, 0% 2.5vw, top left, top left, 3vw 15vw, 5vw 13vw, 8vw 8vw, 10vw 8.5vw;
+    }
+
+    50% {
+        background-position: 3vw 10vw, 5vw 11vw, top left, 0% 24%, top left, top left, top left, 0% 2.5vw, top left, top left, 3vw 13vw, 5vw 14.5vw, 8vw 8vw, 10vw 8.5vw;
+    }
+}
+
+@for $i from 1 through $cactus {
+    @keyframes jump#{$i} {
+        0%, 100% {
+            top: calc(70% - 14vw);
+        }
+
+        50% {
+            top: calc(70% - 36vw);
+        }
+    }
+
+    #start-game:checked ~ #cactus-#{$i}:checked ~ #game #dinosaur {
+        animation: jump#{$i} calc(var(--duration) * 0.04375) ease-out 1, walk 0.35s linear infinite;
+
+        &::before {
+            animation: moveLegsPixels 0.25s steps(1, start) infinite;
+        }
+    }
+
+    @keyframes cactus#{$i} {
+        0%, 99% {
+            --wrong: #{$i - 1};
+        }
+
+        100% {
+            --wrong: #{$i};
+        }
+    }
+}
+
+#dinosaur {
+    pointer-events: none;
+    width: 12vw;
+    height: 16vw;
+    position: fixed;
+    top: 70%;
+    top: calc(70% - 14vw);
+    left: 5vw;
+}
+
+@keyframes moveLegsPixels {
+    0%, 100% {
+        box-shadow: 11em 0, 12em 0, 13em 0, 14em 0, 15em 0, 16em 0, 17em 0, 18em 0, 10em 1em, 11em 1em, 12em 1em, 13em 1em, 14em 1em, 15em 1em, 16em 1em, 17em 1em, 18em 1em, 19em 1em, 10em 2em, 11em 2em, 13em 2em, 14em 2em, 15em 2em, 16em 2em, 17em 2em, 18em 2em, 19em 2em, 10em 3em, 11em 3em, 12em 3em, 13em 3em, 14em 3em, 15em 3em, 16em 3em, 17em 3em, 18em 3em, 19em 3em, 10em 4em, 11em 4em, 12em 4em, 13em 4em, 14em 4em, 15em 4em, 16em 4em, 17em 4em, 18em 4em, 19em 4em, 10em 5em, 11em 5em, 12em 5em, 13em 5em, 14em 5em, 15em 5em, 16em 5em, 17em 5em, 18em 5em, 19em 5em, 10em 6em, 11em 6em, 12em 6em, 13em 6em, 14em 6em, 10em 7em, 11em 7em, 12em 7em, 13em 7em, 14em 7em, 15em 7em, 16em 7em, 17em 7em, 0em 8em, 9em 8em, 10em 8em, 11em 8em, 12em 8em, 13em 8em, 0em 9em, 8em 9em, 9em 9em, 10em 9em, 11em 9em, 12em 9em, 13em 9em, 0em 10em, 1em 10em, 6em 10em, 7em 10em, 8em 10em, 9em 10em, 10em 10em, 11em 10em, 12em 10em, 13em 10em, 14em 10em, 15em 10em, 0em 11em, 1em 11em, 2em 11em, 5em 11em, 6em 11em, 7em 11em, 8em 11em, 9em 11em, 10em 11em, 11em 11em, 12em 11em, 13em 11em, 15em 11em, 0em 12em, 1em 12em, 2em 12em, 3em 12em, 4em 12em, 5em 12em, 6em 12em, 7em 12em, 8em 12em, 9em 12em, 10em 12em, 11em 12em, 12em 12em, 13em 12em, 0em 13em, 1em 13em, 2em 13em, 3em 13em, 4em 13em, 5em 13em, 6em 13em, 7em 13em, 8em 13em, 9em 13em, 10em 13em, 11em 13em, 12em 13em, 13em 13em, 1em 14em, 2em 14em, 3em 14em, 4em 14em, 5em 14em, 6em 14em, 7em 14em, 8em 14em, 9em 14em, 10em 14em, 11em 14em, 12em 14em, 2em 15em, 3em 15em, 4em 15em, 5em 15em, 6em 15em, 7em 15em, 8em 15em, 9em 15em, 10em 15em, 11em 15em, 12em 15em, 3em 16em, 4em 16em, 5em 16em, 6em 16em, 7em 16em, 8em 16em, 9em 16em, 10em 16em, 11em 16em, 4em 17em, 5em 17em, 6em 17em, 7em 17em, 8em 17em, 9em 17em, 10em 17em, 5em 18em, 6em 18em, 7em 18em, 10em 18em, 11em 18em, 5em 19em, 6em 19em, 5em 20em, 5em 21em, 6em 21em;
+    }
+
+    50% {
+        box-shadow: 11em 0, 12em 0, 13em 0, 14em 0, 15em 0, 16em 0, 17em 0, 18em 0, 10em 1em, 11em 1em, 12em 1em, 13em 1em, 14em 1em, 15em 1em, 16em 1em, 17em 1em, 18em 1em, 19em 1em, 10em 2em, 11em 2em, 13em 2em, 14em 2em, 15em 2em, 16em 2em, 17em 2em, 18em 2em, 19em 2em, 10em 3em, 11em 3em, 12em 3em, 13em 3em, 14em 3em, 15em 3em, 16em 3em, 17em 3em, 18em 3em, 19em 3em, 10em 4em, 11em 4em, 12em 4em, 13em 4em, 14em 4em, 15em 4em, 16em 4em, 17em 4em, 18em 4em, 19em 4em, 10em 5em, 11em 5em, 12em 5em, 13em 5em, 14em 5em, 15em 5em, 16em 5em, 17em 5em, 18em 5em, 19em 5em, 10em 6em, 11em 6em, 12em 6em, 13em 6em, 14em 6em, 10em 7em, 11em 7em, 12em 7em, 13em 7em, 14em 7em, 15em 7em, 16em 7em, 17em 7em, 0em 8em, 9em 8em, 10em 8em, 11em 8em, 12em 8em, 13em 8em, 0em 9em, 8em 9em, 9em 9em, 10em 9em, 11em 9em, 12em 9em, 13em 9em, 0em 10em, 1em 10em, 6em 10em, 7em 10em, 8em 10em, 9em 10em, 10em 10em, 11em 10em, 12em 10em, 13em 10em, 14em 10em, 15em 10em, 0em 11em, 1em 11em, 2em 11em, 5em 11em, 6em 11em, 7em 11em, 8em 11em, 9em 11em, 10em 11em, 11em 11em, 12em 11em, 13em 11em, 15em 11em, 0em 12em, 1em 12em, 2em 12em, 3em 12em, 4em 12em, 5em 12em, 6em 12em, 7em 12em, 8em 12em, 9em 12em, 10em 12em, 11em 12em, 12em 12em, 13em 12em, 0em 13em, 1em 13em, 2em 13em, 3em 13em, 4em 13em, 5em 13em, 6em 13em, 7em 13em, 8em 13em, 9em 13em, 10em 13em, 11em 13em, 12em 13em, 13em 13em, 1em 14em, 2em 14em, 3em 14em, 4em 14em, 5em 14em, 6em 14em, 7em 14em, 8em 14em, 9em 14em, 10em 14em, 11em 14em, 12em 14em, 2em 15em, 3em 15em, 4em 15em, 5em 15em, 6em 15em, 7em 15em, 8em 15em, 9em 15em, 10em 15em, 11em 15em, 12em 15em, 3em 16em, 4em 16em, 5em 16em, 6em 16em, 7em 16em, 8em 16em, 9em 16em, 10em 16em, 11em 16em, 12em 16em, 4em 17em, 5em 17em, 6em 17em, 7em 17em, 8em 17em, 9em 17em, 10em 17em, 11em 17em, 5em 18em, 10em 18em, 11em 18em, 5em 19em, 6em 19em, 10em 19em, 10em 20em, 11em 20em
+    }
+}
+
+#dinosaur::before {
+    animation: moveLegsPixels 0.25s steps(1, start) infinite;
+    content: "";
+    pointer-events: none;
+    width: 0.55vw;
+    height: 0.55vw;
+    position: absolute;
+    top: 4vw;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: 0.5vw;
+    color: var(--color);
+    box-shadow: 11em 0, 12em 0, 13em 0, 14em 0, 15em 0, 16em 0, 17em 0, 18em 0, 10em 1em, 11em 1em, 12em 1em, 13em 1em, 14em 1em, 15em 1em, 16em 1em, 17em 1em, 18em 1em, 19em 1em, 10em 2em, 11em 2em, 13em 2em, 14em 2em, 15em 2em, 16em 2em, 17em 2em, 18em 2em, 19em 2em, 10em 3em, 11em 3em, 12em 3em, 13em 3em, 14em 3em, 15em 3em, 16em 3em, 17em 3em, 18em 3em, 19em 3em, 10em 4em, 11em 4em, 12em 4em, 13em 4em, 14em 4em, 15em 4em, 16em 4em, 17em 4em, 18em 4em, 19em 4em, 10em 5em, 11em 5em, 12em 5em, 13em 5em, 14em 5em, 15em 5em, 16em 5em, 17em 5em, 18em 5em, 19em 5em, 10em 6em, 11em 6em, 12em 6em, 13em 6em, 14em 6em, 10em 7em, 11em 7em, 12em 7em, 13em 7em, 14em 7em, 15em 7em, 16em 7em, 17em 7em, 0em 8em, 9em 8em, 10em 8em, 11em 8em, 12em 8em, 13em 8em, 0em 9em, 8em 9em, 9em 9em, 10em 9em, 11em 9em, 12em 9em, 13em 9em, 0em 10em, 1em 10em, 6em 10em, 7em 10em, 8em 10em, 9em 10em, 10em 10em, 11em 10em, 12em 10em, 13em 10em, 14em 10em, 15em 10em, 0em 11em, 1em 11em, 2em 11em, 5em 11em, 6em 11em, 7em 11em, 8em 11em, 9em 11em, 10em 11em, 11em 11em, 12em 11em, 13em 11em, 15em 11em, 0em 12em, 1em 12em, 2em 12em, 3em 12em, 4em 12em, 5em 12em, 6em 12em, 7em 12em, 8em 12em, 9em 12em, 10em 12em, 11em 12em, 12em 12em, 13em 12em, 0em 13em, 1em 13em, 2em 13em, 3em 13em, 4em 13em, 5em 13em, 6em 13em, 7em 13em, 8em 13em, 9em 13em, 10em 13em, 11em 13em, 12em 13em, 13em 13em, 1em 14em, 2em 14em, 3em 14em, 4em 14em, 5em 14em, 6em 14em, 7em 14em, 8em 14em, 9em 14em, 10em 14em, 11em 14em, 12em 14em, 2em 15em, 3em 15em, 4em 15em, 5em 15em, 6em 15em, 7em 15em, 8em 15em, 9em 15em, 10em 15em, 11em 15em, 12em 15em, 3em 16em, 4em 16em, 5em 16em, 6em 16em, 7em 16em, 8em 16em, 9em 16em, 10em 16em, 11em 16em, 4em 17em, 5em 17em, 6em 17em, 7em 17em, 8em 17em, 9em 17em, 10em 17em, 5em 18em, 6em 18em, 7em 18em, 10em 18em, 11em 18em, 5em 19em, 6em 19em, 5em 20em, 5em 21em, 6em 21em;
+}
+
+#pixelize:not(:checked) ~ form #dinosaur {
+    animation: walk 0.35s linear infinite;
+    aanimation-iteration-count: calc(var(--wrong) - var(--correct));
+    background-image: linear-gradient(115deg, var(--color) 40%, transparent 0), linear-gradient(115deg, var(--color) 40%, transparent 0), radial-gradient(circle at 6.75vw 1.5vw, white 0.5vw, transparent 0), linear-gradient(to right, transparent 70%, white 0), linear-gradient(to right, transparent 7vw, var(--color) 0 9.5vw, transparent 0), radial-gradient(circle at 7vw 2.5vw, var(--color) 2.5vw, transparent 0), radial-gradient(circle at 9.5vw 2.5vw, var(--color) 2.5vw, transparent 0), linear-gradient(to right, transparent 4.5vw, var(--color) 0 8.25vw, transparent 0), radial-gradient(ellipse at 2.5vw 6vw, white 2.5vw, transparent 0), radial-gradient(circle at 4.125vw 9vw, var(--color) 4.125vw, transparent 0), linear-gradient(var(--color), var(--color)), linear-gradient(var(--color), var(--color)), linear-gradient(var(--color), var(--color)), linear-gradient(var(--color), var(--color));
+    background-size: 40% 25%, 40% 25%, 100% 100%, 100% 4%, 100% 5.05vw, 100% 100%, 100% 100%, 100% 6.5vw, 100% 100%, 100% 100%, 20% 1vw, 20% 1vw, 3vw 1vw, 1vw 1vw;
+    background-position: 3vw 12vw, 5vw 10vw, top left, 0% 24%, top left, top left, top left, 0% 2.5vw, top left, top left, 3vw 15vw, 5vw 13vw, 8vw 8vw, 10vw 9vw;
+    background-repeat: no-repeat;
+
+    &::before {
+        content: none;
+    }
+}
+
+#gameover {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100% * min(1, calc(var(--wrong) - var(--correct))));
+    overflow: hidden;
+    color: var(--color);
+    align-items: center;
+    padding-top: calc(20vh * min(1, calc(var(--wrong) - var(--correct))));
+    box-sizing: border-box;
+    font-size: 9vw;
+    font-weight: bold;
+    text-shadow: 0px -2px white, 2px -2px white, 2px 0px white, 2px 2px white, 0px 2px white, -2px 2px white, -2px 0px white, -2px -2px white;
+
+    h2 {
+        font-size: 1em;
+        margin-bottom: 2vw;
+    }
+
+    input {
+        background: var(--color);
+        border: 0;
+        width: 15vw;
+        height: 8vw;
+        color: white;
+        text-shadow: none;
+        font-size: 5vw;
+        box-sizing: border-box;
+    }
+}
