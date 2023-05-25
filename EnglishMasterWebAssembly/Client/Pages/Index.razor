@@ -61,6 +61,19 @@
                 </div>
             </div>
         }
+        <div class="p-1">
+            <div>Ranking - @_today.ToString("MMMM/yyyy")</div>
+            <div class="p-1">
+                @foreach (var item in _ranks)
+                {
+                    <div class="d-flex p-1">
+                        <div class="fs-2 fw-bold">@item.Ranking</div>
+                        <div class="fs-4 fw-bold m-auto mx-2">@item.Nickname</div>
+                        <div class="fs-5 m-auto mx-1">- @item.Count questions</div>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
 </div>
 
@@ -69,21 +82,24 @@
     private bool _isLoading = true;
     private string _fullName = "Guest";
     private List<Summary> _summary = new();
+    private List<Rank> _ranks = new();
+    private DateTime _today = DateTime.Today;
 
     protected override async Task OnInitializedAsync()
     {
         var user = await UserInfo.GetUserInfo(localStorage, http);
         _fullName = string.IsNullOrEmpty(user?.Username) ? "Guest" : $"{user.FirstName} {user.LastName}";
         _summary = await http.GetFromJsonAsync<List<Summary>>(nameof(MeaningOfWordLearningHistory) + $"/summary?userId={user?.Id}") ?? new();
+        _ranks = await http.GetFromJsonAsync<List<Rank>>(nameof(Rank) + $"?year={_today.Year}&month={_today.Month}") ?? new();
         _isLoading = false;
     }
 
     private void NavigateToLoginPage()
     {
         var queryParameter = new Dictionary<string, string>
-            {
-                ["RedirectURL"] = navigationManager.Uri
-            };
+        {
+            ["RedirectURL"] = navigationManager.Uri
+        };
         navigationManager.NavigateTo(QueryHelpers.AddQueryString("Login", queryParameter));
     }
 }

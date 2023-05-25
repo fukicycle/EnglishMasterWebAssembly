@@ -15,6 +15,7 @@
         public string LastName { get; set; } = null!;
         public string? Icon { get; set; }
         public string? Token { get; set; }
+        public string Nickname { get; set; } = null!;
 
         public virtual ICollection<MeaningOfWordLearningHistory> MeaningOfWordLearningHistories { get; set; }
         public virtual ICollection<RoomUser> RoomUsers { get; set; }
