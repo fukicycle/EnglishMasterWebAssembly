@@ -1,11 +1,15 @@
-﻿namespace EnglishMasterWebAssembly.Shared.Models
-{
-    public partial class MeaningOfIdiom
-    {
-        public long Id { get; set; }
-        public long IdiomId { get; set; }
-        public string Meaning { get; set; } = null!;
+﻿using System;
+using System.Collections.Generic;
 
-        public virtual Idiom Idiom { get; set; } = null!;
-    }
+namespace EnglishMasterWebAssembly.Shared.Models;
+
+public partial class MeaningOfIdiom
+{
+    public long Id { get; set; }
+
+    public long IdiomId { get; set; }
+
+    public string Meaning { get; set; } = null!;
+
+    public virtual Idiom Idiom { get; set; } = null!;
 }

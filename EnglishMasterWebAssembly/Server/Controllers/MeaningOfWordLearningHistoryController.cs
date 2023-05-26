@@ -28,7 +28,7 @@ namespace EnglishMasterWebAssembly.Server.Controllers
                 Word = a.QuestionMeaningOfWord.Word.Word1,
                 WordID = a.QuestionMeaningOfWord.WordId,
                 Question = a.QuestionMeaningOfWord.Meaning,
-                Answer = a.AnswerMeaningOfWord.Meaning,
+                Answer = a.AnswerMeaningOfWord?.Meaning ?? "No answer",
                 IsCorrect = a.AnswerMeaningOfWordId == a.QuestionMeaningOfWordId,
                 Date = a.Date
             });

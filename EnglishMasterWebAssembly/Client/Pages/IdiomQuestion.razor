@@ -9,17 +9,8 @@
 <PageTitle>Idiom</PageTitle>
 <div class="container">
     <div class="content-area">
-        @*@if (!IsTest)
-        {
-        <div class="achivement-area">
-        <p class="text-primary">@TotalAnswerCount</p>
-        <p class="text-success">@TotalCorrectCount</p>
-        <p class="text-danger">@TotalIncorrectCount</p>
-        </div>
-        }*@
         <div class="spinner-area">
             <p>モード</p>
-            @*<select @onchange="@ModeChanged" disabled="@Timer.Enabled">*@
             <select disabled @onchange="@ModeChanged">
                 <option>練習</option>
                 <option>試験</option>
@@ -43,31 +34,10 @@
                 }
                 else if (_isPass == null)
                 {
-                    if (_isTest)
-                    {
-                        if (_timer.Enabled)
-                        {
-                            <p class="question">@(_idiomList.FirstOrDefault(a => a.Id == _question.IdiomId)?.Idiom1 ?? "No word")</p>
-                            <p>@_limitTime.ToString(@"mm\:ss")</p>
-                            <hr />
-                            <p class="count">@(_idx + 1)/@_questions.Count</p>
-                        }
-                        else
-                        {
-                            <p class="question">Please click the start!</p>
-                            <p>@_limitTime.ToString(@"mm\:ss")</p>
-                            <hr />
-                            <p class="count">@(_idx + 1)/@_questions.Count</p>
-
-                        }
-                    }
-                    else
-                    {
-                        <p class="question">@(_idiomList.FirstOrDefault(a => a.Id == _question.IdiomId)?.Idiom1 ?? "No word")</p>
-                        <p>-</p>
-                        <hr />
-                        <p class="count">@(_idx + 1)/@_questions.Count</p>
-                    }
+                    <p class="question">@(_idiomList.FirstOrDefault(a => a.Id == _question.IdiomId)?.Idiom1 ?? "No word")</p>
+                    <p>-</p>
+                    <hr />
+                    <p class="count">@(_idx + 1)/@_questions.Count</p>
                 }
                 else if (_isPass == true)
                 {
@@ -92,7 +62,7 @@
             }
             else
             {
-                @if (_isTest && !_isEnd && !_timer.Enabled)
+                @if (!_isEnd && !_timer.Enabled)
                 {
                     <button class="btn-base" @onclick="StartButtonOnClick">Start</button>
                 }
@@ -105,19 +75,12 @@
                 }
                 else
                 {
-                    if (_isTest)
-                    {
-                        <button class="btn-base" @onclick="@(() => navigationManager.NavigateTo("./Result"))">Show Result</button>
-                    }
-                    else
-                    {
                         <button class="btn-base" @onclick="ReturnButtonOnClick">Return top</button>
-                    }
                 }
             }
         </div>
         <div class="navigation-area">
-            @if (_question != null && !_isTest)
+            @if (_question != null)
             {
                 <button class="btn-base" @onclick="@MovePrev"><span class="oi oi-chevron-left"></span></button>
                 <button class="btn-base" @onclick="@MoveNext"><span class="oi oi-chevron-right"></span></button>
@@ -136,13 +99,8 @@
     private bool _isEnd = false;
 
     //Test mode property
-    private bool _isTest = false;
     private Timer _timer = new Timer(1000);
-    private TimeSpan _limitTime = TimeSpan.FromSeconds(90);
-    private Dictionary<long, bool> _testResult = new();
-    private int _totalAnswerCount = 0;
-    private int _totalCorrectCount = 0;
-    private int _totalIncorrectCount = 0;
+    private TimeSpan _limitTime = TimeSpan.FromSeconds(10);
 
     protected override async Task OnInitializedAsync()
     {
@@ -161,9 +119,6 @@
             }
             StateHasChanged();
         };
-        _totalAnswerCount = await localStorage.GetItemAsync<int>("ALL_COUNT");
-        _totalCorrectCount = await localStorage.GetItemAsync<int>("CORRECT_COUNT");
-        _totalIncorrectCount = await localStorage.GetItemAsync<int>("IN_CORRECT_COUNT");
     }
 
     private void MovePrev()
@@ -192,7 +147,6 @@
         {
             _isEnd = true;
             _idx = _questions.Count - 1;
-            if (_isTest) _timer.Stop();
         }
         else
         {
@@ -202,31 +156,12 @@
     }
 
     private long prevAnswerId = 0;
-    private async Task AnswerButtonOnClick(long id)
+    private void AnswerButtonOnClick(long id)
     {
         _isPass = null;
         if (prevAnswerId != id)
         {
             prevAnswerId = id;
-            _totalAnswerCount++;
-            await localStorage.SetItemAsync<int>("ALL_COUNT", _totalAnswerCount);
-            if (_question.Id == id)
-            {
-                _totalCorrectCount++;
-                await localStorage.SetItemAsync<int>("CORRECT_COUNT", _totalCorrectCount);
-            }
-            else
-            {
-                _totalIncorrectCount++;
-                await localStorage.SetItemAsync<int>("IN_CORRECT_COUNT", _totalIncorrectCount);
-            }
-        }
-        if (_isTest)
-        {
-            bool testResult = _question.Id == id;
-            _testResult.Add(_question.Id, testResult);
-            await sessionStorage.SetItemAsStringAsync("TestResult", JsonConvert.SerializeObject(_testResult));
-            MoveNext();
         }
         else _isPass = _question.Id == id;
     }
@@ -235,7 +170,6 @@
     {
         var value = e.Value?.ToString();
         if (value is null) return;
-        _isTest = value == "試験";
         CreateQuestions();
     }
 
@@ -248,8 +182,7 @@
     {
         _isPass = null;
         _idx = 0;
-        if (_isTest) _questions = _meaningOfIdiomList.GetQuestions().Take(25).ToList();
-        else _questions = _meaningOfIdiomList.GetQuestions().ToList();
+        _questions = _meaningOfIdiomList.GetQuestions().ToList();
         if (_questions.Count > 0)
             _question = _questions[_idx];
         else
