@@ -201,6 +201,7 @@
             _answerList = _meaningOfWordList.GetAnswer(_question).ToList();
             _timer.Start();
         }
+        StateHasChanged();
     }
 
     private void ParameterChanged()
