@@ -62,7 +62,7 @@
             </div>
         }
         <div class="p-1">
-            <div>Ranking - @_today.ToString("MMMM/yyyy")</div>
+            <div class="fs-4 fw-bold">Ranking - @_startDate?.ToString("MM/dd") ~ @_endDate?.ToString("MM/dd") </div>
             <div class="p-1">
                 @foreach (var item in _ranks)
                 {
@@ -84,6 +84,8 @@
     private List<Summary> _summary = new();
     private List<Rank> _ranks = new();
     private DateTime _today = DateTime.Today;
+    private DateTime? _startDate;
+    private DateTime? _endDate;
 
     protected override async Task OnInitializedAsync()
     {
@@ -92,14 +94,26 @@
         _summary = await http.GetFromJsonAsync<List<Summary>>(nameof(MeaningOfWordLearningHistory) + $"/summary?userId={user?.Id}") ?? new();
         _ranks = await http.GetFromJsonAsync<List<Rank>>(nameof(Rank) + $"?year={_today.Year}&month={_today.Month}") ?? new();
         _isLoading = false;
+        CalcCurrentWeek();
     }
 
     private void NavigateToLoginPage()
     {
         var queryParameter = new Dictionary<string, string>
-        {
-            ["RedirectURL"] = navigationManager.Uri
-        };
+            {
+                ["RedirectURL"] = navigationManager.Uri
+            };
         navigationManager.NavigateTo(QueryHelpers.AddQueryString("Login", queryParameter));
+    }
+
+    private void CalcCurrentWeek()
+    {
+        var today = DateTime.Today;
+        var index = typeof(DayOfWeek).GetEnumNames().ToList().IndexOf(today.DayOfWeek.ToString());
+        var startDate = today.AddDays(-index);
+        var endDate = today.AddDays(6 - index);
+        _startDate = startDate;
+        _endDate = endDate;
+        StateHasChanged();
     }
 }
