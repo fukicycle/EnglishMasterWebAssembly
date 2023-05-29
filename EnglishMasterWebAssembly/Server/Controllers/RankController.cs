@@ -19,9 +19,9 @@ namespace EnglishMasterWebAssembly.Server.Controllers
             _db = db;
         }
 
-        public async Task<IEnumerable<Rank>> Get(int year, int month)
+        public async Task<IEnumerable<Rank>> Get(DateTime start,DateTime end)
         {
-            var ranking = await _db.MeaningOfWordLearningHistories.GroupBy(a => a.User).ToListAsync();
+            var ranking = await _db.MeaningOfWordLearningHistories.Where(a => a.Date >= start && a.Date <= end).GroupBy(a => a.User).ToListAsync();
             var rank = 1;
             return ranking.Where(a => a.Count() >= 100).OrderByDescending(a => Math.Round(a.Count(b => b.QuestionMeaningOfWordId == b.AnswerMeaningOfWordId)/(a.Count() + 0.0m) * 100.0m,2)).Take(3).Select(a => new Rank
             {

@@ -92,9 +92,9 @@
         var user = await UserInfo.GetUserInfo(localStorage, http);
         _fullName = string.IsNullOrEmpty(user?.Username) ? "Guest" : $"{user.FirstName} {user.LastName}";
         _summary = await http.GetFromJsonAsync<List<Summary>>(nameof(MeaningOfWordLearningHistory) + $"/summary?userId={user?.Id}") ?? new();
-        _ranks = await http.GetFromJsonAsync<List<Rank>>(nameof(Rank) + $"?year={_today.Year}&month={_today.Month}") ?? new();
         _isLoading = false;
         CalcCurrentWeek();
+        _ranks = await http.GetFromJsonAsync<List<Rank>>(nameof(Rank) + $"?start={_startDate:yyyy-MM-dd}&end={_endDate:yyyy-MM-dd}") ?? new();
     }
 
     private void NavigateToLoginPage()
