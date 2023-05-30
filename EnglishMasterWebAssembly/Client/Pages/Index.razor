@@ -29,7 +29,7 @@
         else if (_fullName.Equals("Guest"))
         {
             <div class="d-flex">
-                <h3 class="m-auto">Welcome back, @_fullName !</h3>
+                <div class="fs-3 fw-bold m-auto">Welcome back, @_fullName !</div>
                 <button class="m-auto px-1 btn-base w-25 py-1" @onclick="NavigateToLoginPage">Sign in</button>
             </div>
             <div class="p-1">Sign in to see all results.</div>
@@ -37,36 +37,38 @@
         }
         else
         {
-            <h3>Welcome back, @_fullName !</h3>
+            <div class="fs-3 fw-bold">Welcome back, @_fullName !</div>
             <div class="p-1">
-                <div class="spinner-area">
-                    <p>Month:</p>
-                    <select>
-                        @foreach (var item in _summary.GroupBy(a => a.Date.ToString("yyyy-MM")))
-                        {
-                            <option>@item.Key</option>
-                        }
-                    </select>
-                </div>
-                <div class="row p-0 w-100">
-                    <div class="col-4">Total:</div>
-                    <div class="col-8">@_summary.Where(a => a.Date.Year == 2023 && a.Date.Month == 5).Sum(a => a.Total)</div>
-                </div>
-                <div class="row p-0 w-100">
-                    <div class="col-4">Correct:</div>
-                    <div class="col-8">@_summary.Where(a => a.Date.Year == 2023 && a.Date.Month == 5).Sum(a => a.Correct)</div>
-                </div>
-                <div class="row p-0 w-100">
-                    <div class="col-4">Incorrect:</div>
-                    <div class="col-8">@_summary.Where(a => a.Date.Year == 2023 && a.Date.Month == 5).Sum(a => a.Incorrect)</div>
-                </div>
+                <table class="table table-borderless p-0 m-0">
+                    <thead>
+                        <tr class="text-center">
+                            <th>Total</th>
+                            <th>Correct ratio</th>
+                            <th>Weekly rank</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="text-center">
+                            <td>@_summary.Sum(a => a.Total)</td>
+                            <td>@Math.Round((decimal)_summary.Sum(a => a.Correct) / _summary.Sum(a => a.Total) * 100m,2) %</td>
+                            @if (_rank?.Ranking == 0)
+                            {
+                                <td>-</td>
+                            }
+                            else
+                            {
+                                <td>@_rank?.Ranking</td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="p-1">
                 <div class="fs-5 fw-bold">Ranking - @_startDate?.ToString("MM/dd") ~ @_endDate?.ToString("MM/dd") </div>
                 <div class="p-1">
                     @foreach (var item in _ranks)
                     {
-                        <div class="d-flex p-1">
+                        <div class="d-flex pt-1">
 
                             <div class="fs-4 fw-bold">@item.Ranking</div>
                             <div class="fs-5 fw-bold m-auto mx-2">@item.Nickname</div>
@@ -88,12 +90,6 @@
                             }
                         </div>
                     }
-                    <div>Your score:</div>
-                    <div class="d-flex p-1">
-                        <div class="fs-5 fw-bold">@_rank?.Ranking</div>
-                        <div class="fs-5 fw-bold m-auto mx-2">@_rank?.Nickname</div>
-                        <div class="fs-6 m-auto mx-1">- @_rank?.CorrectRate %</div>
-                    </div>
                 </div>
             </div>
         }
