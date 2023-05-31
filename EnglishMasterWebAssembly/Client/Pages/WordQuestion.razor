@@ -291,13 +291,23 @@
     private async void SubmitResult(long id)
     {
         if (_user is null) return;
+        if (_question.Id == id)
+        {
+            _correctCount++;
+        }
+        else
+        {
+            _correctCount = 0;
+        }
         MeaningOfWordLearningHistory meaningOfWordLearningHistory = new MeaningOfWordLearningHistory
         {
             QuestionMeaningOfWordId = _question.Id,
             AnswerMeaningOfWordId = id == 0 ? null : (long?)id,
             Date = DateTime.Now,
             UserId = _user.Id,
-            IsDone = _question.Id == id
+            IsDone = _question.Id == id,
+            BasePoint = _question.Id == id ? 2 : -1,
+            AdditionalPoint = GetAdditionalPoint()
         };
         await http.PostAsJsonAsync(nameof(MeaningOfWordLearningHistory), meaningOfWordLearningHistory);
     }
@@ -312,5 +322,23 @@
     public void Dispose()
     {
         _timer.Dispose();
+    }
+
+    private int _correctCount = 0;
+
+    private int GetAdditionalPoint()
+    {
+        switch (_correctCount)
+        {
+            case 5:
+                return 3;
+            case 10:
+                return 5;
+            case 25:
+                _correctCount = 0;
+                return 10;
+            default:
+                return 0;
+        }
     }
 }
