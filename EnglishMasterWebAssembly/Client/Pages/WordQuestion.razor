@@ -343,8 +343,6 @@
             if (i >= 50) basePoint = basePoint - (i / 10000m);
             if (basePoint < 1) basePoint = 1;
             value = value * basePoint;
-            //Console.WriteLine(WriteBar(Math.Ceiling(value)));
-            Console.WriteLine(i + ":" + Math.Ceiling(value));
         }
         return int.Parse(Math.Ceiling(value).ToString());
     }
