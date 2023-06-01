@@ -315,6 +315,7 @@
     private void StartButtonOnClick()
     {
         _isRunning = true;
+        _correctCount = 0;
         StateHasChanged();
         _timer.Start();
     }
@@ -328,17 +329,16 @@
 
     private int GetAdditionalPoint()
     {
-        switch (_correctCount)
+        decimal basePoint = 1.1m;
+        decimal value = basePoint;
+        for (int i = 1; i <= _correctCount; i++)
         {
-            case 5:
-                return 3;
-            case 10:
-                return 5;
-            case 25:
-                _correctCount = 0;
-                return 10;
-            default:
-                return 0;
+            if (i >= 50) basePoint = basePoint - (i / 10000m);
+            if (basePoint < 1) basePoint = 1;
+            value = value * basePoint;
+            //Console.WriteLine(WriteBar(Math.Ceiling(value)));
+            Console.WriteLine(i + ":" + Math.Ceiling(value));
         }
+        return int.Parse(Math.Ceiling(value).ToString());
     }
 }
