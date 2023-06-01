@@ -7,53 +7,61 @@
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager navigationManager
+@implements IDisposable
 <PageTitle>Word</PageTitle>
 <div class="container">
     <div class="content-area">
-        <div class="spinner-area">
-            <p>問題数</p>
-            <select @onchange="@LimitChanged">
-                @for (int i = 25; i <= 100; i += 25)
-                {
-                    @if (Limit == i)
+        @if (!_isRunning)
+        {
+            <div class="spinner-area">
+                <p>問題数</p>
+                <select @onchange="@LimitChanged">
+                    @for (int i = 25; i <= 100; i += 25)
                     {
-                        <option selected value="@i">@i</option>
+                        @if (Limit == i)
+                        {
+                            <option selected value="@i">@i</option>
+                        }
+                        else
+                        {
+                            <option value="@i">@i</option>
+                        }
                     }
-                    else
+                </select>
+                <p>レベル</p>
+                <select @onchange="@LevelChanged">
+                    @foreach (var item in _levelList)
                     {
-                        <option value="@i">@i</option>
+                        if (LevelId == item.Id)
+                        {
+                            <option selected value="@item.Id">@item.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
                     }
-                }
-            </select>
-            <p>レベル</p>
-            <select @onchange="@LevelChanged">
-                @foreach (var item in _levelList)
-                {
-                    if (LevelId == item.Id)
+                </select>
+                <p>品詞</p>
+                <select @onchange="@PartOfSpeechChanged">
+                    @foreach (var item in _partOfSpeechList)
                     {
-                        <option selected value="@item.Id">@item.Name</option>
+                        if (PartOfSpeechId == item.Id)
+                        {
+                            <option selected value="@item.Id">@item.InJapanese</option>
+                        }
+                        else
+                        {
+                            <option value="@item.Id">@item.InJapanese</option>
+                        }
                     }
-                    else
-                    {
-                        <option value="@item.Id">@item.Name</option>
-                    }
-                }
-            </select>
-            <p>品詞</p>
-            <select @onchange="@PartOfSpeechChanged">
-                @foreach (var item in _partOfSpeechList)
-                {
-                    if (PartOfSpeechId == item.Id)
-                    {
-                        <option selected value="@item.Id">@item.InJapanese</option>
-                    }
-                    else
-                    {
-                        <option value="@item.Id">@item.InJapanese</option>
-                    }
-                }
-            </select>
-        </div>
+                </select>
+            </div>
+        }
+        else
+        {
+            <div class="spinner-area"></div>
+        }
         <div class="question-area">
             @if (_wordList == null || _questions == null)
             {
@@ -118,7 +126,7 @@
                     {
                         @foreach (var item in _answerList)
                         {
-                            <button class="btn-base" @onclick="@(() => AnswerButtonOnClick(item.Id))" disabled="@(_isPass != null)">@item.Meaning</button>
+                            <button class="btn-base p-3" @onclick="@(() => AnswerButtonOnClick(item.Id))" disabled="@(_isPass != null)">@item.Meaning</button>
                         }
                     }
                 }
@@ -174,7 +182,7 @@
         _isLoad = false;
     }
 
-    private async void TimerElapsed(object? sender,ElapsedEventArgs e)
+    private async void TimerElapsed(object? sender, ElapsedEventArgs e)
     {
         _limitTime = _limitTime.Subtract(TimeSpan.FromSeconds(1));
         StateHasChanged();
@@ -279,10 +287,10 @@
         if (_user is not null)
         {
             var queryParameter = new Dictionary<string, string>
-            {
-                ["count"] = Limit.ToString(),
-                ["userId"] = _user.Id.ToString()
-            };
+                {
+                    ["count"] = Limit.ToString(),
+                    ["userId"] = _user.Id.ToString()
+                };
             navigationManager.NavigateTo(QueryHelpers.AddQueryString("Result", queryParameter));
         }
     }
@@ -290,21 +298,52 @@
     private async void SubmitResult(long id)
     {
         if (_user is null) return;
-        MeaningOfWordLearningHistory meaningOfWordLearningHistory = new MeaningOfWordLearningHistory
+        if (_question.Id == id)
         {
-            QuestionMeaningOfWordId = _question.Id,
-            AnswerMeaningOfWordId = id == 0 ? null : (long?)id,
-            Date = DateTime.Now,
-            UserId = _user.Id,
-            IsDone = _question.Id == id
-        };
+            _correctCount++;
+        }
+        else
+        {
+            _correctCount = 0;
+        }
+        MeaningOfWordLearningHistory meaningOfWordLearningHistory = new MeaningOfWordLearningHistory
+            {
+                QuestionMeaningOfWordId = _question.Id,
+                AnswerMeaningOfWordId = id == 0 ? null : (long?)id,
+                Date = DateTime.Now,
+                UserId = _user.Id,
+                IsDone = _question.Id == id,
+                BasePoint = _question.Id == id ? 2 : -1,
+                AdditionalPoint = GetAdditionalPoint()
+            };
         await http.PostAsJsonAsync(nameof(MeaningOfWordLearningHistory), meaningOfWordLearningHistory);
     }
 
     private void StartButtonOnClick()
     {
         _isRunning = true;
+        _correctCount = 0;
         StateHasChanged();
         _timer.Start();
+    }
+
+    public void Dispose()
+    {
+        _timer.Dispose();
+    }
+
+    private int _correctCount = 0;
+
+    private int GetAdditionalPoint()
+    {
+        decimal basePoint = 1.1m;
+        decimal value = basePoint;
+        for (int i = 1; i <= _correctCount; i++)
+        {
+            if (i >= 50) basePoint = basePoint - (i / 10000m);
+            if (basePoint < 1) basePoint = 1;
+            value = value * basePoint;
+        }
+        return int.Parse(Math.Ceiling(value).ToString());
     }
 }

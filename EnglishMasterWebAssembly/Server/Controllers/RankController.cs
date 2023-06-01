@@ -23,12 +23,29 @@ namespace EnglishMasterWebAssembly.Server.Controllers
         {
             var ranking = await _db.MeaningOfWordLearningHistories.Where(a => a.Date >= start && a.Date <= end).GroupBy(a => a.User).ToListAsync();
             var rank = 1;
-            return ranking.Where(a => a.Count() >= 100).OrderByDescending(a => Math.Round(a.Count(b => b.QuestionMeaningOfWordId == b.AnswerMeaningOfWordId)/(a.Count() + 0.0m) * 100.0m,2)).Take(3).Select(a => new Rank
+            return ranking.Where(a => a.Count() >= 100).OrderByDescending(a => a.Sum(b => b.BasePoint + b.AdditionalPoint)).Take(5).Select(a => new Rank
             {
                 Nickname = a.Key.Nickname,
                 Ranking = rank++,
-                CorrectRate = Math.Round(a.Count(b => b.QuestionMeaningOfWordId == b.AnswerMeaningOfWordId) / (a.Count() + 0.0m) * 100.0m, 2)
+                CorrectRate = Math.Round(a.Count(b => b.QuestionMeaningOfWordId == b.AnswerMeaningOfWordId) / (a.Count() + 0.0m) * 100.0m, 2),
+                Point = a.Sum(b => b.BasePoint + b.AdditionalPoint)
             });
+        }
+
+        [HttpGet("{id}")]
+        public async Task<Rank?> Get(long id,DateTime start, DateTime end)
+        {
+            var ranking = await _db.MeaningOfWordLearningHistories.Where(a => a.Date >= start && a.Date <= end).GroupBy(a => a.User).ToListAsync();
+            var rank = 1;
+            //return ranking.Where(a => a.Count() >= 100).OrderByDescending(a => Math.Round(a.Count(b => b.QuestionMeaningOfWordId == b.AnswerMeaningOfWordId) / (a.Count() + 0.0m) * 100.0m, 2)).Select(a => new Rank
+            return ranking.Where(a => a.Count() >= 100).OrderByDescending(a => a.Sum(b => b.BasePoint + b.AdditionalPoint)).Select(a => new Rank
+            {
+                UserID = a.Key.Id,
+                Nickname = a.Key.Nickname,
+                Ranking = rank++,
+                CorrectRate = Math.Round(a.Count(b => b.QuestionMeaningOfWordId == b.AnswerMeaningOfWordId) / (a.Count() + 0.0m) * 100.0m, 2),
+                Point = a.Sum(b => b.BasePoint + b.AdditionalPoint)
+            }).SingleOrDefault(a => a.UserID == id) ?? new();
         }
     }
 }

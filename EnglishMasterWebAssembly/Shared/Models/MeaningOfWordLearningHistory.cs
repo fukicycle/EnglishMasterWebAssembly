@@ -17,6 +17,10 @@ public partial class MeaningOfWordLearningHistory
 
     public bool IsDone { get; set; }
 
+    public int BasePoint { get; set; }
+
+    public int AdditionalPoint { get; set; }
+
     public virtual MeaningOfWord? AnswerMeaningOfWord { get; set; }
 
     public virtual MeaningOfWord QuestionMeaningOfWord { get; set; } = null!;
