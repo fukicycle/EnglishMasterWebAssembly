@@ -43,14 +43,23 @@
                     <thead>
                         <tr class="text-center">
                             <th>Total</th>
-                            <th>Correct ratio</th>
+                            <th>CR</th>
+                            <th>WP</th>
                             <th>Weekly rank</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="text-center">
                             <td>@_summary.Sum(a => a.Total)</td>
-                            <td>@Math.Round((decimal)_summary.Sum(a => a.Correct) / _summary.Sum(a => a.Total) * 100m,2) %</td>
+                            @if (_summary.Sum(a => a.Total) != 0)
+                            {
+                                <td>@Math.Round((decimal)_summary.Sum(a => a.Correct) / _summary.Sum(a => a.Total) * 100m, 2) %</td>
+                            }
+                            else
+                            {
+                                <td>-</td>
+                            }
+                            <td>@_rank?.Point pt</td>
                             @if (_rank?.Ranking == 0)
                             {
                                 <td>-</td>
@@ -122,9 +131,9 @@
     private void NavigateToLoginPage()
     {
         var queryParameter = new Dictionary<string, string>
-            {
-                ["RedirectURL"] = navigationManager.Uri
-            };
+        {
+            ["RedirectURL"] = navigationManager.Uri
+        };
         navigationManager.NavigateTo(QueryHelpers.AddQueryString("Login", queryParameter));
     }
 
