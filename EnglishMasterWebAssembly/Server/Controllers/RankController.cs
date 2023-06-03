@@ -21,7 +21,7 @@ namespace EnglishMasterWebAssembly.Server.Controllers
 
         public async Task<IEnumerable<Rank>> Get(DateTime start,DateTime end)
         {
-            var ranking = await _db.MeaningOfWordLearningHistories.Where(a => a.Date >= start && a.Date <= end).GroupBy(a => a.User).ToListAsync();
+            var ranking = await _db.MeaningOfWordLearningHistories.Where(a => a.Date.Date >= start && a.Date.Date <= end).GroupBy(a => a.User).ToListAsync();
             var rank = 1;
             return ranking.Where(a => a.Count() >= 100).OrderByDescending(a => a.Sum(b => b.BasePoint + b.AdditionalPoint)).Take(5).Select(a => new Rank
             {
@@ -35,7 +35,7 @@ namespace EnglishMasterWebAssembly.Server.Controllers
         [HttpGet("{id}")]
         public async Task<Rank?> Get(long id,DateTime start, DateTime end)
         {
-            var ranking = await _db.MeaningOfWordLearningHistories.Where(a => a.Date >= start && a.Date <= end).GroupBy(a => a.User).ToListAsync();
+            var ranking = await _db.MeaningOfWordLearningHistories.Where(a => a.Date.Date >= start && a.Date.Date <= end).GroupBy(a => a.User).ToListAsync();
             var rank = 1;
             //return ranking.Where(a => a.Count() >= 100).OrderByDescending(a => Math.Round(a.Count(b => b.QuestionMeaningOfWordId == b.AnswerMeaningOfWordId) / (a.Count() + 0.0m) * 100.0m, 2)).Select(a => new Rank
             return ranking.Where(a => a.Count() >= 100).OrderByDescending(a => a.Sum(b => b.BasePoint + b.AdditionalPoint)).Select(a => new Rank
