@@ -14,20 +14,20 @@
         @if (!_isRunning)
         {
             <div class="spinner-area">
-                <p>問題数</p>
-                <select @onchange="@LimitChanged">
-                    @for (int i = 25; i <= 100; i += 25)
-                    {
-                        @if (Limit == i)
+                @*<p>問題数</p>
+                    <select @onchange="@LimitChanged">
+                        @for (int i = 25; i <= 100; i += 25)
                         {
-                            <option selected value="@i">@i</option>
+                            @if (Limit == i)
+                            {
+                                <option selected value="@i">@i</option>
+                            }
+                            else
+                            {
+                                <option value="@i">@i</option>
+                            }
                         }
-                        else
-                        {
-                            <option value="@i">@i</option>
-                        }
-                    }
-                </select>
+                    </select>*@
                 <p>レベル</p>
                 <select @onchange="@LevelChanged">
                     @foreach (var item in _levelList)
@@ -60,7 +60,10 @@
         }
         else
         {
-            <div class="spinner-area"></div>
+            <div class="spinner-area">
+                <p>途中で</p>
+                <button class="btn-base" @onclick="StopButtonOnClick">終了する</button>
+            </div>
         }
         <div class="question-area">
             @if (_wordList == null || _questions == null)
@@ -155,9 +158,9 @@
     [SupplyParameterFromQuery]
     [Parameter]
     public long PartOfSpeechId { get; set; } = 0;
-    [SupplyParameterFromQuery]
-    [Parameter]
-    public int Limit { get; set; } = 25;
+    //[SupplyParameterFromQuery]
+    //[Parameter]
+    public int Limit { get; set; } = 100;
 
     private Timer _timer = new Timer(1000);
     private TimeSpan _limitTime = TimeSpan.FromSeconds(10);
@@ -174,8 +177,8 @@
             PartOfSpeechId = _partOfSpeechList.First().Id;
         if (LevelId == 0)
             LevelId = _levelList.First().Id;
-        if (Limit == 0)
-            Limit = 25;
+        //if (Limit == 0)
+        //Limit = 100;
         _timer.Elapsed += TimerElapsed;
         CreateQuestions();
         _user = await UserInfo.GetUserInfo(localStorage, http);
@@ -217,19 +220,19 @@
         Dictionary<string, object?> parameters = new Dictionary<string, object?>();
         parameters.Add(nameof(LevelId), LevelId);
         parameters.Add(nameof(PartOfSpeechId), PartOfSpeechId);
-        parameters.Add(nameof(Limit), Limit);
+        //parameters.Add(nameof(Limit), Limit);
         navigationManager.NavigateTo(navigationManager.GetUriWithQueryParameters(parameters));
 
     }
 
-    private void LimitChanged(ChangeEventArgs e)
-    {
-        var value = e.Value?.ToString();
-        if (value is null) return;
-        Limit = int.Parse(value);
-        ParameterChanged();
-        CreateQuestions();
-    }
+    //private void LimitChanged(ChangeEventArgs e)
+    //{
+    //    var value = e.Value?.ToString();
+    //    if (value is null) return;
+    //    Limit = int.Parse(value);
+    //    ParameterChanged();
+    //    CreateQuestions();
+    //}
 
     private void LevelChanged(ChangeEventArgs e)
     {
@@ -287,10 +290,10 @@
         if (_user is not null)
         {
             var queryParameter = new Dictionary<string, string>
-                {
-                    ["count"] = Limit.ToString(),
-                    ["userId"] = _user.Id.ToString()
-                };
+            {
+                ["count"] = Limit.ToString(),
+                ["userId"] = _user.Id.ToString()
+            };
             navigationManager.NavigateTo(QueryHelpers.AddQueryString("Result", queryParameter));
         }
     }
@@ -307,15 +310,15 @@
             _correctCount = 0;
         }
         MeaningOfWordLearningHistory meaningOfWordLearningHistory = new MeaningOfWordLearningHistory
-            {
-                QuestionMeaningOfWordId = _question.Id,
-                AnswerMeaningOfWordId = id == 0 ? null : (long?)id,
-                Date = DateTime.Now,
-                UserId = _user.Id,
-                IsDone = _question.Id == id,
-                BasePoint = _question.Id == id ? 2 : -1,
-                AdditionalPoint = GetAdditionalPoint()
-            };
+        {
+            QuestionMeaningOfWordId = _question.Id,
+            AnswerMeaningOfWordId = id == 0 ? null : (long?)id,
+            Date = DateTime.Now,
+            UserId = _user.Id,
+            IsDone = _question.Id == id,
+            BasePoint = _question.Id == id ? 2 : -1,
+            AdditionalPoint = GetAdditionalPoint()
+        };
         await http.PostAsJsonAsync(nameof(MeaningOfWordLearningHistory), meaningOfWordLearningHistory);
     }
 
@@ -325,6 +328,15 @@
         _correctCount = 0;
         StateHasChanged();
         _timer.Start();
+    }
+
+    private void StopButtonOnClick()
+    {
+        _isRunning = false;
+        _correctCount = 0;
+        _timer.Stop();
+        StateHasChanged();
+        CreateQuestions();
     }
 
     public void Dispose()
