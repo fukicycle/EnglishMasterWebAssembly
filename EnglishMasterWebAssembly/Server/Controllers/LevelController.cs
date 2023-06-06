@@ -15,7 +15,7 @@ namespace EnglishMasterWebAssembly.Server.Controllers
         }
         public async Task<IEnumerable<Level>> Get()
         {
-            return await _db.Levels.ToListAsync();
+            return await _db.Levels.Where(a => a.MeaningOfWords.Any()).ToListAsync();
         }
     }
 }
