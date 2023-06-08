@@ -23,7 +23,7 @@ namespace EnglishMasterWebAssembly.Server.Controllers
         {
             var ranking = await _db.MeaningOfWordLearningHistories.Where(a => a.Date.Date >= start && a.Date.Date <= end).GroupBy(a => a.User).ToListAsync();
             var rank = 1;
-            return ranking.Where(a => a.Count() >= 1).OrderByDescending(a => a.Sum(b => b.BasePoint + b.AdditionalPoint)).Take(5).Select(a => new Rank
+            return ranking.Where(a => a.Count() >= 1).OrderByDescending(a => a.Sum(b => b.BasePoint + b.AdditionalPoint)).Select(a => new Rank
             {
                 Nickname = a.Key.Nickname,
                 Ranking = rank++,
