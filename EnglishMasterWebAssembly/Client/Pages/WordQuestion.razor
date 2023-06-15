@@ -323,7 +323,7 @@
             UserId = _user.Id,
             IsDone = _question.Id == id,
             BasePoint = _question.Id == id ? 2 : -1,
-            AdditionalPoint = GetAdditionalPoint()
+            AdditionalPoint = _question.Id == id ? GetAdditionalPoint() : 0
         };
         await http.PostAsJsonAsync(nameof(MeaningOfWordLearningHistory), meaningOfWordLearningHistory);
     }
