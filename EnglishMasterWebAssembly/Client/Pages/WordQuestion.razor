@@ -65,7 +65,7 @@
                 <button class="btn-base" @onclick="StopButtonOnClick">終了する</button>
             </div>
         }
-        <div class="question-area">
+        <div class="question-area" style="background-color:@_color;">
             @if (_wordList == null || _questions == null)
             {
                 <p class="question">Loading...</p>
@@ -151,6 +151,8 @@
     private bool _isLoad = false;
     private Dictionary<long, bool> _result = new Dictionary<long, bool>();
     private User? _user;
+    private string[] _colors = { "#A6C8FC!important", "#FCF3A6!important", "#FCA6AB!important" };
+    private string _color = "#A6C8FC!important";
 
     [SupplyParameterFromQuery]
     [Parameter]
@@ -188,10 +190,14 @@
     private async void TimerElapsed(object? sender, ElapsedEventArgs e)
     {
         _limitTime = _limitTime.Subtract(TimeSpan.FromSeconds(1));
+        if (_limitTime == TimeSpan.FromSeconds(6)) _color = _colors[1];
+        if (_limitTime == TimeSpan.FromSeconds(3)) _color = _colors[2];
         StateHasChanged();
         if (_limitTime == TimeSpan.Zero)
         {
+            _color = _colors[0];
             await AnswerButtonOnClick(0);
+
         }
     }
 
@@ -317,7 +323,7 @@
             UserId = _user.Id,
             IsDone = _question.Id == id,
             BasePoint = _question.Id == id ? 2 : -1,
-            AdditionalPoint = GetAdditionalPoint()
+            AdditionalPoint = _question.Id == id ? GetAdditionalPoint() : 0
         };
         await http.PostAsJsonAsync(nameof(MeaningOfWordLearningHistory), meaningOfWordLearningHistory);
     }
