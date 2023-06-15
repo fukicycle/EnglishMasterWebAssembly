@@ -195,9 +195,7 @@
         StateHasChanged();
         if (_limitTime == TimeSpan.Zero)
         {
-            _color = _colors[0];
             await AnswerButtonOnClick(0);
-
         }
     }
 
@@ -261,6 +259,7 @@
     private long prevAnswerId = 0;
     private async Task AnswerButtonOnClick(long id)
     {
+        _color = _colors[0];
         _isPass = null;
         if (id == 0)
         {
